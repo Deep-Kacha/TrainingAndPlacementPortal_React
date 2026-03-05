@@ -55,13 +55,13 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
 
       <Sidebar />
 
-      <div className="flex-1 bg-gray-100 p-4 md:p-8">
+      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
 
-        <h1 className="text-3xl font-bold text-red-600">
+        <h1 className="text-2xl md:text-3xl font-bold text-red-600">
           Dashboard
         </h1>
 
@@ -87,7 +87,7 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
 
-        <h2 className="text-2xl font-bold text-red-600 mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-red-600 mb-6">
           Quick Actions
         </h2>
 
