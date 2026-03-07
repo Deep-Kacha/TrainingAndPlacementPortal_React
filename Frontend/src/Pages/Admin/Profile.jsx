@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Sidebar from "../../Components/Admin/Dashboard/SideBar";
+import Sidebar from "../../Components/Admin/SideBar";
 import ProfileCard from "../../Components/Admin/Profile/ProfileCard";
 import ProfileInfoForm from "../../Components/Admin/Profile/ProfileInfoForm";
 import AddPortalUser from "../../Components/Admin/Profile/AddPortalUser";

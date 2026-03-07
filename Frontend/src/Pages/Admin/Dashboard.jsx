@@ -1,5 +1,5 @@
 
-import Sidebar from "../../Components/Admin/Dashboard/SideBar";
+import Sidebar from "../../Components/Admin/SideBar";
 import StatCard from "../../Components/Admin/Dashboard/StatCard";
 import QuickActionCard from "../../Components/Admin/Dashboard/QuickActionCard";
 

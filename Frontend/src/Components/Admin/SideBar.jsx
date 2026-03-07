@@ -13,7 +13,7 @@ import {
   FaTimes
 } from "react-icons/fa";
 
-import logo from "../../../assets/images/logo.png";
+import logo from "../../assets/images/logo.png";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +21,7 @@ const Sidebar = () => {
   const menu = [
     { name: "Dashboard", path: "/", icon: <FaThLarge /> },
     { name: "Profile", path: "/profile", icon: <FaUser /> },
-    { name: "Company Management", path: "/company", icon: <FaBuilding /> },
+    { name: "Company Management", path: "/CompanyManagement", icon: <FaBuilding /> },
     { name: "Student Management", path: "/students", icon: <FaUsers /> },
     { name: "Interview Schedule", path: "/interview", icon: <FaCalendarAlt /> },
     { name: "Placement History", path: "/history", icon: <FaHistory /> },
@@ -48,21 +48,22 @@ const Sidebar = () => {
       <ul className={`space-y-3 ${isOpen ? "block mt-4" : "hidden"} md:block md:mt-0`}>
 
         {menu.map((item, index) => (
-          <NavLink
-            key={index}
-            to={item.path}
-            end={item.path === "/"}
-            onClick={() => setIsOpen(false)}
-            className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
-              ${isActive
-                ? "bg-[rgb(175,172,172)] text-white"
-                : "bg-white hover:bg-gray-200"}`
-            }
-          >
-            {item.icon}
-            {item.name}
-          </NavLink>
+          <li key={index}>
+            <NavLink
+              to={item.path}
+              end={item.path === "/"}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
+                ${isActive
+                  ? "bg-[rgb(175,172,172)] text-white"
+                  : "bg-white hover:bg-gray-200"}`
+              }
+            >
+              {item.icon}
+              {item.name}
+            </NavLink>
+          </li>
         ))}
 
       </ul>
