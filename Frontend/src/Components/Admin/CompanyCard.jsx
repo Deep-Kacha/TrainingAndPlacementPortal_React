@@ -1,6 +1,9 @@
 import { FaMapMarkerAlt } from "react-icons/fa";
 
-const CompanyCard = () => {
+const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
+  const status = data?.status || "pending";
+  const isUndoable = undoState?.id === data?.id;
+
   return (
     <div className="bg-[#d8cfc3] p-6 rounded-xl shadow">
 
@@ -9,13 +12,13 @@ const CompanyCard = () => {
       <div className="flex items-center gap-4 mb-3">
 
         <div className="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold">
-          T
+          {data?.name ? data.name.charAt(0) : "C"}
         </div>
 
         <div>
-          <h3 className="font-bold text-lg">TCS Ltd</h3>
+          <h3 className="font-bold text-lg">{data?.name || "Company Name"}</h3>
           <p className="text-gray-600 text-sm">
-            Software Development Engineer
+            {data?.role || "Job Role"}
           </p>
         </div>
 
@@ -24,34 +27,54 @@ const CompanyCard = () => {
       {/* Salary */}
 
       <p className="text-red-600 font-bold text-lg mb-2">
-        ₹8 LPA
+        {data?.salary || "Salary"}
       </p>
 
       {/* Location */}
 
       <p className="flex items-center gap-2 text-gray-600 text-sm mb-2">
         <FaMapMarkerAlt />
-        Bangalore, Karnataka
+        {data?.location || "Location"}
       </p>
 
       {/* Selection Process */}
 
       <p className="text-gray-600 text-sm mb-4">
-        Aptitude Test + Personal Interview + Practical Test + Panel Interview
+        {data?.process || "Selection Process"}
       </p>
 
       {/* Buttons */}
 
       <div className="grid grid-cols-2 gap-3 mb-3">
 
-        <button className="bg-red-600 text-white py-2 rounded">
-          ✕ DECLINE
-        </button>
+        {status === "pending" ? (
+          <>
+            <button
+              onClick={() => onStatusChange(data.id, "declined")}
+              className="bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+            >
+              ✕ DECLINE
+            </button>
 
-        <button className="bg-green-600 text-white py-2 rounded">
-          ✓ ACCEPT
-        </button>
-
+            <button
+              onClick={() => onStatusChange(data.id, "accepted")}
+              className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition"
+            >
+              ✓ ACCEPT
+            </button>
+          </>
+        ) : (
+          <div className="col-span-2 flex gap-2">
+            <button disabled className={`flex-1 text-white py-2 rounded cursor-not-allowed ${status === "accepted" ? "bg-green-600" : "bg-red-600"}`}>
+              {status === "accepted" ? "✓ ACCEPTED" : "✕ DECLINED"}
+            </button>
+            {isUndoable && (
+              <button onClick={onUndo} className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                Undo
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3">
