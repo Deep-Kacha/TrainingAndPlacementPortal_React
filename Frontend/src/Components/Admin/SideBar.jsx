@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaThLarge,
   FaUser,
@@ -17,6 +17,7 @@ import logo from "../../assets/images/logo.png";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const menu = [
     { name: "Dashboard", path: "/", icon: <FaThLarge /> },
@@ -53,12 +54,13 @@ const Sidebar = () => {
               to={item.path}
               end={item.path === "/"}
               onClick={() => setIsOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
-                ${isActive
+              className={({ isActive }) => {
+                const isCompanyActive = isActive || (item.path === "/CompanyManagement" && location.pathname === "/admin/jd-detail");
+                return `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
+                ${isCompanyActive
                   ? "bg-[rgb(175,172,172)] text-white"
-                  : "bg-white hover:bg-gray-200"}`
-              }
+                  : "bg-white hover:bg-gray-200"}`;
+              }}
             >
               {item.icon}
               {item.name}

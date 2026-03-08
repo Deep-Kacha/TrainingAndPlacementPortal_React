@@ -4,6 +4,7 @@ import ForgotPassword from "./components/Authentication/Forgotpassword";
 import Dashboard from "./Pages/Admin/Dashboard";
 import Profile from "./Pages/Admin/Profile";
 import CompanyManagement from "./Pages/Admin/CompanyManagement";
+import JdDetail from "./Pages/Admin/JdDetail";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/CompanyManagement" element={<CompanyManagement />} />
+      <Route path="/admin/jd-detail" element={<JdDetail />} />
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
     </Routes>

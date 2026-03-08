@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../Components/Admin/SideBar";
-import CompanyCard from "../../Components/Admin/CompanyCard";
+import CompanyCard from "../../Components/Admin/CompanyMangement/CompanyCard";
 
 const CompanyManagement = () => {
 
