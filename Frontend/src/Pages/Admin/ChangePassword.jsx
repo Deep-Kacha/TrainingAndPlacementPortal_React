@@ -231,7 +231,10 @@ const ChangePassword = () => {
 
 
             {/* Cancel */}
-            <button className="w-full border py-3 rounded-lg">
+            <button 
+              className="w-full border py-3 rounded-lg hover:bg-gray-50"
+              onClick={() => navigate(-1)}
+            >
               Cancel
             </button>
 
