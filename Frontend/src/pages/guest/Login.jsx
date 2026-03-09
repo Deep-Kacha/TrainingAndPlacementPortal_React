@@ -12,7 +12,7 @@ const Login = () => {
     <AuthHeader/>
 
       {/* Main Section */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4">
+      <div className="flex-grow flex flex-col items-center justify-center px-4 py-12">
 
         {/* Title */}
         <div className="text-center mb-8">
@@ -62,7 +62,7 @@ const Login = () => {
           </div>
 
           <div className="text-right text-sm mb-4">
-            <span  onClick={() => navigate("/forgot-password")} className="hover:underline cursor-pointer">
+            <span  onClick={() => navigate("/Authentication/forgot-password")} className="hover:underline cursor-pointer">
               Forgot Password?
             </span>
           </div>

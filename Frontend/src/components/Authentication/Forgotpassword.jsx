@@ -13,7 +13,7 @@ const ForgotPassword = () => {
       <AuthHeader/>
 
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4">
+      <div className="flex-grow flex flex-col items-center justify-center px-4 py-12">
         
         {/* Title */}
         <h1 className="text-2xl md:text-3xl font-bold mb-8">

@@ -16,17 +16,17 @@ const Header = () => {
 
         {/* CENTER : NAVIGATION */}
         <nav className="hidden md:flex flex-1 justify-center space-x-10 text-gray-800 font-medium">
-          <Link to="/" className="hover:text-red-600">Home</Link>
-          <Link to="/placements" className="hover:text-red-600">Placements</Link>
-          <Link to="/recruiters" className="hover:text-red-600">Recruiters</Link>
-          <Link to="/submit-jd" className="hover:text-red-600">Submit JD</Link>
-          <Link to="/about" className="hover:text-red-600">About Us</Link>
+          <a href="#home" className="hover:text-red-600">Home</a>
+          <a href="#placements" className="hover:text-red-600">Placements</a>
+          <a href="#recruiters" className="hover:text-red-600">Recruiters</a>
+          <a href="/submit-jd" className="hover:text-red-600">Submit JD</a>
+          <a href="#about" className="hover:text-red-600">About Us</a>
         </nav>
 
         {/* RIGHT : AUTH BUTTONS */}
         <div className="hidden md:flex items-center space-x-3 flex-shrink-0">
           <Link
-            to="/login"
+            to="/Authentication/login"
             className="px-4 py-1 border border-red-600 text-red-600 rounded-md hover:bg-red-50"
           >
             Login
