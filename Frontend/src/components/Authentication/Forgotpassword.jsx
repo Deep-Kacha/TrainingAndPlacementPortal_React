@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-// import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
+import AuthHeader from "../common/AuthHeader";
 
 const ForgotPassword = () => {
   const [showNew, setShowNew] = useState(false);
@@ -9,10 +9,10 @@ const ForgotPassword = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-200">
       
-      <Header />
+      <AuthHeader/>
 
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4">
+      <div className="flex-grow flex flex-col items-center justify-center px-4 py-12">
         
         {/* Title */}
         <h1 className="text-2xl md:text-3xl font-bold mb-8">
