@@ -5,6 +5,7 @@ import Dashboard from "./Pages/Admin/Dashboard";
 import Profile from "./Pages/Admin/Profile";
 import CompanyManagement from "./Pages/Admin/CompanyManagement";
 import JdDetail from "./Pages/Admin/JdDetail";
+import ChangePassword from "./Pages/Admin/ChangePassword";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/profile" element={<Profile />} />
       <Route path="/CompanyManagement" element={<CompanyManagement />} />
       <Route path="/admin/jd-detail" element={<JdDetail />} />
+      <Route path="/ChangePassword" element={<ChangePassword />} />
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
     </Routes>
