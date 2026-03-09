@@ -62,19 +62,19 @@ const JdDetail = () => {
   };
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
 
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 md:ml-64 bg-gray-100 p-8">
+      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
 
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0">
 
           <div>
-            <h1 className="text-3xl font-bold text-red-600">
+            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
               Company Management
             </h1>
             <p className="text-gray-600 text-sm">
@@ -82,13 +82,13 @@ const JdDetail = () => {
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-3 w-full md:w-auto">
             <button 
               onClick={() => setIsEditing(true)}
-              className={`bg-red-600 text-white px-5 py-2 rounded-lg ${isEditing ? "opacity-50 cursor-not-allowed" : "hover:bg-red-700"}`}
+              className={`bg-red-600 text-white px-5 py-2 rounded-lg w-full md:w-auto ${isEditing ? "opacity-50 cursor-not-allowed" : "hover:bg-red-700"}`}
               disabled={isEditing}
             >
-              Edit Content
+              Edit Content  
             </button>
           </div>
 
@@ -96,7 +96,7 @@ const JdDetail = () => {
 
 
         {/* Form Title */}
-        <div className="bg-white rounded-xl shadow-sm p-6 text-center mb-6">
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 text-center mb-6">
 
           <h2 className="text-lg font-semibold">
             Campus Placement Registration Form
@@ -115,7 +115,7 @@ const JdDetail = () => {
           title="Contact Information"
         >
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
             <div className="bg-gray-100 p-4 rounded-lg">
               <p className="font-semibold">Dr. Vishal Doshi</p>
@@ -364,16 +364,16 @@ const JdDetail = () => {
 
         {/* Buttons */}
         {isEditing && (
-          <div className="flex justify-end gap-4 mt-6">
+          <div className="flex flex-col-reverse md:flex-row justify-end gap-4 mt-6">
             <button 
               onClick={() => setIsEditing(false)}
-              className="border px-6 py-2 rounded-lg hover:bg-gray-50"
+              className="border px-6 py-2 rounded-lg hover:bg-gray-50 w-full md:w-auto"
             >
               CANCEL
             </button>
             <button 
               onClick={() => setIsEditing(false)}
-              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 w-full md:w-auto"
             >
               Save Changes
             </button>
