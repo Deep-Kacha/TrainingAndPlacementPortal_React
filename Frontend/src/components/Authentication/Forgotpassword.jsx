@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import Footer from "../../components/common/Footer";
 import AuthHeader from "../common/AuthHeader";
 
@@ -93,6 +92,7 @@ const ForgotPassword = () => {
 
         </div>
       </div>
+      
 
       <Footer />
 
