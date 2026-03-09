@@ -7,6 +7,7 @@ import CompanyManagement from "./Pages/Admin/CompanyManagement";
 import JdDetail from "./Pages/Admin/JdDetail";
 import ChangePassword from "./Pages/Admin/ChangePassword";
 import ForgotPassword from "./Pages/Admin/ForgotPassword";
+import InterviewSchedule from "./Pages/Admin/InterviewSchedule";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
       <Route path="/admin/jd-detail" element={<JdDetail />} />
       <Route path="/ChangePassword" element={<ChangePassword />} />
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
+      <Route path="/InterviewSchedule" element={<InterviewSchedule />} />
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
     </Routes>
