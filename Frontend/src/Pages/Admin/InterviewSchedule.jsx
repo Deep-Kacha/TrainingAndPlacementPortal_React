@@ -90,7 +90,7 @@ const InterviewSchedule = () => {
         </p>
 
         {/* Search and Filter Section */}
-        <div className="mb-6 flex flex-col md:flex-row gap-4 items-center">
+        <div className="mb-6 flex flex-col md:flex-row gap-4 items-stretch md:items-center">
 
           {/* Search Input */}
           <div className="relative flex-grow w-full">
@@ -105,7 +105,7 @@ const InterviewSchedule = () => {
           </div>
 
           {/* Search Category Dropdown */}
-          <div className="relative w-full md:w-auto flex-shrink-0">
+          <div className="relative w-full md:w-48 flex-shrink-0">
             <select
               value={searchCategory}
               onChange={(e) => setSearchCategory(e.target.value)}
@@ -121,7 +121,7 @@ const InterviewSchedule = () => {
           </div>
 
           {/* Status Filter Dropdown */}
-          <div className="relative w-full md:w-auto flex-shrink-0">
+          <div className="relative w-full md:w-72 flex-shrink-0">
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
