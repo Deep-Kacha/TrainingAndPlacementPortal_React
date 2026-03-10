@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 const InterviewCard = ({ data }) => {
   const [isOnHold, setIsOnHold] = useState(false);
-
+  const navigate = useNavigate(); 
   return (
     <div className="bg-[#d8cfc3] p-6 rounded-xl shadow">
 
@@ -62,7 +65,9 @@ const InterviewCard = ({ data }) => {
           ON HOLD
         </button>
 
-        <button className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+        <button 
+          onClick={() => navigate("/InterviewScheduleForm")}
+          className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
           SCHEDULE INTERVIEW
         </button>
 

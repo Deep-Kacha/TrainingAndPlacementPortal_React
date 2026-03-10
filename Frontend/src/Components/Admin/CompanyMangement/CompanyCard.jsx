@@ -1,6 +1,7 @@
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
+
 const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
   const status = data?.status || "pending";
   const isUndoable = undoState?.id === data?.id;
@@ -82,14 +83,14 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
       <div className="grid grid-cols-2 gap-3">
 
         <button
-          onClick={() => navigate("/admin/jd-detail", { state: { mode: "view" } })}
+          onClick={() => navigate("/JdDetail", { state: { mode: "view" } })}
           className="border border-black py-2 rounded hover:bg-gray-50 transition"
         >
           VIEW DETAILS
         </button>
 
         <button
-          onClick={() => navigate("/admin/jd-detail", { state: { mode: "edit" } })}
+          onClick={() => navigate("/JdDetail", { state: { mode: "edit" } })}
           className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
           EDIT DETAILS
