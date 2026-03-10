@@ -9,6 +9,7 @@ import ChangePassword from "./Pages/Admin/ChangePassword";
 import ForgotPassword from "./Pages/Admin/ForgotPassword";
 import InterviewSchedule from "./Pages/Admin/InterviewSchedule";
 import InterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
+import StudentsManagement from "./Pages/Admin/StudentsManagement";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/InterviewSchedule" element={<InterviewSchedule />} />
       <Route path="/InterviewScheduleForm" element={<InterviewScheduleForm />} /> 
+      <Route path="/StudentsManagement" element={<StudentsManagement />} />
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
     </Routes>

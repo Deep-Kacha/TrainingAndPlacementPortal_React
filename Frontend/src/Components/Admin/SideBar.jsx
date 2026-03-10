@@ -23,7 +23,7 @@ const Sidebar = () => {
     { name: "Dashboard", path: "/", icon: <FaThLarge /> },
     { name: "Profile", path: "/profile", icon: <FaUser /> },
     { name: "Company Management", path: "/CompanyManagement", icon: <FaBuilding /> },
-    { name: "Student Management", path: "/students", icon: <FaUsers /> },
+    { name: "Student Management", path: "/StudentsManagement", icon: <FaUsers /> },
     { name: "Interview Schedule", path: "/InterviewSchedule", icon: <FaCalendarAlt /> },
     { name: "Placement History", path: "/history", icon: <FaHistory /> },
     { name: "Change Password", path: "/ChangePassword", icon: <FaLock /> },
@@ -36,7 +36,7 @@ const Sidebar = () => {
       {/* Logo + Mobile Button */}
       <div className="flex justify-between items-center md:justify-center md:flex-col">
         <img src={logo} alt="RK University" className="w-28 md:w-36 md:mb-4" />
-
+          
         <button
           className="text-2xl md:hidden"
           onClick={() => setIsOpen(!isOpen)}
