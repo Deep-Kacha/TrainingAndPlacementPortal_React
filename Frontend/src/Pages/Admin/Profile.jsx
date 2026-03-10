@@ -8,13 +8,13 @@ import PasswordActions from "../../Components/Admin/Profile/PasswordActions";
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    name: "Rajesh Sharma",
+    name: "Vishal Doshi",
     role: "TPO Head",
     employeeId: "26FGHP579",
     department: "Training & Placement Shell",
     location: "Office No .27",
     mobile: "+91 98765 43210",
-    email: "rajesh.sharma@rku.ac.in"
+    email: "vishal.doshi@rku.ac.in"
   });
   const [errors, setErrors] = useState({});
 

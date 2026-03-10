@@ -8,6 +8,7 @@ import JdDetail from "./Pages/Admin/JdDetail";
 import ChangePassword from "./Pages/Admin/ChangePassword";
 import ForgotPassword from "./Pages/Admin/ForgotPassword";
 import InterviewSchedule from "./Pages/Admin/InterviewSchedule";
+import InterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
 
 function App() {
   return (
@@ -15,10 +16,11 @@ function App() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/CompanyManagement" element={<CompanyManagement />} />
-      <Route path="/admin/jd-detail" element={<JdDetail />} />
+      <Route path="/JdDetail" element={<JdDetail />} />
       <Route path="/ChangePassword" element={<ChangePassword />} />
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/InterviewSchedule" element={<InterviewSchedule />} />
+      <Route path="/InterviewScheduleForm" element={<InterviewScheduleForm />} /> 
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
     </Routes>
