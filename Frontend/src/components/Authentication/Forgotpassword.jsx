@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 <<<<<<< HEAD
+<<<<<<< HEAD
 // import Header from "../../components/common/Header";
 =======
 
 >>>>>>> 3c8fb094e444531e468e574cd5d1de99f4d73648
+=======
+>>>>>>> 89408cf32317f0b22cae83c6ea8e44cb61937c0e
 import Footer from "../../components/common/Footer";
 import AuthHeader from "../common/AuthHeader";
 
@@ -17,7 +20,7 @@ const ForgotPassword = () => {
       <AuthHeader/>
 
       {/* Main Content */}
-      <div className="flex-grow flex flex-col items-center justify-center px-4">
+      <div className="flex-grow flex flex-col items-center justify-center px-4 py-12">
         
         {/* Title */}
         <h1 className="text-2xl md:text-3xl font-bold mb-8">
