@@ -1,7 +1,9 @@
-const QuickActionCard = ({ title, description, icon, linkColor, buttonText }) => {
+const QuickActionCard = ({ title, description, icon, linkColor, buttonText, onClick }) => {
 
   return (
-    <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+    <div
+      className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center"
+    >
 
       <div className="flex justify-center mb-4 text-3xl">
         {icon}
@@ -15,7 +17,10 @@ const QuickActionCard = ({ title, description, icon, linkColor, buttonText }) =>
         {description}
       </p>
 
-      <button className={`mt-4 font-semibold ${linkColor}`}>
+      <button
+        onClick={onClick}
+        className={`mt-4 font-semibold ${linkColor}`}
+      >
         {buttonText}
       </button>
 
