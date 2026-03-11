@@ -10,6 +10,7 @@ import ForgotPassword from "./Pages/Admin/ForgotPassword";
 import InterviewSchedule from "./Pages/Admin/InterviewSchedule";
 import InterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
 import StudentsManagement from "./Pages/Admin/StudentsManagement";
+import PlacementHistory from "./Pages/Admin/PlacementHistory";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
       <Route path="/InterviewSchedule" element={<InterviewSchedule />} />
       <Route path="/InterviewScheduleForm" element={<InterviewScheduleForm />} /> 
       <Route path="/StudentsManagement" element={<StudentsManagement />} />
+      <Route path="/PlacementHistory" element={<PlacementHistory />} />
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
     </Routes>

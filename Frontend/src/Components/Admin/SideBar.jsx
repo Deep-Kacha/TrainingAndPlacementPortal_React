@@ -25,7 +25,7 @@ const Sidebar = () => {
     { name: "Company Management", path: "/CompanyManagement", icon: <FaBuilding /> },
     { name: "Student Management", path: "/StudentsManagement", icon: <FaUsers /> },
     { name: "Interview Schedule", path: "/InterviewSchedule", icon: <FaCalendarAlt /> },
-    { name: "Placement History", path: "/history", icon: <FaHistory /> },
+    { name: "Placement History", path: "/PlacementHistory", icon: <FaHistory /> },
     { name: "Change Password", path: "/ChangePassword", icon: <FaLock /> },
     { name: "Logout", path: "/logout", icon: <FaSignOutAlt /> }
   ];
