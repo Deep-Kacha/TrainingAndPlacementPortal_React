@@ -30,7 +30,7 @@ const Dashboard = () => {
                 {statusCards.map((card, index) => (
                     <div key={index} className="card-dashboard">
                         <div className="flex justify-between items-start mb-5">
-                            <div className="text-[1.5rem] p-[10px] bg-[#e9e2d5] rounded-[8px]">
+                            <div className="text-[1.5rem] p-[10px] bg-[#d8cfc3] rounded-[8px]">
                                 {card.icon}
                             </div>
                             <span className={`font-bold text-[0.85rem] px-[8px] py-[4px] rounded-[4px] ${card.colorClass}`}>
@@ -56,7 +56,7 @@ const Dashboard = () => {
                             </div>
                             <h3 className="text-lg font-bold my-[10px] text-[#333]">{action.title}</h3>
                             <p className="text-text-gray text-[0.9rem] mb-[20px] leading-snug w-full">{action.desc}</p>
-                            <span className="text-[#c41e3a] font-[600] text-[0.95rem] no-underline mt-auto">
+                            <span className="text-[#e7000b] font-[600] text-[0.95rem] no-underline mt-auto">
                                 {action.linkText} ➔
                             </span>
                         </div>

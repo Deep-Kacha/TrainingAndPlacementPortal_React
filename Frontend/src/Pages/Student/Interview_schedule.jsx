@@ -81,7 +81,7 @@ const Interview_schedule = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {interviews.map((item) => (
                     <div key={item.id} className="card-basic p-6 relative flex flex-col pb-20 md:pb-6">
-                        
+
                         {/* Header Section */}
                         <div className="flex flex-row items-center gap-4 mb-6">
                             <div className="w-14 h-14 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-2xl shrink-0">
