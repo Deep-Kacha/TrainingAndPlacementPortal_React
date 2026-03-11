@@ -57,7 +57,8 @@ const Sidebar = () => {
               className={({ isActive }) => {
                 const isCompanyActive = isActive || 
                 (item.path === "/CompanyManagement" && location.pathname === "/JdDetail") ||
-                (item.path === "/InterviewSchedule" && location.pathname === "/InterviewScheduleForm");
+                (item.path === "/InterviewSchedule" && location.pathname === "/InterviewScheduleForm") ||
+                (item.path === "/ChangePassword" && location.pathname === "/ForgotPassword");
                 return `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
                 ${isCompanyActive
                   ? "bg-[rgb(175,172,172)] text-white"

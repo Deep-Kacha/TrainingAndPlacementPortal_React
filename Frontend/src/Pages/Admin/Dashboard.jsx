@@ -124,7 +124,7 @@ const Dashboard = () => {
             linkColor="text-blue-600"
             onClick={() => navigate("/InterviewSchedule")}
           />
-          
+
           <QuickActionCard
             title="History"
             description="Explore Placement History"
@@ -133,7 +133,6 @@ const Dashboard = () => {
             linkColor="text-red-500"
             onClick={() => navigate("/PlacementHistory")}
           />
-
 
           <QuickActionCard
             title="Profile"
