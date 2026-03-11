@@ -9,8 +9,8 @@ const Header = () => {
             <div className="flex items-center">
                 <img src={logo} alt="RK University Logo" className="h-[70px] w-auto inline-block" />
             </div>
-            <button 
-                className="px-[20px] py-[10px] rounded-[5px] bg-[#c41e3a] text-white font-bold cursor-pointer absolute right-[50px] top-[20px] border-none" 
+            <button
+                className="px-[20px] py-[10px] rounded-[5px] bg-[#e7000b] text-white font-bold cursor-pointer absolute right-[50px] top-[20px] border-none"
                 onClick={() => navigate("/student/profile")}
             >
                 Profile
