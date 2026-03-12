@@ -2,11 +2,6 @@ import React, { useState } from "react";
 
 const StudentRegistration = () => {
 
-  // -------------------------------------------
-  // STEP 1: Store all form values here
-  // Every field starts empty ""
-  // File fields start as null (no file selected)
-  // -------------------------------------------
   const [formData, setFormData] = useState({
     // Personal Information
     enrollment: "",
@@ -38,26 +33,14 @@ const StudentRegistration = () => {
     paymentProof: null,
   });
 
-  // -------------------------------------------
-  // STEP 2: Store error messages here
-  // Empty at start, filled when validation fails
-  // -------------------------------------------
   const [errors, setErrors] = useState({});
 
-  // -------------------------------------------
-  // STEP 3: This runs every time user types
-  // It updates only the field that changed
-  // -------------------------------------------
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     // If it's a file input, save the file. Otherwise save the text value.
     setFormData({ ...formData, [name]: files ? files[0] : value });
   };
 
-  // -------------------------------------------
-  // STEP 4: Check all fields before submitting
-  // Returns true if everything is valid
-  // -------------------------------------------
   const validateForm = () => {
     let newErrors = {};
 
@@ -170,9 +153,7 @@ const StudentRegistration = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // -------------------------------------------
-  // STEP 5: This runs when user clicks Submit
-  // -------------------------------------------
+
   const handleSubmit = (e) => {
     e.preventDefault(); // Stop page from refreshing
     if (validateForm()) {
@@ -185,12 +166,8 @@ const StudentRegistration = () => {
   // -------------------------------------------
   // Shared input style — used on all inputs
   // Copy-paste this on every input/select/textarea
-  // -------------------------------------------
   const inputStyle = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm mt-1 focus:outline-none focus:border-red-400";
 
-  // -------------------------------------------
-  // THE UI STARTS HERE
-  // -------------------------------------------
   return (
     <section className="bg-gray-100 min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-6">
@@ -207,9 +184,7 @@ const StudentRegistration = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
 
 
-          {/* ============================================
-              SECTION 1 — Personal Information
-          ============================================ */}
+          {/* SECTION 1 — Personal Information */}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
             {/* Section Header */}
@@ -371,9 +346,7 @@ const StudentRegistration = () => {
           </div>
 
 
-          {/* ============================================
-              SECTION 2 — Academic Details
-          ============================================ */}
+          {/* SECTION 2 — Academic Details*/}
           <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
             <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
