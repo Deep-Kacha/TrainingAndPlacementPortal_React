@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaThLarge,
   FaUser,
@@ -17,15 +17,16 @@ import logo from "../../assets/images/logo.png";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const menu = [
     { name: "Dashboard", path: "/", icon: <FaThLarge /> },
     { name: "Profile", path: "/profile", icon: <FaUser /> },
-    { name: "Company Management", path: "/company", icon: <FaBuilding /> },
-    { name: "Student Management", path: "/students", icon: <FaUsers /> },
-    { name: "Interview Schedule", path: "/interview", icon: <FaCalendarAlt /> },
-    { name: "Placement History", path: "/history", icon: <FaHistory /> },
-    { name: "Change Password", path: "/change-password", icon: <FaLock /> },
+    { name: "Company Management", path: "/CompanyManagement", icon: <FaBuilding /> },
+    { name: "Student Management", path: "/StudentsManagement", icon: <FaUsers /> },
+    { name: "Interview Schedule", path: "/InterviewSchedule", icon: <FaCalendarAlt /> },
+    { name: "Placement History", path: "/PlacementHistory", icon: <FaHistory /> },
+    { name: "Change Password", path: "/ChangePassword", icon: <FaLock /> },
     { name: "Logout", path: "/logout", icon: <FaSignOutAlt /> }
   ];
 
@@ -35,7 +36,7 @@ const Sidebar = () => {
       {/* Logo + Mobile Button */}
       <div className="flex justify-between items-center md:justify-center md:flex-col">
         <img src={logo} alt="RK University" className="w-28 md:w-36 md:mb-4" />
-
+          
         <button
           className="text-2xl md:hidden"
           onClick={() => setIsOpen(!isOpen)}
@@ -48,20 +49,26 @@ const Sidebar = () => {
       <ul className={`space-y-3 ${isOpen ? "block mt-4" : "hidden"} md:block md:mt-0`}>
 
         {menu.map((item, index) => (
-          <NavLink
-            key={index}
-            to={item.path}
-            onClick={() => setIsOpen(false)}
-            className={({ isActive }) =>
-              `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
-              ${isActive
-                ? "bg-[rgb(175,172,172)] text-white"
-                : "bg-white hover:bg-gray-200"}`
-            }
-          >
-            {item.icon}
-            {item.name}
-          </NavLink>
+          <li key={index}>
+            <NavLink
+              to={item.path}
+              end={item.path === "/"}
+              onClick={() => setIsOpen(false)}
+              className={({ isActive }) => {
+                const isCompanyActive = isActive || 
+                (item.path === "/CompanyManagement" && location.pathname === "/JdDetail") ||
+                (item.path === "/InterviewSchedule" && location.pathname === "/InterviewScheduleForm") ||
+                (item.path === "/ChangePassword" && location.pathname === "/ForgotPassword");
+                return `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
+                ${isCompanyActive
+                  ? "bg-[rgb(175,172,172)] text-white"
+                  : "bg-white hover:bg-gray-200"}`;
+              }}
+            >
+              {item.icon}
+              {item.name}
+            </NavLink>
+          </li>
         ))}
 
       </ul>

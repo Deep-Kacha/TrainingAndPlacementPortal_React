@@ -1,7 +1,10 @@
 
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/Admin/SideBar";
-import StatCard from "../../Components/Admin/StatCard";
-import QuickActionCard from "../../Components/Admin/QuickActionCard";
+import StatCard from "../../Components/Admin/Dashboard/StatCard";
+import QuickActionCard from "../../Components/Admin/Dashboard/QuickActionCard";
+import JdDetail from "./JdDetail";
+  
 
 import {
   FaUsers,
@@ -14,6 +17,8 @@ import {
 } from "react-icons/fa";
 
 const Dashboard = () => {
+
+  const navigate = useNavigate();
 
   const stats = [
     {
@@ -99,6 +104,7 @@ const Dashboard = () => {
             icon={<FaBriefcase className="text-orange-500" />}
             buttonText="View Companies →"
             linkColor="text-orange-500"
+            onClick={() => navigate("/CompanyManagement")}
           />
 
           <QuickActionCard
@@ -107,14 +113,7 @@ const Dashboard = () => {
             icon={<FaSearch className="text-cyan-500" />}
             buttonText="View Student Details →"
             linkColor="text-cyan-500"
-          />
-
-          <QuickActionCard
-            title="History"
-            description="Explore Placement History"
-            icon={<FaClock className="text-red-500" />}
-            buttonText="View Placement History →"
-            linkColor="text-red-500"
+            onClick={() => navigate("/StudentsManagement")}
           />
 
           <QuickActionCard
@@ -123,6 +122,16 @@ const Dashboard = () => {
             icon={<FaFileAlt className="text-blue-600" />}
             buttonText="View Schedules →"
             linkColor="text-blue-600"
+            onClick={() => navigate("/InterviewSchedule")}
+          />
+
+          <QuickActionCard
+            title="History"
+            description="Explore Placement History"
+            icon={<FaClock className="text-red-500" />}
+            buttonText="View Placement History →"
+            linkColor="text-red-500"
+            onClick={() => navigate("/PlacementHistory")}
           />
 
           <QuickActionCard
@@ -131,6 +140,7 @@ const Dashboard = () => {
             icon={<FaUsers className="text-purple-500" />}
             buttonText="Edit Profile →"
             linkColor="text-purple-500"
+            onClick={() => navigate("/profile")}
           />
 
         </div>
