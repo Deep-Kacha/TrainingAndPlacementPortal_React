@@ -23,6 +23,23 @@ function App() {
       <Route path="/InterviewScheduleForm" element={<InterviewScheduleForm />} /> 
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
+
+      {/* Student Side Routes  */}
+      <Route path="/" element={<Navigate to="/student/dashboard" replace />} />
+
+      <Route path="/student" element={<StudentLayout />}>
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="jobs" element={<Jobs />} />
+        <Route path="jobs/details" element={<JobDetails />} />
+        <Route path="applications" element={<Applications />} />
+        <Route path="interview_schedule" element={<Interview_schedule />} />
+        <Route path="Placement_history" element={<Placement_history />} />
+        <Route path="change_pass" element={<Change_pass />} />
+        <Route path="logout" element={<Logout />} />
+        <Route path="ForgotPassword" element={<ForgotPassword />} />
+      </Route>
+
     </Routes>
   );
 }
