@@ -10,6 +10,24 @@ import ForgotPassword from "./Pages/Admin/ForgotPassword";
 import InterviewSchedule from "./Pages/Admin/InterviewSchedule";
 import InterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
 
+import { Routes, Route, Navigate } from "react-router-dom";
+import StudentLayout from "./components/StudentLayout";
+
+import Dashboard from "./pages/Dashboard";
+import Profile from "./pages/Profile";
+import Jobs from "./pages/Jobs";
+import Applications from "./pages/Applications";
+import Interview_schedule from "./pages/Interview_schedule";
+import Placement_history from "./pages/Placement_history";
+import Change_pass from "./pages/Change_pass";
+import Logout from "./pages/Logout";
+import JobDetails from "./pages/JobDetails";
+import ForgotPassword from "./pages/forgot_pass";
+
+
+
+
+
 function App() {
   return (
     <Routes>
@@ -20,7 +38,7 @@ function App() {
       <Route path="/ChangePassword" element={<ChangePassword />} />
       <Route path="/ForgotPassword" element={<ForgotPassword />} />
       <Route path="/InterviewSchedule" element={<InterviewSchedule />} />
-      <Route path="/InterviewScheduleForm" element={<InterviewScheduleForm />} /> 
+      <Route path="/InterviewScheduleForm" element={<InterviewScheduleForm />} />
       {/* <Route path="/" element={<Login />} />
       <Route path="/forgot-password" element={<ForgotPassword />} /> */}
 
