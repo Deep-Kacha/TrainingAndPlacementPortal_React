@@ -2,23 +2,66 @@ import React, { useState } from "react";
 
 const StudentRegistration = () => {
 
-  const [formData, setFormData] = useState({});
+  // -------------------------------------------
+  // STEP 1: Store all form values here
+  // Every field starts empty ""
+  // File fields start as null (no file selected)
+  // -------------------------------------------
+  const [formData, setFormData] = useState({
+    // Personal Information
+    enrollment: "",
+    name: "",
+    branch: "",
+    semester: "",
+    universityEmail: "",
+    personalEmail: "",
+    password: "",
+    confirmPassword: "",
+    mobile: "",
+    // Academic Details
+    tenth: "",
+    twelfth: "",
+    cgpa: "",
+    backlogs: "",
+    // Parent / Guardian
+    parentName: "",
+    parentEmail: "",
+    parentMobile: "",
+    // Address
+    currentAddress: "",
+    permanentAddress: "",
+    city: "",
+    state: "",
+    pincode: "",
+    // File Uploads
+    consentForm: null,
+    paymentProof: null,
+  });
+
+  // -------------------------------------------
+  // STEP 2: Store error messages here
+  // Empty at start, filled when validation fails
+  // -------------------------------------------
   const [errors, setErrors] = useState({});
 
+  // -------------------------------------------
+  // STEP 3: This runs every time user types
+  // It updates only the field that changed
+  // -------------------------------------------
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value
-    });
+    // If it's a file input, save the file. Otherwise save the text value.
+    setFormData({ ...formData, [name]: files ? files[0] : value });
   };
 
+  // -------------------------------------------
+  // STEP 4: Check all fields before submitting
+  // Returns true if everything is valid
+  // -------------------------------------------
   const validateForm = () => {
-
     let newErrors = {};
 
-    // Personal Info
+    // Personal checks
     if (!formData.enrollment)
       newErrors.enrollment = "Enrollment number is required";
 
@@ -32,721 +75,613 @@ const StudentRegistration = () => {
       newErrors.semester = "Semester is required";
 
     if (!formData.universityEmail) {
-      newErrors.universityEmail = "University email required";
+      newErrors.universityEmail = "University email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.universityEmail)) {
       newErrors.universityEmail = "Invalid email format";
     }
 
     if (!formData.personalEmail)
-      newErrors.personalEmail = "Personal email required";
+      newErrors.personalEmail = "Personal email is required";
 
     if (!formData.password)
-      newErrors.password = "Password required";
+      newErrors.password = "Password is required";
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = "Confirm your password";
+      newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
     if (!formData.mobile) {
-      newErrors.mobile = "Mobile number required";
+      newErrors.mobile = "Mobile number is required";
     } else if (!/^[0-9]{10}$/.test(formData.mobile)) {
       newErrors.mobile = "Mobile must be 10 digits";
     }
 
-    // Academic
+    // Academic checks
     if (!formData.tenth) {
-      newErrors.tenth = "10th percentage required";
+      newErrors.tenth = "10th percentage is required";
     } else if (formData.tenth < 0 || formData.tenth > 100) {
-      newErrors.tenth = "Must be between 0-100";
+      newErrors.tenth = "Must be between 0 and 100";
     }
 
     if (!formData.twelfth) {
-      newErrors.twelfth = "12th percentage required";
+      newErrors.twelfth = "12th percentage is required";
     } else if (formData.twelfth < 0 || formData.twelfth > 100) {
-      newErrors.twelfth = "Must be between 0-100";
+      newErrors.twelfth = "Must be between 0 and 100";
     }
 
     if (!formData.cgpa) {
-      newErrors.cgpa = "CGPA required";
+      newErrors.cgpa = "CGPA is required";
     } else if (formData.cgpa < 0 || formData.cgpa > 10) {
-      newErrors.cgpa = "CGPA must be between 0-10";
+      newErrors.cgpa = "CGPA must be between 0 and 10";
     }
 
-    // Parent
+    // Parent checks
     if (!formData.parentName)
-      newErrors.parentName = "Parent name required";
+      newErrors.parentName = "Parent name is required";
 
     if (!formData.parentEmail) {
-      newErrors.parentEmail = "Parent email required";
+      newErrors.parentEmail = "Parent email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.parentEmail)) {
-      newErrors.parentEmail = "Invalid email";
+      newErrors.parentEmail = "Invalid email format";
     }
 
     if (!formData.parentMobile) {
-      newErrors.parentMobile = "Parent mobile required";
+      newErrors.parentMobile = "Parent mobile is required";
     } else if (!/^[0-9]{10}$/.test(formData.parentMobile)) {
       newErrors.parentMobile = "Must be 10 digits";
     }
 
-    // Address
+    // Address checks
     if (!formData.currentAddress)
-      newErrors.currentAddress = "Current address required";
+      newErrors.currentAddress = "Current address is required";
 
     if (!formData.permanentAddress)
-      newErrors.permanentAddress = "Permanent address required";
+      newErrors.permanentAddress = "Permanent address is required";
 
     if (!formData.city)
-      newErrors.city = "City required";
+      newErrors.city = "City is required";
 
     if (!formData.state)
-      newErrors.state = "State required";
+      newErrors.state = "State is required";
 
     if (!formData.pincode) {
-      newErrors.pincode = "Pincode required";
+      newErrors.pincode = "Pincode is required";
     } else if (!/^[0-9]{6}$/.test(formData.pincode)) {
-      newErrors.pincode = "Invalid pincode";
+      newErrors.pincode = "Pincode must be 6 digits";
     }
 
-    // Files
+    // File checks
     if (!formData.consentForm) {
-      newErrors.consentForm = "Consent form required";
+      newErrors.consentForm = "Consent form is required";
     } else if (formData.consentForm.type !== "application/pdf") {
-      newErrors.consentForm = "Only PDF allowed";
+      newErrors.consentForm = "Only PDF format is allowed";
     }
 
     if (!formData.paymentProof) {
-      newErrors.paymentProof = "Payment proof required";
+      newErrors.paymentProof = "Payment proof is required";
     } else if (!formData.paymentProof.type.startsWith("image/")) {
-      newErrors.paymentProof = "Only image allowed";
+      newErrors.paymentProof = "Only image format is allowed";
     }
 
     setErrors(newErrors);
-
+    // If newErrors is empty, form is valid → return true
     return Object.keys(newErrors).length === 0;
   };
 
+  // -------------------------------------------
+  // STEP 5: This runs when user clicks Submit
+  // -------------------------------------------
   const handleSubmit = (e) => {
-
-    e.preventDefault();
-
+    e.preventDefault(); // Stop page from refreshing
     if (validateForm()) {
       console.log("Form Submitted:", formData);
+      // TODO: Replace console.log with your API call later
+      // Example: axios.post("/api/student/register", formData)
     }
-
   };
 
+  // -------------------------------------------
+  // Shared input style — used on all inputs
+  // Copy-paste this on every input/select/textarea
+  // -------------------------------------------
+  const inputStyle = "w-full border border-gray-300 rounded-md px-3 py-2 text-sm mt-1 focus:outline-none focus:border-red-400";
+
+  // -------------------------------------------
+  // THE UI STARTS HERE
+  // -------------------------------------------
   return (
+    <section className="bg-gray-100 min-h-screen py-12">
+      <div className="max-w-4xl mx-auto px-6">
 
-    <section className="bg-gray-100 py-12">
-
-      <div className="max-w-6xl mx-auto px-6">
-
-        {/* Heading */}
-
-        <div className="text-center mb-10 relative">
-
-          <h2 className="text-3xl font-bold text-gray-800">
-            Student Registration
-          </h2>
-
+        {/* Page Title */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-800">Student Registration</h2>
           <p className="text-gray-500 text-sm mt-2">
-            Fill out the form below to Registration for Placements.
+            Fill out the form below to register for Placements.
           </p>
-
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        {/* The Form */}
+        <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* PERSONAL INFO */}
 
-          <div className="bg-white border rounded-lg p-8">
+          {/* ============================================
+              SECTION 1 — Personal Information
+          ============================================ */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
-            <div className="flex items-center gap-3 mb-6">
-
-              <div className="bg-red-700 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
-                1
+            {/* Section Header */}
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+              <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">1</span>
               </div>
-
-              <h3 className="font-semibold text-gray-800">
-                Personal Information
-              </h3>
-
+              <h3 className="font-semibold text-gray-800">Personal Information</h3>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            {/* Section Fields — 2 columns on desktop, 1 on mobile */}
+            <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-5">
 
               <div>
-                <label className="label">Enrollment Number</label>
-
+                <label className="text-sm text-gray-600">
+                  Enrollment Number <span className="text-red-500">*</span>
+                </label>
                 <input
                   name="enrollment"
-                  className="input"
                   placeholder="Enter your enrollment number"
+                  className={inputStyle}
+                  value={formData.enrollment}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.enrollment}
-                </p>
+                {/* Show error only if it exists */}
+                {errors.enrollment && <p className="text-red-500 text-xs mt-1">{errors.enrollment}</p>}
               </div>
 
               <div>
-                <label className="label">Full Name</label>
-
+                <label className="text-sm text-gray-600">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
                 <input
                   name="name"
-                  className="input"
                   placeholder="Enter your full name"
+                  className={inputStyle}
+                  value={formData.name}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.name}
-                </p>
+                {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
               </div>
 
               <div>
-                <label className="label">Branch</label>
-
+                <label className="text-sm text-gray-600">
+                  Branch <span className="text-red-500">*</span>
+                </label>
+                {/* Select dropdown */}
                 <select
                   name="branch"
-                  className="input"
+                  className={inputStyle}
+                  value={formData.branch}
                   onChange={handleChange}
                 >
-
-                  <option value="">
-                    Select your branch
-                  </option>
-
-                  <option>
-                    CSE
-                  </option>
-
-                  <option>
-                    IT
-                  </option>
-
-                  <option>
-                    CE
-                  </option>
-
+                  <option value="">Select your branch</option>
+                  <option value="CSE">CSE</option>
+                  <option value="IT">IT</option>
+                  <option value="CE">CE</option>
+                  <option value="ECE">ECE</option>
+                  <option value="ME">ME</option>
                 </select>
-
-                <p className="text-red-500 text-sm">
-                  {errors.branch}
-                </p>
-
+                {errors.branch && <p className="text-red-500 text-xs mt-1">{errors.branch}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Current Semester
+                <label className="text-sm text-gray-600">
+                  Current Semester <span className="text-red-500">*</span>
                 </label>
-
                 <select
                   name="semester"
-                  className="input"
+                  className={inputStyle}
+                  value={formData.semester}
                   onChange={handleChange}
                 >
-
-                  <option value="">
-                    Select semester
-                  </option>
-
-                  <option>5</option>
-                  <option>6</option>
-                  <option>7</option>
-                  <option>8</option>
-
+                  <option value="">Select semester</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
                 </select>
-
-                <p className="text-red-500 text-sm">
-                  {errors.semester}
-                </p>
-
+                {errors.semester && <p className="text-red-500 text-xs mt-1">{errors.semester}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  University Email Address
+                <label className="text-sm text-gray-600">
+                  University Email Address <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="universityEmail"
-                  className="input"
-                  placeholder="Enter your email address"
+                  type="email"
+                  placeholder="yourname@rku.ac.in"
+                  className={inputStyle}
+                  value={formData.universityEmail}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.universityEmail}
-                </p>
-
+                {errors.universityEmail && <p className="text-red-500 text-xs mt-1">{errors.universityEmail}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Personal Email Address
+                <label className="text-sm text-gray-600">
+                  Personal Email Address <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="personalEmail"
-                  className="input"
-                  placeholder="Enter your email address"
+                  type="email"
+                  placeholder="yourname@gmail.com"
+                  className={inputStyle}
+                  value={formData.personalEmail}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.personalEmail}
-                </p>
-
+                {errors.personalEmail && <p className="text-red-500 text-xs mt-1">{errors.personalEmail}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Password
+                <label className="text-sm text-gray-600">
+                  Password <span className="text-red-500">*</span>
                 </label>
-
                 <input
-                  type="password"
                   name="password"
-                  className="input"
-                  placeholder="Enter your Password"
-                  onChange={handleChange}
-                />
-
-                <p className="text-red-500 text-sm">
-                  {errors.password}
-                </p>
-
-              </div>
-
-              <div>
-
-                <label className="label">
-                  Confirm Password
-                </label>
-
-                <input
                   type="password"
-                  name="confirmPassword"
-                  className="input"
-                  placeholder="Enter your Confirm Password"
+                  placeholder="Enter your password"
+                  className={inputStyle}
+                  value={formData.password}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.confirmPassword}
-                </p>
-
+                {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Mobile Number
+                <label className="text-sm text-gray-600">
+                  Confirm Password <span className="text-red-500">*</span>
                 </label>
+                <input
+                  name="confirmPassword"
+                  type="password"
+                  placeholder="Re-enter your password"
+                  className={inputStyle}
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                />
+                {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
+              </div>
 
+              <div>
+                <label className="text-sm text-gray-600">
+                  Mobile Number <span className="text-red-500">*</span>
+                </label>
                 <input
                   name="mobile"
-                  className="input"
-                  placeholder="Enter your mobile number"
+                  type="tel"
+                  placeholder="10-digit mobile number"
+                  className={inputStyle}
+                  value={formData.mobile}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.mobile}
-                </p>
-
+                {errors.mobile && <p className="text-red-500 text-xs mt-1">{errors.mobile}</p>}
               </div>
 
             </div>
-
           </div>
 
-          {/* Academic */}
 
-          <div className="bg-white border rounded-lg p-8">
+          {/* ============================================
+              SECTION 2 — Academic Details
+          ============================================ */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
-            <div className="flex items-center gap-3 mb-6">
-
-              <div className="bg-red-700 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
-                2
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+              <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">2</span>
               </div>
-
-              <h3 className="font-semibold text-gray-800">
-                Academic Details
-              </h3>
-
+              <h3 className="font-semibold text-gray-800">Academic Details</h3>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-5">
 
               <div>
-                <label className="label">
-                  10th Percentage
+                <label className="text-sm text-gray-600">
+                  10th Percentage <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="tenth"
-                  className="input"
-                  placeholder="e.g. 98.28"
+                  type="number"
+                  placeholder="e.g. 85.50"
+                  className={inputStyle}
+                  value={formData.tenth}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.tenth}
-                </p>
+                {errors.tenth && <p className="text-red-500 text-xs mt-1">{errors.tenth}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  12th Percentage
+                <label className="text-sm text-gray-600">
+                  12th Percentage <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="twelfth"
-                  className="input"
-                  placeholder="e.g. 98.28"
+                  type="number"
+                  placeholder="e.g. 82.00"
+                  className={inputStyle}
+                  value={formData.twelfth}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.twelfth}
-                </p>
-
+                {errors.twelfth && <p className="text-red-500 text-xs mt-1">{errors.twelfth}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Current CGPA
+                <label className="text-sm text-gray-600">
+                  Current CGPA <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="cgpa"
-                  className="input"
+                  type="number"
                   placeholder="e.g. 7.50"
+                  className={inputStyle}
+                  value={formData.cgpa}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.cgpa}
-                </p>
-
+                {errors.cgpa && <p className="text-red-500 text-xs mt-1">{errors.cgpa}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Active Backlogs (if any)
-                </label>
-
+                <label className="text-sm text-gray-600">Active Backlogs (if any)</label>
                 <input
                   name="backlogs"
-                  className="input"
-                  placeholder="1"
+                  type="number"
+                  placeholder="0"
+                  className={inputStyle}
+                  value={formData.backlogs}
                   onChange={handleChange}
                 />
-
+                {/* No * = not required, so no error needed */}
               </div>
 
             </div>
-
           </div>
 
-          {/* Parent */}
 
-          <div className="bg-white border rounded-lg p-8">
+          {/* SECTION 3 — Parent / Guardian Information */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
-            <div className="flex items-center gap-3 mb-6">
-
-              <div className="bg-red-700 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
-                3
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+              <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">3</span>
               </div>
-
-              <h3 className="font-semibold text-gray-800">
-                Parent / Guardian Information
-              </h3>
-
+              <h3 className="font-semibold text-gray-800">Parent / Guardian Information</h3>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-5">
 
               <div>
-
-                <label className="label">
-                  Parent Name
+                <label className="text-sm text-gray-600">
+                  Parent Name <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="parentName"
-                  className="input"
+                  placeholder="Enter parent name"
+                  className={inputStyle}
+                  value={formData.parentName}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.parentName}
-                </p>
-
+                {errors.parentName && <p className="text-red-500 text-xs mt-1">{errors.parentName}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Parent Email
+                <label className="text-sm text-gray-600">
+                  Parent Email <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="parentEmail"
-                  className="input"
+                  type="email"
+                  placeholder="Enter parent email"
+                  className={inputStyle}
+                  value={formData.parentEmail}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.parentEmail}
-                </p>
-
+                {errors.parentEmail && <p className="text-red-500 text-xs mt-1">{errors.parentEmail}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Mobile Number
+                <label className="text-sm text-gray-600">
+                  Parent Mobile Number <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="parentMobile"
-                  className="input"
+                  type="tel"
+                  placeholder="10-digit mobile number"
+                  className={inputStyle}
+                  value={formData.parentMobile}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.parentMobile}
-                </p>
-
+                {errors.parentMobile && <p className="text-red-500 text-xs mt-1">{errors.parentMobile}</p>}
               </div>
 
             </div>
-
           </div>
 
-          {/* Address */}
 
-          <div className="bg-white border rounded-lg p-8">
+          {/* SECTION 4 — Address */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
-            <div className="flex items-center gap-3 mb-6">
-
-              <div className="bg-red-700 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
-                4
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+              <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">4</span>
               </div>
-
-              <h3 className="font-semibold text-gray-800">
-                Address
-              </h3>
-
+              <h3 className="font-semibold text-gray-800">Address</h3>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="px-6 py-5 grid grid-cols-1 md:grid-cols-2 gap-5">
 
               <div>
-
-                <label className="label">
-                  Current Address
+                <label className="text-sm text-gray-600">
+                  Current Address <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="currentAddress"
-                  className="input"
+                  placeholder="Enter current address"
+                  className={inputStyle}
+                  value={formData.currentAddress}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.currentAddress}
-                </p>
-
+                {errors.currentAddress && <p className="text-red-500 text-xs mt-1">{errors.currentAddress}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Permanent Address
+                <label className="text-sm text-gray-600">
+                  Permanent Address <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="permanentAddress"
-                  className="input"
+                  placeholder="Enter permanent address"
+                  className={inputStyle}
+                  value={formData.permanentAddress}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.permanentAddress}
-                </p>
-
+                {errors.permanentAddress && <p className="text-red-500 text-xs mt-1">{errors.permanentAddress}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  City
+                <label className="text-sm text-gray-600">
+                  City <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="city"
-                  className="input"
+                  placeholder="Enter city"
+                  className={inputStyle}
+                  value={formData.city}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.city}
-                </p>
-
+                {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  State
+                <label className="text-sm text-gray-600">
+                  State <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="state"
-                  className="input"
+                  placeholder="Enter state"
+                  className={inputStyle}
+                  value={formData.state}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.state}
-                </p>
-
+                {errors.state && <p className="text-red-500 text-xs mt-1">{errors.state}</p>}
               </div>
 
               <div>
-
-                <label className="label">
-                  Pincode
+                <label className="text-sm text-gray-600">
+                  Pincode <span className="text-red-500">*</span>
                 </label>
-
                 <input
                   name="pincode"
-                  className="input"
+                  placeholder="6-digit pincode"
+                  className={inputStyle}
+                  value={formData.pincode}
                   onChange={handleChange}
                 />
-
-                <p className="text-red-500 text-sm">
-                  {errors.pincode}
-                </p>
-
+                {errors.pincode && <p className="text-red-500 text-xs mt-1">{errors.pincode}</p>}
               </div>
 
             </div>
-
           </div>
 
-          {/* Consent & Payment */}
 
-          <div className="bg-white border rounded-lg p-8">
+          {/* SECTION 5 — Consent & Payment Upload */}
+          <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
 
-            <div className="flex items-center gap-3 mb-6">
-
-              <div className="bg-red-700 text-white w-7 h-7 flex items-center justify-center rounded-full text-sm">
-                5
+            <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
+              <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white text-xs font-bold">5</span>
               </div>
-
-              <h3 className="font-semibold text-gray-800">
-                Consent & Payment
-              </h3>
-
+              <h3 className="font-semibold text-gray-800">Consent & Payment</h3>
             </div>
 
-            <div className="space-y-6">
+            <div className="px-6 py-5 space-y-6">
 
-              <label className="label">
-                Add Consent Form
-              </label>
-
-              <div className="upload-box">
-
-                <p>
-                  Click to upload or drag and drop
-                </p>
-
-                <span>
-                  only in PDF format
-                </span>
-
-                <input
-                  type="file"
-                  name="consentForm"
-                  onChange={handleChange}
-                />
-
+              {/* Upload 1 — Consent Form (PDF) */}
+              <div>
+                <label className="text-sm text-gray-600">
+                  Consent Form <span className="text-red-500">*</span>
+                </label>
+                <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50">
+                  <p className="text-sm text-gray-500 mb-1">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-400 mb-3">Only PDF format allowed</p>
+                  {/* Hidden file input triggered by the button label */}
+                  <label className="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded cursor-pointer">
+                    Choose File
+                    <input
+                      type="file"
+                      name="consentForm"
+                      accept=".pdf"
+                      className="hidden"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  {/* Show file name after selection */}
+                  {formData.consentForm && (
+                    <p className="text-xs text-green-600 mt-2">✓ {formData.consentForm.name}</p>
+                  )}
+                </div>
+                {errors.consentForm && <p className="text-red-500 text-xs mt-1">{errors.consentForm}</p>}
               </div>
 
-              <p className="text-red-500 text-sm">
-                {errors.consentForm}
-              </p>
-
-              <label className="label">
-                For Online payment upload screenshot of payment and for offline payment upload cheque Photo
-              </label>
-
-              <div className="upload-box">
-
-                <p>
-                  Click to upload or drag and drop
+              {/* Upload 2 — Payment Proof (Image) */}
+              <div>
+                <label className="text-sm text-gray-600">
+                  Payment Proof <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-gray-400 mt-0.5 mb-1">
+                  For online payment upload screenshot · For offline payment upload cheque photo
                 </p>
-
-                <span>
-                  only in jpg format
-                </span>
-
-                <input
-                  type="file"
-                  name="paymentProof"
-                  onChange={handleChange}
-                />
-
+                <div className="mt-1 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center bg-gray-50">
+                  <p className="text-sm text-gray-500 mb-1">Click to upload or drag and drop</p>
+                  <p className="text-xs text-gray-400 mb-3">JPG / PNG format allowed</p>
+                  <label className="bg-red-600 hover:bg-red-700 text-white text-xs px-4 py-2 rounded cursor-pointer">
+                    Choose File
+                    <input
+                      type="file"
+                      name="paymentProof"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleChange}
+                    />
+                  </label>
+                  {formData.paymentProof && (
+                    <p className="text-xs text-green-600 mt-2">✓ {formData.paymentProof.name}</p>
+                  )}
+                </div>
+                {errors.paymentProof && <p className="text-red-500 text-xs mt-1">{errors.paymentProof}</p>}
               </div>
-
-              <p className="text-red-500 text-sm">
-                {errors.paymentProof}
-              </p>
 
             </div>
-
           </div>
 
-          {/* Submit */}
 
-          <div className="text-center">
-
-            <button className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow">
+          {/* SUBMIT BUTTON */}
+          <div className="text-center pb-6">
+            <button
+              type="submit"
+              className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow"
+            >
               Submit Form
             </button>
-
-            <p className="text-xs text-gray-500 mt-4 max-w-lg mx-auto">
-              After a registration Admin will verify your payment and eligibility
-              criteria. After verification you can access the portal.
+            <p className="text-xs text-gray-400 mt-3 max-w-md mx-auto">
+              After registration, admin will verify your payment and eligibility criteria.
+              After verification you can access the portal.
             </p>
-
           </div>
 
         </form>
-
       </div>
-
     </section>
-
   );
-
 };
 
 export default StudentRegistration;
