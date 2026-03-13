@@ -15,7 +15,7 @@ const StudJobDetails = () => {
   };
 
   return (
-    <div className="page-container">
+    <div className="w-full">
       <div className="page-header">
         <h1 className="page-title">Company Job Description</h1>
         <p className="page-subtitle">Read All Information Properly Before Apply</p>
@@ -26,7 +26,7 @@ const StudJobDetails = () => {
         <div className="lg:col-span-2 space-y-6">
 
           {/* Header Card */}
-          <div className="card-basic flex items-center gap-6">
+          <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex items-center gap-6">
             <div className="w-16 h-16 bg-blue-500 rounded-xl shadow-sm flex items-center justify-center shrink-0 text-white font-bold text-3xl">
               {job.company.charAt(0)}
             </div>
@@ -56,7 +56,7 @@ const StudJobDetails = () => {
           </div>
 
           {/* Description Content */}
-          <div className="card-basic">
+          <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
             <div className="mb-6">
               <h3 className="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2">Job Description</h3>
               <p className="text-sm text-gray-700 mb-3 leading-relaxed">
@@ -106,7 +106,7 @@ const StudJobDetails = () => {
         {/* Right Section */}
         <div className="lg:col-span-1 space-y-6">
 
-          <div className="card-basic">
+          <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Eligibility Criteria</h3>
 
             <div className="space-y-4">
@@ -125,7 +125,7 @@ const StudJobDetails = () => {
             </div>
           </div>
 
-          {/* <div className="card-basic">
+          {/* <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Key Dates</h3>
 
             <div className="space-y-4">

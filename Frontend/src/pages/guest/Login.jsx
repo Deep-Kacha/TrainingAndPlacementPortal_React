@@ -1,11 +1,58 @@
-import React from "react";
+import React, { useState } from "react";
 import Footer from "../../components/common/Footer";
-import AuthHeader from "../../components/common/AuthHeader";
+import AuthHeader from "../../Components/common/AuthHeader";
 import { useNavigate } from "react-router-dom";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 const Login = () => {
     const navigate = useNavigate();
+
+    const [role, setRole] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const [validationErrors, setValidationErrors] = useState({});
+
+    const validate = (name, value) => {
+        let errorMessage = "";
+        if (name === "role" && !value) errorMessage = "Please select a role.";
+        else if (name === "email") {
+            if (!value) errorMessage = "Email is required.";
+            else if (!/^[^\s@]+@rku\.ac\.in$/.test(value)) errorMessage = "Only @rku.ac.in emails are allowed.";
+        } else if (name === "password" && !value) errorMessage = "Password is required.";
+        return errorMessage;
+    };
+
+    const handleLogin = () => {
+        const roleErr = validate("role", role);
+        const emailErr = validate("email", email);
+        const passErr = validate("password", password);
+
+        if (roleErr || emailErr || passErr) {
+            setValidationErrors({ role: roleErr, email: emailErr, password: passErr });
+            return;
+        }
+
+        setError(""); // Clear previous errors
+        if (role === "Student") {
+            if (email === "student@rku.ac.in" && password === "Student@123") {
+                navigate("/StudDashboard");
+            } else {
+                setError("Invalid Student email or password");
+            }
+        } else if (role === "Admin") {
+            if (email === "admin@rku.ac.in" && password === "Admin@123") {
+                navigate("/AdminDashboard");
+            } else {
+                setError("Invalid Admin email or password");
+            }
+        } else {
+            setError("Please select a valid role");
+        }
+    };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-200">
 
@@ -34,11 +81,19 @@ const Login = () => {
           {/* Select Role */}
           <div className="mb-4">
             <label className="text-sm font-medium">Select Role</label>
-            <select className="w-full mt-1 p-2 rounded-md border">
-              <option>Choose your role</option>
-              <option>Student</option>
-              <option>Admin</option>
+            <select 
+              className={`w-full mt-1 p-2 rounded-md border ${validationErrors.role ? "border-red-500" : ""}`}
+              value={role}
+              onChange={(e) => {
+                setRole(e.target.value);
+                setValidationErrors(prev => ({ ...prev, role: validate("role", e.target.value) }));
+              }}
+            >
+              <option value="">Choose your role</option>
+              <option value="Student">Student</option>
+              <option value="Admin">Admin</option>
             </select>
+            {validationErrors.role && <p className="text-red-500 text-xs mt-1">{validationErrors.role}</p>}
           </div>
 
           {/* Email */}
@@ -47,29 +102,61 @@ const Login = () => {
             <input
               type="email"
               placeholder="Enter your college email"
-              className="w-full mt-1 p-2 rounded-md border"
+              className={`w-full mt-1 p-2 rounded-md border ${validationErrors.email ? "border-red-500" : ""}`}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setValidationErrors(prev => ({ ...prev, email: validate("email", e.target.value) }));
+              }}
             />
+            {validationErrors.email && <p className="text-red-500 text-xs mt-1">{validationErrors.email}</p>}
           </div>
 
           {/* Password */}
           <div className="mb-2">
             <label className="text-sm font-medium">Password</label>
-            <input
-              type="password"
-              placeholder="Enter your password"
-              className="w-full mt-1 p-2 rounded-md border"
-            />
+            <div className="relative mt-1">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                className={`w-full p-2 rounded-md border ${validationErrors.password ? "border-red-500" : ""}`}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setValidationErrors(prev => ({ ...prev, password: validate("password", e.target.value) }));
+                }}
+              />
+              <button
+                type="button"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {validationErrors.password && <p className="text-red-500 text-xs mt-1">{validationErrors.password}</p>}
           </div>
 
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
           <div className="text-right text-sm mb-4">
-            <span  onClick={() => navigate("/Authentication/forgot-password")} className="hover:underline cursor-pointer">
+            <span  onClick={() => navigate("/ForgotPassword")} className="hover:underline cursor-pointer">
               Forgot Password?
             </span>
           </div>
 
           {/* Login Button */}
-          <button className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition">
+          <button
+            onClick={handleLogin}
+            className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3"
+          >
             Login
+          </button>
+          <button
+            onClick={() => navigate(-1)}
+            className="w-full border border-black py-2 rounded-md hover:bg-gray-100 transition"
+          >
+            Cancel
           </button>
 
           <div className="text-center mt-6 text-sm">

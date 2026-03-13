@@ -28,6 +28,7 @@ const StudForgotPassword = () => {
             else if (!/[A-Z]/.test(value)) error = "Must contain an uppercase letter.";
             else if (!/[a-z]/.test(value)) error = "Must contain a lowercase letter.";
             else if (!/\d/.test(value)) error = "Must contain a number.";
+            else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) error = "Must contain a special character.";
         } else if (name === "confirmPassword") {
             if (!value) error = "Confirm password is required.";
             else if (value !== allData.newPassword) error = "Passwords do not match.";
@@ -65,7 +66,7 @@ const StudForgotPassword = () => {
         if (!emailErr && !newErr && !confirmErr && formData.email && formData.newPassword && formData.confirmPassword) {
             alert("Password successfully verified and updated!");
             setFormData({ email: "", newPassword: "", confirmPassword: "" });
-            navigate("/"); // assuming navigating to home or login page after successful password reset
+            navigate("/Authentication/login"); // assuming navigating to home or login page after successful password reset
         }
     };
 
@@ -76,6 +77,7 @@ const StudForgotPassword = () => {
             case "upper": return /[A-Z]/.test(val);
             case "lower": return /[a-z]/.test(val);
             case "number": return /\d/.test(val);
+            case "special": return /[!@#$%^&*(),.?":{}|<>]/.test(val);
             default: return false;
         }
     };
@@ -99,7 +101,7 @@ const StudForgotPassword = () => {
                     {/* Email */}
                     <div className="mb-5">
 
-                        <label className="block text-sm mb-1">
+                        <label className="block text-sm font-semibold text-[#333] mb-2">
                             Registered Email Address
                         </label>
 
@@ -111,7 +113,7 @@ const StudForgotPassword = () => {
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Enter your college email"
-                                className={`w-full p-3 bg-white rounded-lg  pl-10 ${errors.email ? "border-red-500" : ""}`}
+                                className={`w-full p-3 bg-white rounded-lg pl-10 border outline-none text-[#333] ${errors.email ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
                             />
 
                             <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
@@ -125,7 +127,7 @@ const StudForgotPassword = () => {
                     {/* New Password */}
                     <div className="mb-5">
 
-                        <label className="block text-sm mb-1">
+                        <label className="block text-sm font-semibold text-[#333] mb-2">
                             New Password
                         </label>
 
@@ -137,7 +139,7 @@ const StudForgotPassword = () => {
                                 value={formData.newPassword}
                                 onChange={handleChange}
                                 placeholder="Enter new password"
-                                className={`w-full p-3 bg-white rounded-lg  ${errors.newPassword ? "border-red-500" : ""}`}
+                                className={`w-full p-3 bg-white rounded-lg border outline-none text-[#333] ${errors.newPassword ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
                             />
 
                             <button
@@ -157,7 +159,7 @@ const StudForgotPassword = () => {
                     {/* Confirm Password */}
                     <div className="mb-5">
 
-                        <label className="block text-sm mb-1">
+                        <label className="block text-sm font-semibold text-[#333] mb-2">
                             Confirm Password
                         </label>
 
@@ -169,7 +171,7 @@ const StudForgotPassword = () => {
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="Re-enter new password"
-                                className={`w-full p-3 bg-white rounded-lg  ${errors.confirmPassword ? "border-red-500" : ""}`}
+                                className={`w-full p-3 bg-white rounded-lg border outline-none text-[#333] ${errors.confirmPassword ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
                             />
 
                             <button
@@ -187,25 +189,22 @@ const StudForgotPassword = () => {
 
 
                     {/* Password Rules */}
-                    <div className="bg-white p-4 rounded-lg mb-5 text-sm border">
-
-                        <p className="font-semibold mb-2">
-                            Password must contain:
+                    <div className="bg-white border border-[#e0d8cc] p-4 rounded-lg mb-5 text-sm">
+                        <p className="font-bold text-[#333] mb-2">
+                            Password requirements:
                         </p>
-
-                        <ul className="space-y-1 text-gray-600">
-
-                            <li className={checkRequirement("length") ? "text-green-600" : ""}>
-                                {checkRequirement("length") ? "✔" : "○"} At least 8 characters
+                        <ul className="space-y-1 text-[#666]">
+                            <li className={checkRequirement("length") ? "text-green-600 font-medium" : ""}>
+                                {checkRequirement("length") ? "✔" : "○"} At least 8 characters long
                             </li>
-                            <li className={checkRequirement("upper") ? "text-green-600" : ""}>
-                                {checkRequirement("upper") ? "✔" : "○"} One uppercase letter
+                            <li className={checkRequirement("upper") && checkRequirement("lower") ? "text-green-600 font-medium" : ""}>
+                                {checkRequirement("upper") && checkRequirement("lower") ? "✔" : "○"} Contains uppercase and lowercase letters
                             </li>
-                            <li className={checkRequirement("lower") ? "text-green-600" : ""}>
-                                {checkRequirement("lower") ? "✔" : "○"} One lowercase letter
+                            <li className={checkRequirement("number") ? "text-green-600 font-medium" : ""}>
+                                {checkRequirement("number") ? "✔" : "○"} Contains at least one number
                             </li>
-                            <li className={checkRequirement("number") ? "text-green-600" : ""}>
-                                {checkRequirement("number") ? "✔" : "○"} One number
+                            <li className={checkRequirement("special") ? "text-green-600 font-medium" : ""}>
+                                {checkRequirement("special") ? "✔" : "○"} Contains at least one special character
                             </li>
                         </ul>
                     </div>
@@ -214,16 +213,16 @@ const StudForgotPassword = () => {
                     {/* Confirm Button */}
                     <button
                         onClick={handleSubmit}
-                        className="w-full bg-red-600 text-white py-3 rounded-lg mb-3 hover:bg-red-700"
+                        className="w-full bg-[#e7000b] text-white py-3 rounded-lg mb-3 font-bold uppercase transition-all hover:bg-red-700 border-none cursor-pointer"
                     >
-                        Confirm Password
+                        Update Password
                     </button>
 
 
                     {/* Cancel Button */}
                     <button
                         onClick={() => navigate(-1)}
-                        className="w-full bg-white border py-3 rounded-lg hover:bg-gray-50"
+                        className="w-full bg-transparent border border-gray-400 text-[#333] py-3 rounded-lg font-bold uppercase transition-all hover:bg-gray-100 cursor-pointer"
                     >
                         Cancel
                     </button>

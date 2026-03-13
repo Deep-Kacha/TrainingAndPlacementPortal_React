@@ -20,7 +20,7 @@ const StudJobs = () => {
     };
 
     return (
-        <div className="page-container">
+        <div className="w-full">
             <header className="page-header">
                 <h1 className="page-title">Companies for Apply</h1>
                 <p className="page-subtitle">Here you can Apply for Interviews</p>
@@ -28,7 +28,7 @@ const StudJobs = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {jobs.map(job => (
-                    <div className="card-basic flex flex-col" key={job.id}>
+                    <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col" key={job.id}>
                         <div className="flex items-start gap-4 mb-5">
                             <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">
                                 {job.company.charAt(0)}
@@ -57,7 +57,7 @@ const StudJobs = () => {
                         <div className="flex gap-3 mt-auto">
                             <button 
                                 className="btn-outline flex-1"
-                                onClick={() => navigate('/student/jobs/details', { state: { job } })}
+                                onClick={() => navigate('/StudJobDetails', { state: { job } })}
                             >
                                 View Details
                             </button>

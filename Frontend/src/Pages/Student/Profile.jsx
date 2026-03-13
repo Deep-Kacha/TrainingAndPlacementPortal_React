@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaEdit } from 'react-icons/fa';
 
 const StudProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
@@ -52,7 +53,7 @@ const StudProfile = () => {
     };
 
     return (
-        <div className="page-container max-w-6xl mx-auto pt-5">
+        <div className="w-full max-w-6xl mx-auto">
             <header className="page-header">
                 <h1 className="page-title">Your Profile</h1>
                 <p className="page-subtitle">Read All Information Properly If Any Mistakes You can Edit It</p>
@@ -60,7 +61,7 @@ const StudProfile = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8 mb-10">
                 {/* Left Side: Identity Card */}
-                <div className="bg-[#ece6da] rounded-xl py-10 px-8 text-center flex flex-col items-center border border-[#e0dacd] shadow-sm">
+                <div className="bg-white rounded-xl py-10 px-8 text-center flex flex-col items-center border border-gray-200 shadow-sm">
                     <div className="w-24 h-24 bg-[#e7000b] rounded-full text-white flex items-center justify-center text-4xl font-bold mb-5 shadow-md">
                         {profileData.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST'}
                     </div>
@@ -89,7 +90,7 @@ const StudProfile = () => {
                             <span className="font-bold text-gray-900">{profileData.enrollmentNo}</span>
                         )}
                     </div>
-                    <div className="w-full border-t border-[#d4cec3] pt-4 pb-4 flex justify-between items-center text-[14px]">
+                    <div className="w-full border-t border-gray-200 pt-4 pb-4 flex justify-between items-center text-[14px]">
                         <span className="text-gray-500 font-medium whitespace-nowrap mr-2">Branch</span>
                         {isEditing ? (
                             <input type="text" name="branch" value={profileData.branch} onChange={handleInputChange} className="font-bold bg-white border border-[#e7000b] focus:outline-none rounded p-1 w-2/3 text-right" />
@@ -97,7 +98,7 @@ const StudProfile = () => {
                             <span className="font-bold text-gray-900">{profileData.branch}</span>
                         )}
                     </div>
-                    <div className="w-full border-t border-b border-[#d4cec3] pt-4 pb-4 flex justify-between items-center text-[14px]">
+                    <div className="w-full border-t border-b border-gray-200 pt-4 pb-4 flex justify-between items-center text-[14px]">
                         <span className="text-gray-500 font-medium whitespace-nowrap mr-2">CGPA</span>
                         {isEditing ? (
                             <input type="number" step="0.01" name="cgpa" value={profileData.cgpa} onChange={handleInputChange} className="font-bold text-[#168a48] text-base bg-white border border-[#e7000b] focus:outline-none rounded p-1 w-1/3 text-right" />
@@ -107,13 +108,13 @@ const StudProfile = () => {
                     </div>
 
                     <button className="bg-[#c72027] text-white rounded-md mt-6 w-full py-3 px-4 font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-red-800 transition shadow-sm" onClick={toggleEdit}>
-                        <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        <FaEdit />
                         {isEditing ? 'SAVE PROFILE' : 'EDIT CONTACT'}
                     </button>
                 </div>
 
                 {/* Right Side: Detailed Profile Info */}
-                <div className="bg-[#ece6da] rounded-xl p-8 border border-[#e0dacd] shadow-sm">
+                <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
                     <h3 className="text-[20px] mb-8 text-gray-900 font-bold">Profile Information</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-5">
                         {[
@@ -142,22 +143,22 @@ const StudProfile = () => {
             </div>
 
             {/* Bottom Section: Recent Applications */}
-            <div className="bg-[#ece6da] rounded-xl border border-[#e0dacd] overflow-hidden pb-0 mb-6 shadow-sm">
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden pb-0 mb-6 shadow-sm">
                 <div className="px-8 py-6 pb-4">
                     <h3 className="m-0 text-[18px] font-bold text-gray-900">Recent Applications</h3>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                         <thead>
-                            <tr className="bg-[#e0dacd]/40">
-                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold whitespace-nowrap border-b border-[#d4cec3]">Job Position</th>
-                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold border-b border-[#d4cec3]">Company</th>
-                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold border-b border-[#d4cec3]">Status</th>
+                            <tr className="bg-gray-50">
+                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold whitespace-nowrap border-b border-gray-200">Job Position</th>
+                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold border-b border-gray-200">Company</th>
+                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold border-b border-gray-200">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#d4cec3]">
+                        <tbody className="divide-y divide-gray-200">
                             {recentApplications.map(app => (
-                                <tr key={app.id} className="bg-[#ece6da]">
+                                <tr key={app.id} className="bg-white">
                                     <td className="py-5 px-8">
                                         <p className="font-bold text-[15px] text-gray-900 m-0 whitespace-nowrap">{app.position}</p>
                                         <p className="text-[13px] font-medium text-[#64748b] mt-1 m-0">{app.type}</p>

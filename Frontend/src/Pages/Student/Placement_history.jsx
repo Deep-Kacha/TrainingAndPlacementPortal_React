@@ -119,7 +119,7 @@ const StudPlacementHistory = () => {
             </header>
 
             {/* Current Placement Status Card */}
-            <div className="bg-[#ece6da] border text-left border-[#e0d8cc] p-6 md:p-8 rounded-[12px] shadow-sm w-full mb-10">
+            <div className="bg-white border text-left border-gray-200 p-6 md:p-8 rounded-[12px] shadow-sm w-full mb-10">
                 <h2 className="text-[1.5rem] font-bold text-[#333] mb-6 m-0 relative">Current Placement Status</h2>
 
                 <div className="grid grid-cols-2 gap-y-6 gap-x-8">
@@ -159,55 +159,59 @@ const StudPlacementHistory = () => {
             </div>
 
             {/* Table */}
-            <div className="bg-[#ece6da] rounded-[16px] overflow-hidden shadow-sm">
-                {/* Table Header */}
-                <div className="grid grid-cols-6 gap-4 px-8 py-5 border-b border-[#c4bcae]/50 bg-[#fbfaf8]">
-                    <div className="font-bold text-[#444] text-[14px] col-span-1 pl-[60px]">Company Name</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Job Role</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Package</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Offer Date</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Joining Date</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Status</div>
-                </div>
-
-                {/* Table Rows */}
-                <div className="flex flex-col">
-                    {placementRecords.map((app, index) => (
-                        <div
-                            key={index}
-                            className={`grid grid-cols-6 gap-4 px-8 py-[22px] items-center bg-[#ece6da] border-b border-[#c4bcae]/30 ${index % 2 === 0 ? 'bg-[#e2dacb]' : 'bg-[#ece6da]'}`}
-                        >
-                            <div className="flex items-center gap-4 col-span-1">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${app.iconBg} ${app.iconText}`}>
-                                    <FaBuilding size={18} />
-                                </div>
-                                <span className="font-bold text-[#222] text-[14.5px] lg:text-[15.5px] whitespace-nowrap">{app.company}</span>
-                            </div>
-
-                            <div className="text-[#555] text-[14px] lg:text-[15px] text-center whitespace-nowrap overflow-hidden text-ellipsis px-1">
-                                {app.role}
-                            </div>
-
-                            <div className="font-[800] text-[#333] text-[14px] lg:text-[15px] text-center whitespace-nowrap">
-                                {app.package}
-                            </div>
-
-                            <div className="text-[#666] text-[14px] lg:text-[15px] text-center whitespace-nowrap">
-                                {app.offerDate}
-                            </div>
-
-                            <div className="text-[#666] text-[14px] lg:text-[15px] text-center whitespace-nowrap">
-                                {app.joiningDate}
-                            </div>
-
-                            <div className="flex justify-center">
-                                <span className={`inline-flex items-center gap-2 px-2 lg:px-3 py-[6px] rounded-full text-[12px] lg:text-[13px] font-[700] ${app.statusBg} ${app.statusText}`}>
-                                    <app.StatusIcon size={11} />
-                                    {app.status}
-                                </span>
-                            </div>
+            <div className="bg-white rounded-[16px] overflow-hidden shadow-sm">
+                <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                    <div className="min-w-[900px]">
+                        {/* Table Header */}
+                        <div className="grid grid-cols-6 gap-4 px-8 py-5 border-b border-gray-200 bg-[#fbfaf8]">
+                            <div className="font-bold text-[#444] text-[14px] col-span-1 pl-[60px]">Company Name</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Job Role</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Package</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Offer Date</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Joining Date</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Status</div>
                         </div>
-                    ))}
+
+                        {/* Table Rows */}
+                        <div className="flex flex-col">
+                            {placementRecords.map((app, index) => (
+                                <div
+                                    key={index}
+                                    className={`grid grid-cols-6 gap-4 px-8 py-[22px] items-center border-b border-gray-200 ${index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}
+                                >
+                                    <div className="flex items-center gap-4 col-span-1">
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${app.iconBg} ${app.iconText}`}>
+                                            <FaBuilding size={18} />
+                                        </div>
+                                        <span className="font-bold text-[#222] text-[14.5px] lg:text-[15.5px] whitespace-nowrap">{app.company}</span>
+                                    </div>
+
+                                    <div className="text-[#555] text-[14px] lg:text-[15px] text-center whitespace-nowrap overflow-hidden text-ellipsis px-1">
+                                        {app.role}
+                                    </div>
+
+                                    <div className="font-[800] text-[#333] text-[14px] lg:text-[15px] text-center whitespace-nowrap">
+                                        {app.package}
+                                    </div>
+
+                                    <div className="text-[#666] text-[14px] lg:text-[15px] text-center whitespace-nowrap">
+                                        {app.offerDate}
+                                    </div>
+
+                                    <div className="text-[#666] text-[14px] lg:text-[15px] text-center whitespace-nowrap">
+                                        {app.joiningDate}
+                                    </div>
+
+                                    <div className="flex justify-center">
+                                        <span className={`inline-flex items-center gap-2 px-2 lg:px-3 py-[6px] rounded-full text-[12px] lg:text-[13px] font-[700] ${app.statusBg} ${app.statusText}`}>
+                                            <app.StatusIcon size={11} />
+                                            {app.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

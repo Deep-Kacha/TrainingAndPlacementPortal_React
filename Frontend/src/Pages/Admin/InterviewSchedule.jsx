@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import Sidebar from "../../Components/Admin/SideBar";
 import InterviewCard from "../../Components/Admin/InterviewSchedule/InterviewCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 
@@ -73,13 +72,7 @@ const AdminInterviewSchedule = () => {
 
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         {/* Header */}
         <h1 className="text-2xl md:text-3xl font-bold text-red-600">
@@ -147,8 +140,6 @@ const AdminInterviewSchedule = () => {
           ))}
 
         </div>
-
-      </div>
 
     </div>
   );

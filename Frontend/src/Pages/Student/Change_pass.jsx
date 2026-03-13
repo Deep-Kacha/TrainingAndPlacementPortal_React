@@ -197,7 +197,7 @@ const StudChangePass = () => {
                     <div className="text-right text-sm mb-5">
                         <button
                             className="text-[#3498db] font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
-                            onClick={() => navigate("/student/ForgotPassword")}
+                            onClick={() => navigate("/StudForgotPassword")}
                         >
                             Forgot Password?
                         </button>
@@ -214,7 +214,7 @@ const StudChangePass = () => {
                     {/* Cancel */}
                     <button
                         className="w-full bg-transparent border border-gray-400 text-[#333] py-3 rounded-lg font-bold uppercase transition-all hover:bg-gray-100 cursor-pointer"
-                        onClick={() => navigate("/student/dashboard")}
+                        onClick={() => navigate(-1)}
                     >
                         Cancel
                     </button>

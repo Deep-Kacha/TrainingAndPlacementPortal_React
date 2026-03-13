@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../../Components/Admin/SideBar";
 import ProfileCard from "../../Components/Admin/Profile/ProfileCard";
 import ProfileInfoForm from "../../Components/Admin/Profile/ProfileInfoForm";
 import AddPortalUser from "../../Components/Admin/Profile/AddPortalUser";
@@ -78,11 +77,7 @@ const AdminProfile = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      <Sidebar />
-
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
           {/* Header */}
           <h1 className="text-2xl md:text-3xl font-bold text-red-600">Profile</h1>
@@ -116,8 +111,6 @@ const AdminProfile = () => {
             <PasswordActions />
 
           </div>
-
-      </div>
 
     </div>
   );

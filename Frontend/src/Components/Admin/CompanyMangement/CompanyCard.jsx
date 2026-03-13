@@ -83,14 +83,14 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
       <div className="grid grid-cols-2 gap-3">
 
         <button
-          onClick={() => navigate("/JdDetail", { state: { mode: "view" } })}
+          onClick={() => navigate("/AdminJdDetail", { state: { mode: "view" } })}
           className="border border-black py-2 rounded hover:bg-gray-50 transition"
         >
           VIEW DETAILS
         </button>
 
         <button
-          onClick={() => navigate("/JdDetail", { state: { mode: "edit" } })}
+          onClick={() => navigate("/AdminJdDetail", { state: { mode: "edit" } })}
           className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
         >
           EDIT DETAILS

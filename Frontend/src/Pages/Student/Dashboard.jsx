@@ -10,10 +10,10 @@ const StudDashboard = () => {
     ];
 
     const quickActions = [
-        { title: 'Browse Jobs', desc: 'Explore available opportunities', linkText: 'View Jobs', onclick: () => navigate("/student/jobs"), icon: '🔍' },
-        { title: 'My Applied', desc: 'Track application status', linkText: 'View Applied', onclick: () => navigate("/student/applications"), icon: '📋' },
-        { title: 'Profile', desc: 'Update your information', linkText: 'Edit Profile', onclick: () => navigate("/student/profile"), icon: '👤' },
-        { title: 'Interviews', desc: 'Manage interview schedule', linkText: 'View Schedule', onclick: () => navigate("/student/interview_schedule"), icon: '🗓️' }
+        { title: 'Browse Jobs', desc: 'Explore available opportunities', linkText: 'View Jobs', onclick: () => navigate("/StudJobs"), icon: '🔍' },
+        { title: 'My Applied', desc: 'Track application status', linkText: 'View Applied', onclick: () => navigate("/StudApplications"), icon: '📋' },
+        { title: 'Profile', desc: 'Update your information', linkText: 'Edit Profile', onclick: () => navigate("/StudProfile"), icon: '👤' },
+        { title: 'Interviews', desc: 'Manage interview schedule', linkText: 'View Schedule', onclick: () => navigate("/StudInterviewSchedule"), icon: '🗓️' }
     ];
 
     return (
@@ -28,7 +28,7 @@ const StudDashboard = () => {
             {/* Status Cards */}
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
                 {statusCards.map((card, index) => (
-                    <div key={index} className="card-dashboard">
+                    <div key={index} className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
                         <div className="flex justify-between items-start mb-5">
                             <div className="text-[1.5rem] p-[10px] bg-[#d8cfc3] rounded-[8px]">
                                 {card.icon}
@@ -50,7 +50,7 @@ const StudDashboard = () => {
                 <h2 className="text-[1.5rem] font-bold mb-[20px] text-[#333]">Quick Actions</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
                     {quickActions.map((action, index) => (
-                        <div key={index} className="card-action" onClick={action.onclick}>
+                        <div key={index} className="bg-[#ece6da] border border-[#e0dacd] p-6 rounded-lg cursor-pointer hover:shadow-md transition flex flex-col items-center text-center" onClick={action.onclick}>
                             <div className="w-[60px] h-[60px] bg-[#e9e2d5] rounded-full flex items-center justify-center mb-[15px] text-[1.8rem]">
                                 {action.icon}
                             </div>

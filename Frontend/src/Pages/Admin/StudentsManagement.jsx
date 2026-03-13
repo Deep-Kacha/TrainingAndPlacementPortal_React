@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Sidebar from "../../Components/Admin/SideBar";
 import StudentRow from "../../Components/Admin/StudentMangement/StudentRow";
 
 const AdminStudentsManagement = () => {
@@ -172,13 +171,7 @@ const AdminStudentsManagement = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Page Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         {/* Header */}
         <div className="mb-6">
@@ -232,8 +225,6 @@ const AdminStudentsManagement = () => {
           </table>
 
         </div>
-
-      </div>
 
     </div>
   );

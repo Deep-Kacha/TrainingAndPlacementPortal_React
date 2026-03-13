@@ -72,7 +72,7 @@ const StudInterviewSchedule = () => {
     };
 
     return (
-        <div className="page-container">
+        <div className="w-full">
             <header className="page-header">
                 <h1 className="page-title">Interview Schedule</h1>
                 <p className="page-subtitle">View your upcoming and completed interview details.</p>
@@ -80,7 +80,7 @@ const StudInterviewSchedule = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {interviews.map((item) => (
-                    <div key={item.id} className="card-basic p-6 relative flex flex-col pb-20 md:pb-6">
+                    <div key={item.id} className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm relative flex flex-col pb-20 md:pb-6">
 
                         {/* Header Section */}
                         <div className="flex flex-row items-center gap-4 mb-6">

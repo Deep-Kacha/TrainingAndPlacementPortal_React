@@ -98,50 +98,54 @@ const StudApplications = () => {
                 </div>
             </header>
 
-            <div className="bg-[#d8cfc3] rounded-[16px] overflow-hidden shadow-sm">
-                {/* Table Header */}
-                <div className="grid grid-cols-5 gap-4 px-8 py-5 border-b border-[#c4bcae]/50">
-                    <div className="font-bold text-[#444] text-[14px] col-span-1 pl-[60px]">Company Name</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Job Role</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Package</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Applied Date</div>
-                    <div className="font-bold text-[#444] text-[14px] text-center">Status</div>
-                </div>
-
-                {/* Table Rows */}
-                <div className="flex flex-col">
-                    {applicationsList.map((app, index) => (
-                        <div
-                            key={index}
-                            className="grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-[#ece6da] border-b border-[#c4bcae]/30"
-                        >
-                            <div className="flex items-center gap-4 col-span-1">
-                                <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${app.iconBg} ${app.iconText}`}>
-                                    <FaBuilding size={18} />
-                                </div>
-                                <span className="font-bold text-[#222] text-[15.5px] whitespace-nowrap">{app.company}</span>
-                            </div>
-
-                            <div className="text-[#555] text-[15px] text-center whitespace-nowrap">
-                                {app.role}
-                            </div>
-
-                            <div className="font-[800] text-[#333] text-[15px] text-center whitespace-nowrap">
-                                {app.package}
-                            </div>
-
-                            <div className="text-[#666] text-[15px] text-center whitespace-nowrap">
-                                {app.date}
-                            </div>
-
-                            <div className="flex justify-center">
-                                <span className={`inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-[700] ${app.statusBg} ${app.statusText}`}>
-                                    <app.StatusIcon size={11} />
-                                    {app.status}
-                                </span>
-                            </div>
+            <div className="bg-white rounded-[16px] overflow-hidden shadow-sm">
+                <div className="overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                    <div className="min-w-[700px]">
+                        {/* Table Header */}
+                        <div className="grid grid-cols-5 gap-4 px-8 py-5 border-b border-gray-200">
+                            <div className="font-bold text-[#444] text-[14px] col-span-1 pl-[60px]">Company Name</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Job Role</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Package</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Applied Date</div>
+                            <div className="font-bold text-[#444] text-[14px] text-center">Status</div>
                         </div>
-                    ))}
+
+                        {/* Table Rows */}
+                        <div className="flex flex-col">
+                            {applicationsList.map((app, index) => (
+                                <div
+                                    key={index}
+                                    className="grid grid-cols-5 gap-4 px-8 py-[22px] items-center bg-white border-b border-gray-200"
+                                >
+                                    <div className="flex items-center gap-4 col-span-1">
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${app.iconBg} ${app.iconText}`}>
+                                            <FaBuilding size={18} />
+                                        </div>
+                                        <span className="font-bold text-[#222] text-[15.5px] whitespace-nowrap">{app.company}</span>
+                                    </div>
+
+                                    <div className="text-[#555] text-[15px] text-center whitespace-nowrap">
+                                        {app.role}
+                                    </div>
+
+                                    <div className="font-[800] text-[#333] text-[15px] text-center whitespace-nowrap">
+                                        {app.package}
+                                    </div>
+
+                                    <div className="text-[#666] text-[15px] text-center whitespace-nowrap">
+                                        {app.date}
+                                    </div>
+
+                                    <div className="flex justify-center">
+                                        <span className={`inline-flex items-center gap-2 px-3 py-[6px] rounded-full text-[13px] font-[700] ${app.statusBg} ${app.statusText}`}>
+                                            <app.StatusIcon size={11} />
+                                            {app.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

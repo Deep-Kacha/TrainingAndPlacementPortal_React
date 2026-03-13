@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../Components/Admin/SideBar";
 
 const AdminChangePassword = () => {
 
@@ -11,7 +10,7 @@ const AdminChangePassword = () => {
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const [passwords, setPasswords] = useState({
+  const [formData, setFormData] = useState({
     current: "",
     new: "",
     confirm: ""
@@ -23,7 +22,7 @@ const AdminChangePassword = () => {
     confirm: ""
   });
 
-  const validateField = (name, value, allPasswords) => {
+  const validateField = (name, value, allData) => {
     let error = "";
     if (name === "current") {
       if (!value) error = "Current password is required.";
@@ -36,27 +35,27 @@ const AdminChangePassword = () => {
       else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) error = "Must contain a special character.";
     } else if (name === "confirm") {
       if (!value) error = "Confirm password is required.";
-      else if (value !== allPasswords.new) error = "Passwords do not match.";
+      else if (value !== allData.new) error = "Passwords do not match.";
     }
     return error;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const updatedPasswords = { ...passwords, [name]: value };
-    setPasswords(updatedPasswords);
+    const updatedData = { ...formData, [name]: value };
+    setFormData(updatedData);
 
-    const error = validateField(name, value, updatedPasswords);
+    const error = validateField(name, value, updatedData);
     setErrors((prev) => ({ ...prev, [name]: error }));
 
-    if (name === "new" && updatedPasswords.confirm) {
-      const confirmError = validateField("confirm", updatedPasswords.confirm, updatedPasswords);
+    if (name === "new" && updatedData.confirm) {
+      const confirmError = validateField("confirm", updatedData.confirm, updatedData);
       setErrors((prev) => ({ ...prev, [name]: error, confirm: confirmError }));
     }
   };
 
   const checkRequirement = (type) => {
-    const val = passwords.new;
+    const val = formData.new;
     switch (type) {
       case "length": return val.length >= 8;
       case "upper": return /[A-Z]/.test(val);
@@ -69,13 +68,7 @@ const AdminChangePassword = () => {
 
   return (
 
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Page Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         {/* Header */}
         <h1 className="text-2xl md:text-3xl font-bold text-red-600">
@@ -102,7 +95,7 @@ const AdminChangePassword = () => {
                 <input
                   type={showCurrent ? "text" : "password"}
                   name="current"
-                  value={passwords.current}
+                  value={formData.current}
                   onChange={handleChange}
                   placeholder="Enter current password"
                   className={`w-full p-3 rounded-lg border outline-none ${errors.current ? "border-red-500" : ""}`}
@@ -134,7 +127,7 @@ const AdminChangePassword = () => {
                 <input
                   type={showNew ? "text" : "password"}
                   name="new"
-                  value={passwords.new}
+                  value={formData.new}
                   onChange={handleChange}
                   placeholder="Enter new password"
                   className={`w-full p-3 rounded-lg border outline-none ${errors.new ? "border-red-500" : ""}`}
@@ -166,7 +159,7 @@ const AdminChangePassword = () => {
                 <input
                   type={showConfirm ? "text" : "password"}
                   name="confirm"
-                  value={passwords.confirm}
+                  value={formData.confirm}
                   onChange={handleChange}
                   placeholder="Re-Enter new password"
                   className={`w-full p-3 rounded-lg border outline-none ${errors.confirm ? "border-red-500" : ""}`}
@@ -217,7 +210,7 @@ const AdminChangePassword = () => {
             <div className="text-right text-sm mb-4">
               <button
                 className="text-gray-700"
-                onClick={() => navigate("/ForgotPassword")}
+                onClick={() => navigate("/AdminForgotPassword")}
               >
                 Forgot Password?
               </button>
@@ -239,8 +232,6 @@ const AdminChangePassword = () => {
             </button>
 
           </div>
-
-        </div>
 
       </div>
 
