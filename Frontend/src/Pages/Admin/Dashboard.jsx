@@ -1,6 +1,5 @@
 
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../Components/Admin/SideBar";
 import StatCard from "../../Components/Admin/Dashboard/StatCard";
 import QuickActionCard from "../../Components/Admin/Dashboard/QuickActionCard";
 import JdDetail from "./JdDetail";
@@ -16,7 +15,7 @@ import {
   FaSearch
 } from "react-icons/fa";
 
-const Dashboard = () => {
+const AdminDashboard = () => {
 
   const navigate = useNavigate();
 
@@ -60,11 +59,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      <Sidebar />
-
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         <h1 className="text-2xl md:text-3xl font-bold text-red-600">
           Dashboard
@@ -104,7 +99,7 @@ const Dashboard = () => {
             icon={<FaBriefcase className="text-orange-500" />}
             buttonText="View Companies →"
             linkColor="text-orange-500"
-            onClick={() => navigate("/CompanyManagement")}
+            onClick={() => navigate("/AdminCompanyManagement")}
           />
 
           <QuickActionCard
@@ -113,7 +108,7 @@ const Dashboard = () => {
             icon={<FaSearch className="text-cyan-500" />}
             buttonText="View Student Details →"
             linkColor="text-cyan-500"
-            onClick={() => navigate("/StudentsManagement")}
+            onClick={() => navigate("/AdminStudentsManagement")}
           />
 
           <QuickActionCard
@@ -122,7 +117,7 @@ const Dashboard = () => {
             icon={<FaFileAlt className="text-blue-600" />}
             buttonText="View Schedules →"
             linkColor="text-blue-600"
-            onClick={() => navigate("/InterviewSchedule")}
+            onClick={() => navigate("/AdminInterviewSchedule")}
           />
 
           <QuickActionCard
@@ -131,7 +126,7 @@ const Dashboard = () => {
             icon={<FaClock className="text-red-500" />}
             buttonText="View Placement History →"
             linkColor="text-red-500"
-            onClick={() => navigate("/PlacementHistory")}
+            onClick={() => navigate("/AdminPlacementHistory")}
           />
 
           <QuickActionCard
@@ -140,15 +135,13 @@ const Dashboard = () => {
             icon={<FaUsers className="text-purple-500" />}
             buttonText="Edit Profile →"
             linkColor="text-purple-500"
-            onClick={() => navigate("/profile")}
+            onClick={() => navigate("/AdminProfile")}
           />
 
         </div>
-
-      </div>
 
     </div>
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

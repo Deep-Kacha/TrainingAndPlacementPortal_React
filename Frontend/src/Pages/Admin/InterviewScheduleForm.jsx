@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Sidebar from "../../Components/Admin/SideBar";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-const InterviewScheduleForm = () => {
+const AdminInterviewScheduleForm = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -25,13 +24,7 @@ const InterviewScheduleForm = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden w-full">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0 relative z-10">
@@ -178,10 +171,8 @@ const InterviewScheduleForm = () => {
           </button>
         </div>
 
-      </div>
-
     </div>
   );
 };
 
-export default InterviewScheduleForm;
+export default AdminInterviewScheduleForm;

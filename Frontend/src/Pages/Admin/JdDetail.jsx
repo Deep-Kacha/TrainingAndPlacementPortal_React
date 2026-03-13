@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Sidebar from "../../Components/Admin/SideBar";
 import SectionCard from "../../Components/Admin/CompanyMangement/SectionCard";
 import InputField from "../../Components/Admin/CompanyMangement/InputField";
 import CheckboxGroup from "../../Components/Admin/CompanyMangement/CheckboxGroup";
@@ -14,7 +13,7 @@ import {
   FaUpload
 } from "react-icons/fa";
 
-const JdDetail = () => {
+const AdminJdDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
@@ -63,13 +62,7 @@ const JdDetail = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:gap-0 relative z-10">
@@ -403,9 +396,8 @@ const JdDetail = () => {
           </div>
         )}
 
-      </div>
     </div>
   );
 };
 
-export default JdDetail;
+export default AdminJdDetail;

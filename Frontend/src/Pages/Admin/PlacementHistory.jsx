@@ -1,7 +1,6 @@
-import Sidebar from "../../Components/Admin/SideBar";
 import PlacementRow from "../../Components/Admin/PlacementHistory/PlacementRow";
 
-const PlacementHistory = () => {
+const AdminPlacementHistory = () => {
 
   const placements = [
     {
@@ -139,13 +138,7 @@ const PlacementHistory = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         {/* Header */}
         <div className="mb-6">
@@ -194,10 +187,8 @@ const PlacementHistory = () => {
 
         </div>
 
-      </div>
-
     </div>
   );
 };
 
-export default PlacementHistory;
+export default AdminPlacementHistory;

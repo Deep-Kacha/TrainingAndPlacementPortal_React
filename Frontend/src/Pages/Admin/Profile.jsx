@@ -1,11 +1,10 @@
 import { useState } from "react";
-import Sidebar from "../../Components/Admin/SideBar";
 import ProfileCard from "../../Components/Admin/Profile/ProfileCard";
 import ProfileInfoForm from "../../Components/Admin/Profile/ProfileInfoForm";
 import AddPortalUser from "../../Components/Admin/Profile/AddPortalUser";
 import PasswordActions from "../../Components/Admin/Profile/PasswordActions";
 
-const Profile = () => {
+const AdminProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     name: "Vishal Doshi",
@@ -78,11 +77,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      <Sidebar />
-
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
           {/* Header */}
           <h1 className="text-2xl md:text-3xl font-bold text-red-600">Profile</h1>
@@ -117,10 +112,8 @@ const Profile = () => {
 
           </div>
 
-      </div>
-
     </div>
   );
 };
 
-export default Profile;
+export default AdminProfile;

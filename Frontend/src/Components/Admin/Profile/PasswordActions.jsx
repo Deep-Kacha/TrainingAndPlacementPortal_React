@@ -9,7 +9,7 @@ const PasswordActions = () => {
     <div className="flex flex-col gap-4">
 
       <button
-        onClick={() => navigate("/ChangePassword")}
+        onClick={() => navigate("/AdminChangePassword")}
         className="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700"
       >
         <FaEdit />
@@ -17,7 +17,7 @@ const PasswordActions = () => {
       </button>
 
       <button
-        onClick={() => navigate("/ForgotPassword")}
+        onClick={() => navigate("/AdminForgotPassword")}
         className="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700"
       >
         <FaEdit />

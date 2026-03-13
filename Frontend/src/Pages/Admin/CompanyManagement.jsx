@@ -1,9 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
-import Sidebar from "../../Components/Admin/SideBar";
 import CompanyCard from "../../Components/Admin/CompanyMangement/CompanyCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 
-const CompanyManagement = () => {
+const AdminCompanyManagement = () => {
 
   const [companies, setCompanies] = useState([
     {
@@ -105,11 +104,7 @@ const CompanyManagement = () => {
   }, [companies, searchTerm, searchCategory, filterStatus]);
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden w-full">
-
-      <Sidebar />
-
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
+    <div className="w-full">
 
         <h1 className="text-2xl md:text-3xl font-bold text-red-600">
           Company Management
@@ -179,9 +174,8 @@ const CompanyManagement = () => {
             />
           ))}
         </div>
-      </div>
     </div>
   );
 };
 
-export default CompanyManagement;
+export default AdminCompanyManagement;

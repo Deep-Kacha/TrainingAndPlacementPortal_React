@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "../../Components/Admin/SideBar";
 
-const ForgotPassword = () => {
+const AdminForgotPassword = () => {
 
   const navigate = useNavigate();
 
@@ -62,14 +61,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Main Content */}
-      <div className="flex-1 bg-gray-100 p-4 md:p-8 md:ml-64 overflow-y-auto">
-
+    <div className="w-full">
         {/* Header */}
         <h1 className="text-2xl md:text-3xl font-bold text-red-600">
           Forgot Password
@@ -219,10 +211,8 @@ const ForgotPassword = () => {
 
         </div>
 
-      </div>
-
     </div>
   );
 };
 
-export default ForgotPassword;
+export default AdminForgotPassword;

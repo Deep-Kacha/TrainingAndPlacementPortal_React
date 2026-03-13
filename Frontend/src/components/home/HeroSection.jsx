@@ -1,7 +1,10 @@
 import React from "react";
 import heroBg from "../../assets/images/hero.jpg";
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+  const navigate = useNavigate();
+
   return (
     <section id='home'
       className="relative min-h-[520px] flex items-center bg-cover bg-left"
@@ -27,7 +30,10 @@ const HeroSection = () => {
           industry connections and comprehensive placement support.
         </p>
 
-        <button className="mt-6 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition">
+        <button 
+        className="mt-6 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition"
+        onClick={() => navigate("/register")}
+        >
           Register as Student →
         </button>
 
