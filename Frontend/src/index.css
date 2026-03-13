@@ -12,3 +12,20 @@
 .animate-scroll {
   animation: scroll 20s linear infinite;
 }
+
+.label{
+  @apply text-sm text-gray-600 block mb-1;
+}
+
+.input{
+  @apply border border-gray-300 rounded-md px-3 py-2 w-full text-sm focus:ring-2 focus:ring-red-500 outline-none;
+}
+
+.upload-box{
+  @apply border-2 border-dashed border-gray-300 rounded-lg p-10 text-center text-gray-500 relative cursor-pointer;
+}
+
+.upload-box input{
+  @apply absolute inset-0 opacity-0 cursor-pointer;
+}
+
