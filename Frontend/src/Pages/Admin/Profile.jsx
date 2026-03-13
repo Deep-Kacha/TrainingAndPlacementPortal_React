@@ -5,7 +5,7 @@ import ProfileInfoForm from "../../Components/Admin/Profile/ProfileInfoForm";
 import AddPortalUser from "../../Components/Admin/Profile/AddPortalUser";
 import PasswordActions from "../../Components/Admin/Profile/PasswordActions";
 
-const Profile = () => {
+const AdminProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
     name: "Vishal Doshi",
@@ -123,4 +123,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default AdminProfile;

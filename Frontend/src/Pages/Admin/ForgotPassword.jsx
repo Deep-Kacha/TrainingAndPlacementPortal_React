@@ -3,7 +3,7 @@ import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/Admin/SideBar";
 
-const ForgotPassword = () => {
+const AdminForgotPassword = () => {
 
   const navigate = useNavigate();
 
@@ -225,4 +225,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default AdminForgotPassword;

@@ -16,7 +16,7 @@ import {
   FaSearch
 } from "react-icons/fa";
 
-const Dashboard = () => {
+const AdminDashboard = () => {
 
   const navigate = useNavigate();
 
@@ -151,4 +151,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

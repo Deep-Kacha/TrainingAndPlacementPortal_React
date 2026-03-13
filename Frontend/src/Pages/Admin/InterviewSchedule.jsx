@@ -3,7 +3,7 @@ import Sidebar from "../../Components/Admin/SideBar";
 import InterviewCard from "../../Components/Admin/InterviewSchedule/InterviewCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 
-const InterviewSchedule = () => {
+const AdminInterviewSchedule = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("All");
@@ -154,4 +154,4 @@ const InterviewSchedule = () => {
   );
 };
 
-export default InterviewSchedule;
+export default AdminInterviewSchedule;

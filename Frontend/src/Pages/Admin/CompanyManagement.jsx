@@ -3,7 +3,7 @@ import Sidebar from "../../Components/Admin/SideBar";
 import CompanyCard from "../../Components/Admin/CompanyMangement/CompanyCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
 
-const CompanyManagement = () => {
+const AdminCompanyManagement = () => {
 
   const [companies, setCompanies] = useState([
     {
@@ -184,4 +184,4 @@ const CompanyManagement = () => {
   );
 };
 
-export default CompanyManagement;
+export default AdminCompanyManagement;

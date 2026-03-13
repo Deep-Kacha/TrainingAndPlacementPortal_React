@@ -3,7 +3,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../../Components/Admin/SideBar";
 
-const ChangePassword = () => {
+const AdminChangePassword = () => {
 
   const navigate = useNavigate();
 
@@ -248,4 +248,4 @@ const ChangePassword = () => {
   );
 };
 
-export default ChangePassword;
+export default AdminChangePassword;

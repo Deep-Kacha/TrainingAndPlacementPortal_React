@@ -1,7 +1,7 @@
 import Sidebar from "../../Components/Admin/SideBar";
 import PlacementRow from "../../Components/Admin/PlacementHistory/PlacementRow";
 
-const PlacementHistory = () => {
+const AdminPlacementHistory = () => {
 
   const placements = [
     {
@@ -200,4 +200,4 @@ const PlacementHistory = () => {
   );
 };
 
-export default PlacementHistory;
+export default AdminPlacementHistory;

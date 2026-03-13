@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import Sidebar from "../../Components/Admin/SideBar";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-const InterviewScheduleForm = () => {
+const AdminInterviewScheduleForm = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -184,4 +184,4 @@ const InterviewScheduleForm = () => {
   );
 };
 
-export default InterviewScheduleForm;
+export default AdminInterviewScheduleForm;

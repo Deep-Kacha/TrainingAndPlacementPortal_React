@@ -14,7 +14,7 @@ import {
   FaUpload
 } from "react-icons/fa";
 
-const JdDetail = () => {
+const AdminJdDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isEditing, setIsEditing] = useState(false);
@@ -408,4 +408,4 @@ const JdDetail = () => {
   );
 };
 
-export default JdDetail;
+export default AdminJdDetail;

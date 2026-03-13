@@ -2,7 +2,7 @@ import { useState } from "react";
 import Sidebar from "../../Components/Admin/SideBar";
 import StudentRow from "../../Components/Admin/StudentMangement/StudentRow";
 
-const StudentsManagement = () => {
+const AdminStudentsManagement = () => {
 
   const [students, setStudents] = useState([
     {
@@ -239,4 +239,4 @@ const StudentsManagement = () => {
   );
 };
 
-export default StudentsManagement;
+export default AdminStudentsManagement;
