@@ -110,6 +110,11 @@ const StudentRegister = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleClear = () => {
+    setFormData(INITIAL_STATE);
+    setErrors({});
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validateForm()) {
@@ -152,15 +157,23 @@ const StudentRegister = () => {
           />
 
           {/* Submit */}
-          <div className="text-center pb-6">
-            <button>Cancle</button>
-            <button
-              type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow"
-            >
-              Submit Form
-            </button>
-            <p className="text-xs text-gray-400 mt-3 max-w-md mx-auto">
+          <div className="flex flex-col items-center gap-3 pb-6">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleClear}
+                className="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto"
+              >
+                Clear Form
+              </button>
+              <button
+                type="submit"
+                className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto"
+              >
+                Submit Form
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto px-4 sm:px-0">
               After registration, admin will verify your payment and eligibility criteria.
               After verification you can access the portal.
             </p>
