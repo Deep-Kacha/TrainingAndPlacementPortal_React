@@ -153,6 +153,7 @@ const StudentRegister = () => {
 
           {/* Submit */}
           <div className="text-center pb-6">
+            <button>Cancle</button>
             <button
               type="submit"
               className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow"

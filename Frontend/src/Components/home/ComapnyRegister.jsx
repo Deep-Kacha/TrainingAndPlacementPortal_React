@@ -1,6 +1,4 @@
-// pages/CompanyRegister.jsx  (or wherever you place your page components)
-// Refactored: state + validation live here; UI is fully delegated to section components.
-// Visual output is identical to the original.
+
 
 import React, { useState } from "react";
 import ContactInfoSection from "./company/Contactinfosection";
@@ -68,7 +66,7 @@ const CompanyRegister = () => {
     }
   };
 
-  const handleCancel = () => {
+  const handleClear = () => {
     setFormData(INITIAL_STATE);
     setErrors({});
   };
@@ -115,14 +113,14 @@ const CompanyRegister = () => {
         <div className="flex justify-end gap-3 pb-6">
           <button
             type="button"
-            onClick={handleCancel}
-            className="px-7 py-2 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50"
+            onClick={handleClear}
+            className="w-48 py-2 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 transition"
           >
-            CANCEL
+            Clear Form
           </button>
           <button
             type="submit"
-            className="px-7 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium"
+            className="w-48 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium shadow-sm transition"
           >
             Submit Registration
           </button>
