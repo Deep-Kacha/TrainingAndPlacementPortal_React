@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 20s linear infinite;
+}
+
+/* Student Side Styles */
+
+@theme {
+  --color-sidebar-bg: #ece6da;
+  --color-main-bg: #ffffff;
+  --color-primary-red: #e7000b;
+  --color-text-dark: #333333;
+  --color-text-gray: #666666;
+  --color-card-bg: #ece6da;
+  --color-card-border: #e0d8cc;
+  --color-accent-blue: #3498db;
+  --color-accent-green: #27ae60;
+  --color-accent-orange: #e67e22;
+  --color-accent-purple: #9b59b6;
+  --color-warm-beige: #ece6da;
+}
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    background-color: #ffffff;
+    color: #333333;
+  }
+}
+
+@layer components {
+
+  /* Page Layout */
+  .page-container {
+    @apply p-6 bg-white min-h-[calc(100vh-80px)] w-full;
+  }
+
+  .page-header {
+    @apply mb-8;
+  }
+
+  .page-title {
+    @apply text-primary-red text-3xl font-bold mb-2 m-0;
+  }
+
+  .page-subtitle {
+    @apply text-text-gray text-base m-0;
+  }
+
+  /* Cards */
+  .card-basic {
+    @apply bg-warm-beige rounded-xl p-6 shadow-sm;
+  }
+
+  .card-dashboard {
+    @apply bg-card-bg border-[1.5px] border-primary-red rounded-[12px] p-[20px] flex flex-col;
+  }
+
+  .card-action {
+    @apply bg-card-bg border border-primary-red rounded-[12px] p-[25px] text-center transition-transform duration-200 hover:-translate-y-1 cursor-pointer flex flex-col items-center;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply py-3 px-4 rounded-md text-sm font-bold uppercase transition-all duration-200 bg-primary-red text-white hover:bg-red-700 flex items-center justify-center;
+  }
+
+  .btn-outline {
+    @apply py-3 px-4 rounded-md text-sm font-bold uppercase transition-all duration-200 border border-gray-800 text-gray-900 bg-transparent hover:bg-gray-100 flex items-center justify-center;
+  }
+
+  .btn-disabled {
+    @apply py-3 px-4 rounded-md text-sm font-bold uppercase bg-gray-400 text-white cursor-default flex items-center justify-center;
+  }
+
+}
