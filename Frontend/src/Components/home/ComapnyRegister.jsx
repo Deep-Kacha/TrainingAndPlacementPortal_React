@@ -72,61 +72,71 @@ const CompanyRegister = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8 px-4">
+    <section className="bg-gray-100 min-h-screen py-12">
+      <div className="max-w-4xl mx-auto px-6">
 
-      {/* Page Title */}
-      <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-sm border border-gray-200 py-5 text-center mb-6">
-        <h1 className="text-xl font-bold text-gray-800">Campus Placement Registration Form</h1>
-        <p className="text-xs text-gray-400 mt-1">RK University, Rajkot – Training & Placement Cell</p>
-      </div>
-
-      <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-5">
-        <ContactInfoSection />
-
-        <CompanyDetailsSection
-          formData={formData} errors={errors} handleChange={handleChange}
-        />
-
-        <JobRoleSection
-          formData={formData} errors={errors} handleChange={handleChange}
-        />
-
-        <EligibilitySection
-          formData={formData} handleCheckbox={handleCheckbox}
-        />
-
-        <SelectionProcessSection
-          formData={formData} errors={errors} handleChange={handleChange}
-        />
-
-        <ContactPersonSection
-          formData={formData} errors={errors} handleChange={handleChange}
-        />
-
-        <UploadDocumentsSection />
-
-        <AdditionalDetailsSection
-          formData={formData} handleChange={handleChange}
-        />
-
-        {/* Buttons */}
-        <div className="flex justify-end gap-3 pb-6">
-          <button
-            type="button"
-            onClick={handleClear}
-            className="w-48 py-2 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50 transition"
-          >
-            Clear Form
-          </button>
-          <button
-            type="submit"
-            className="w-48 py-2 bg-red-600 hover:bg-red-700 text-white rounded text-sm font-medium shadow-sm transition"
-          >
-            Submit Registration
-          </button>
+        {/* Page Title */}
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-800">Campus Placement Registration</h2>
+          <p className="text-gray-500 text-sm mt-2">
+            RK University, Rajkot – Training & Placement Cell
+          </p>
         </div>
-      </form>
-    </div>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <ContactInfoSection />
+
+          <CompanyDetailsSection
+            formData={formData} errors={errors} handleChange={handleChange}
+          />
+
+          <JobRoleSection
+            formData={formData} errors={errors} handleChange={handleChange}
+          />
+
+          <EligibilitySection
+            formData={formData} handleCheckbox={handleCheckbox}
+          />
+
+          <SelectionProcessSection
+            formData={formData} errors={errors} handleChange={handleChange}
+          />
+
+          <ContactPersonSection
+            formData={formData} errors={errors} handleChange={handleChange}
+          />
+
+          <UploadDocumentsSection />
+
+          <AdditionalDetailsSection
+            formData={formData} handleChange={handleChange}
+          />
+
+          {/* Buttons */}
+          <div className="flex flex-col items-center gap-3 pb-6">
+            <div className="flex flex-col sm:flex-row justify-center gap-3 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleClear}
+                className="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto"
+              >
+                Clear Form
+              </button>
+              <button
+                type="submit"
+                className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto"
+              >
+                Submit Form
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto px-4 sm:px-0">
+              After registration, admin will verify your details and eligibility.
+              After verification you will receive further instructions.
+            </p>
+          </div>
+        </form>
+      </div>
+    </section>
   );
 };
 
