@@ -8,7 +8,7 @@ import ResetPassword from "./Components/Authentication/Resetpassword";
 import Home from "./pages/guest/Home";
 import SubmitJd from "./pages/guest/SubmitJd";
 import Register from "./pages/guest/Register";
-import AuthHeader from "./Components/common/AuthHeader";
+import AuthHeader from "./components/common/AuthHeader";
 
 // Layouts
 import StudentLayout from "./Components/Student/StudentLayout";

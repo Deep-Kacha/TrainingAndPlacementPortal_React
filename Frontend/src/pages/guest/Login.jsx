@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Footer from "../../components/common/Footer";
-import AuthHeader from "../../Components/common/AuthHeader";
+import AuthHeader from "../../components/common/AuthHeader";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -162,7 +162,9 @@ const Login = () => {
           <div className="text-center mt-6 text-sm">
             <p>
               Don't have an account?{" "}
-              <span className="font-semibold cursor-pointer hover:underline">
+              <span className="font-semibold cursor-pointer hover:underline"
+              onClick={() => navigate("/register")}
+              >
                 Register ?
               </span>
             </p>

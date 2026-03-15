@@ -1,18 +1,11 @@
 // components/student/ConsentPaymentSection.jsx
 // Section 5 of StudentRegistration — consent form (PDF) and payment proof (image) uploads.
 
+import SectionCard from "../register/SectionCard";
 import FileUpload from "../register/Fileupload";
 
 const ConsentPaymentSection = ({ formData, errors, handleChange }) => (
-  <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-    <div className="flex items-center gap-3 px-6 py-4 border-b border-gray-100">
-      <div className="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center">
-        <span className="text-white text-xs font-bold">5</span>
-      </div>
-      <h3 className="font-semibold text-gray-800">Consent & Payment</h3>
-    </div>
-
-    <div className="px-6 py-5 space-y-6">
+  <SectionCard number="5" title="Consent & Payment" contentClassName="p-6 md:p-8 space-y-6">
       <FileUpload
         name="consentForm"
         accept=".pdf"
@@ -31,8 +24,7 @@ const ConsentPaymentSection = ({ formData, errors, handleChange }) => (
         onChange={handleChange}
         error={errors.paymentProof}
       />
-    </div>
-  </div>
+  </SectionCard>
 );
 
 export default ConsentPaymentSection;
