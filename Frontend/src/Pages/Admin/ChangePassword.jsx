@@ -54,6 +54,20 @@ const AdminChangePassword = () => {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      newErrors[key] = validateField(key, formData[key], formData);
+    });
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some(err => err !== "");
+    if (!hasErrors) {
+      console.log("Password updated successfully", formData);
+    }
+  };
+
   const checkRequirement = (type) => {
     const val = formData.new;
     switch (type) {
@@ -81,7 +95,7 @@ const AdminChangePassword = () => {
         {/* Form Container */}
         <div className="flex justify-center">
 
-          <div className="bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md w-full max-w-md">
+          <form onSubmit={handleSubmit} className="bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md w-full max-w-md">
 
             {/* Current Password */}
             <div className="mb-5">
@@ -218,20 +232,21 @@ const AdminChangePassword = () => {
 
 
             {/* Update Button */}
-            <button className="w-full bg-red-600 text-white py-3 rounded-lg mb-3 hover:bg-red-700">
+            <button type="submit" className="w-full bg-red-600 text-white py-3 rounded-lg mb-3 hover:bg-red-700">
               Update Password
             </button>
 
 
             {/* Cancel */}
             <button 
+              type="button"
               className="w-full border py-3 rounded-lg hover:bg-gray-50"
               onClick={() => navigate(-1)}
             >
               Cancel
             </button>
 
-          </div>
+          </form>
 
       </div>
 

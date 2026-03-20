@@ -49,6 +49,20 @@ const AdminForgotPassword = () => {
     }
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let newErrors = {};
+    Object.keys(formData).forEach((key) => {
+      newErrors[key] = validateField(key, formData[key], formData);
+    });
+    setErrors(newErrors);
+
+    const hasErrors = Object.values(newErrors).some(err => err !== "");
+    if (!hasErrors) {
+      console.log("Password reset successfully", formData);
+    }
+  };
+
   const checkRequirement = (type) => {
     const val = formData.newPassword;
     switch (type) {
@@ -74,7 +88,7 @@ const AdminForgotPassword = () => {
         {/* Form */}
         <div className="flex justify-center">
 
-          <div className="bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md w-full max-w-md">
+          <form onSubmit={handleSubmit} className="bg-[#d8cfc3] p-6 md:p-8 rounded-xl shadow-md w-full max-w-md">
 
             {/* Email */}
             <div className="mb-5">
@@ -194,20 +208,21 @@ const AdminForgotPassword = () => {
 
 
             {/* Confirm Button */}
-            <button className="w-full bg-red-600 text-white py-3 rounded-lg mb-3 hover:bg-red-700">
+            <button type="submit" className="w-full bg-red-600 text-white py-3 rounded-lg mb-3 hover:bg-red-700">
               Confirm Password
             </button>
 
 
             {/* Cancel Button */}
             <button
+              type="button"
               onClick={() => navigate(-1)}
               className="w-full border py-3 rounded-lg hover:bg-gray-50"
             >
               Cancel
             </button>
 
-          </div>
+          </form>
 
         </div>
 
