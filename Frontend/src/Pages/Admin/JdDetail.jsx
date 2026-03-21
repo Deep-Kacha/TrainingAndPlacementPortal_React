@@ -50,14 +50,56 @@ const AdminJdDetail = () => {
     }
   }, [location.state]);
 
+  const [errors, setErrors] = useState({});
+
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: "" }));
+    }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       handleChange("fileName", file.name);
+    }
+  };
+
+  const validate = () => {
+    let newErrors = {};
+    let isValid = true;
+
+    const reqFields = ["companyName", "jobLocation", "description", "position", "ctc", "internshipDuration", "stipend", "bond", "joiningDate", "selectionProcess", "driveDate", "contactName"];
+    reqFields.forEach(field => {
+      if (!formData[field] || !formData[field].trim()) {
+        newErrors[field] = "This field is required.";
+        isValid = false;
+      }
+    });
+
+    if (!formData.email?.trim()) { newErrors.email = "Email is required."; isValid = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) { newErrors.email = "Invalid email format."; isValid = false; }
+
+    if (!formData.contactEmail?.trim()) { newErrors.contactEmail = "Contact Email is required."; isValid = false; }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.contactEmail)) { newErrors.contactEmail = "Invalid email format."; isValid = false; }
+
+    if (!formData.website?.trim()) { newErrors.website = "Website is required."; isValid = false; }
+    else if (!/^https?:\/\/.*/.test(formData.website)) { newErrors.website = "Invalid URL. Must start with http:// or https://"; isValid = false; }
+
+    if (!formData.contactMobile?.trim()) { newErrors.contactMobile = "Contact Mobile is required."; isValid = false; }
+    else if (!/^\+?[0-9\s-]{10,}$/.test(formData.contactMobile)) { newErrors.contactMobile = "Invalid mobile number."; isValid = false; }
+
+    if (!formData.eligibleBatches || formData.eligibleBatches.length === 0) { newErrors.eligibleBatches = "Select at least one batch."; isValid = false; }
+    if (!formData.eligibleCourses || formData.eligibleCourses.length === 0) { newErrors.eligibleCourses = "Select at least one course."; isValid = false; }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  const handleSave = () => {
+    if (validate()) {
+      setIsEditing(false);
     }
   };
 
@@ -147,30 +189,42 @@ const AdminJdDetail = () => {
         >
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField 
-              label="Email Address *" 
-              value={formData.email} 
-              onChange={(e) => handleChange("email", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Company Name *" 
-              value={formData.companyName} 
-              onChange={(e) => handleChange("companyName", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Job Location *" 
-              value={formData.jobLocation} 
-              onChange={(e) => handleChange("jobLocation", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Company Website URL *" 
-              value={formData.website} 
-              onChange={(e) => handleChange("website", e.target.value)} 
-              readOnly={!isEditing} 
-            />
+            <div className="w-full">
+              <InputField 
+                label="Email Address *" 
+                value={formData.email} 
+                onChange={(e) => handleChange("email", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Company Name *" 
+                value={formData.companyName} 
+                onChange={(e) => handleChange("companyName", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.companyName && <p className="text-red-500 text-xs mt-1">{errors.companyName}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Job Location *" 
+                value={formData.jobLocation} 
+                onChange={(e) => handleChange("jobLocation", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.jobLocation && <p className="text-red-500 text-xs mt-1">{errors.jobLocation}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Company Website URL *" 
+                value={formData.website} 
+                onChange={(e) => handleChange("website", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.website && <p className="text-red-500 text-xs mt-1">{errors.website}</p>}
+            </div>
 
             <div className="md:col-span-2">
               <textarea
@@ -179,8 +233,9 @@ const AdminJdDetail = () => {
                 value={formData.description}
                 onChange={(e) => handleChange("description", e.target.value)}
                 readOnly={!isEditing}
-                className={`w-full border rounded-lg p-3 outline-none ${!isEditing ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-red-400"}`}
+                className={`w-full border rounded-lg p-3 outline-none ${!isEditing ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-red-400"} ${errors.description ? "border-red-500" : ""}`}
               />
+              {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
             </div>
           </div>
 
@@ -194,43 +249,61 @@ const AdminJdDetail = () => {
         >
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField 
-              label="Job Position" 
-              value={formData.position} 
-              onChange={(e) => handleChange("position", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Annual CTC" 
-              value={formData.ctc} 
-              onChange={(e) => handleChange("ctc", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Internship Duration" 
-              value={formData.internshipDuration} 
-              onChange={(e) => handleChange("internshipDuration", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Stipend During Internship" 
-              value={formData.stipend} 
-              onChange={(e) => handleChange("stipend", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Bond" 
-              value={formData.bond} 
-              onChange={(e) => handleChange("bond", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Date of Joining" 
-              type="date" 
-              value={formData.joiningDate} 
-              onChange={(e) => handleChange("joiningDate", e.target.value)} 
-              readOnly={!isEditing} 
-            />
+            <div className="w-full">
+              <InputField 
+                label="Job Position *" 
+                value={formData.position} 
+                onChange={(e) => handleChange("position", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.position && <p className="text-red-500 text-xs mt-1">{errors.position}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Annual CTC *" 
+                value={formData.ctc} 
+                onChange={(e) => handleChange("ctc", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.ctc && <p className="text-red-500 text-xs mt-1">{errors.ctc}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Internship Duration *" 
+                value={formData.internshipDuration} 
+                onChange={(e) => handleChange("internshipDuration", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.internshipDuration && <p className="text-red-500 text-xs mt-1">{errors.internshipDuration}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Stipend During Internship *" 
+                value={formData.stipend} 
+                onChange={(e) => handleChange("stipend", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.stipend && <p className="text-red-500 text-xs mt-1">{errors.stipend}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Bond *" 
+                value={formData.bond} 
+                onChange={(e) => handleChange("bond", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.bond && <p className="text-red-500 text-xs mt-1">{errors.bond}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Date of Joining *" 
+                type="date" 
+                value={formData.joiningDate} 
+                onChange={(e) => handleChange("joiningDate", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.joiningDate && <p className="text-red-500 text-xs mt-1">{errors.joiningDate}</p>}
+            </div>
           </div>
 
         </SectionCard>
@@ -243,21 +316,27 @@ const AdminJdDetail = () => {
         >
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <CheckboxGroup
-              title="Eligible Batch"
-              options={["2025", "2024", "2023"]}
-              selectedOptions={formData.eligibleBatches}
-              onChange={(val) => handleChange("eligibleBatches", val)}
-              disabled={!isEditing}
-            />
+            <div className="w-full">
+              <CheckboxGroup
+                title="Eligible Batch *"
+                options={["2025", "2024", "2023"]}
+                selectedOptions={formData.eligibleBatches}
+                onChange={(val) => handleChange("eligibleBatches", val)}
+                disabled={!isEditing}
+              />
+              {errors.eligibleBatches && <p className="text-red-500 text-xs mt-1">{errors.eligibleBatches}</p>}
+            </div>
 
-            <CheckboxGroup
-              title="Eligible Courses"
-              options={["B.Tech CS", "B.Tech IT", "Mechanical", "Civil", "Electrical", "BCA", "MCA", "MBA"]}
-              selectedOptions={formData.eligibleCourses}
-              onChange={(val) => handleChange("eligibleCourses", val)}
-              disabled={!isEditing}
-            />
+            <div className="w-full">
+              <CheckboxGroup
+                title="Eligible Courses *"
+                options={["B.Tech CS", "B.Tech IT", "Mechanical", "Civil", "Electrical", "BCA", "MCA", "MBA"]}
+                selectedOptions={formData.eligibleCourses}
+                onChange={(val) => handleChange("eligibleCourses", val)}
+                disabled={!isEditing}
+              />
+              {errors.eligibleCourses && <p className="text-red-500 text-xs mt-1">{errors.eligibleCourses}</p>}
+            </div>
           </div>
 
         </SectionCard>
@@ -273,28 +352,34 @@ const AdminJdDetail = () => {
             <div className="md:col-span-2">
               <textarea
                 rows="3"
-                className={`w-full border rounded-lg p-3 outline-none ${!isEditing ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-red-400"}`}
+                className={`w-full border rounded-lg p-3 outline-none ${!isEditing ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-red-400"} ${errors.selectionProcess ? "border-red-500" : ""}`}
                 placeholder="Selection Process"
                 value={formData.selectionProcess}
                 onChange={(e) => handleChange("selectionProcess", e.target.value)}
                 readOnly={!isEditing}
               />
+              {errors.selectionProcess && <p className="text-red-500 text-xs mt-1">{errors.selectionProcess}</p>}
             </div>
 
-            <InputField 
-              label="Expected Date of Campus Drive" 
-              type="date" 
-              value={formData.driveDate} 
-              onChange={(e) => handleChange("driveDate", e.target.value)} 
-              readOnly={!isEditing} 
-            />
+            <div className="w-full">
+              <InputField 
+                label="Expected Date of Campus Drive *" 
+                type="date" 
+                value={formData.driveDate} 
+                onChange={(e) => handleChange("driveDate", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.driveDate && <p className="text-red-500 text-xs mt-1">{errors.driveDate}</p>}
+            </div>
 
-            <InputField 
-              label="Registration Link (Optional)" 
-              value={formData.regLink} 
-              onChange={(e) => handleChange("regLink", e.target.value)} 
-              readOnly={!isEditing} 
-            />
+            <div className="w-full">
+              <InputField 
+                label="Registration Link (Optional)" 
+                value={formData.regLink} 
+                onChange={(e) => handleChange("regLink", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+            </div>
           </div>
 
         </SectionCard>
@@ -307,24 +392,33 @@ const AdminJdDetail = () => {
         >
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <InputField 
-              label="Contact Person Name" 
-              value={formData.contactName} 
-              onChange={(e) => handleChange("contactName", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Contact Person Email ID" 
-              value={formData.contactEmail} 
-              onChange={(e) => handleChange("contactEmail", e.target.value)} 
-              readOnly={!isEditing} 
-            />
-            <InputField 
-              label="Contact Person Mobile No" 
-              value={formData.contactMobile} 
-              onChange={(e) => handleChange("contactMobile", e.target.value)} 
-              readOnly={!isEditing} 
-            />
+            <div className="w-full">
+              <InputField 
+                label="Contact Person Name *" 
+                value={formData.contactName} 
+                onChange={(e) => handleChange("contactName", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.contactName && <p className="text-red-500 text-xs mt-1">{errors.contactName}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Contact Person Email ID *" 
+                value={formData.contactEmail} 
+                onChange={(e) => handleChange("contactEmail", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.contactEmail && <p className="text-red-500 text-xs mt-1">{errors.contactEmail}</p>}
+            </div>
+            <div className="w-full">
+              <InputField 
+                label="Contact Person Mobile No *" 
+                value={formData.contactMobile} 
+                onChange={(e) => handleChange("contactMobile", e.target.value)} 
+                readOnly={!isEditing} 
+              />
+              {errors.contactMobile && <p className="text-red-500 text-xs mt-1">{errors.contactMobile}</p>}
+            </div>
           </div>
 
         </SectionCard>
@@ -388,7 +482,7 @@ const AdminJdDetail = () => {
               CANCEL
             </button>
             <button 
-              onClick={() => setIsEditing(false)}
+            onClick={handleSave}
               className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 w-full md:w-auto"
             >
               Save Changes

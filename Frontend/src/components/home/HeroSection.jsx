@@ -21,7 +21,7 @@ const HeroSection = () => {
           Welcome to Training <br /> & Placement Cell
         </h1>
 
-        <p className="mt-3 text-gray-600 font-medium">
+        <p className="mt-3 text-Gray-600 font-semibold text-lg tracking-wide uppercase">
           RK University
         </p>
 
