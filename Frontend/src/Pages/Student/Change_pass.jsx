@@ -96,7 +96,7 @@ const StudChangePass = () => {
 
             {/* Form Container */}
             <div className="flex justify-center">
-                <div className="bg-[#ece6da] border-[1.5px] border-[#e7000b] p-6 md:p-8 rounded-[12px] shadow-sm w-full max-w-lg">
+                <form onSubmit={handleSubmit} className="bg-[#ece6da] border-[1.5px] border-[#e7000b] p-6 md:p-8 rounded-[12px] shadow-sm w-full max-w-lg">
                     {/* Current Password */}
                     <div className="mb-5">
                         <label className="block text-sm font-semibold text-[#333] mb-2">
@@ -205,7 +205,7 @@ const StudChangePass = () => {
 
                     {/* Update Button */}
                     <button
-                        onClick={handleSubmit}
+                        type="submit"
                         className="w-full bg-[#e7000b] text-white py-3 rounded-lg mb-3 font-bold uppercase transition-all hover:bg-red-700 border-none cursor-pointer"
                     >
                         Update Password
@@ -213,12 +213,13 @@ const StudChangePass = () => {
 
                     {/* Cancel */}
                     <button
+                        type="button"
                         className="w-full bg-transparent border border-gray-400 text-[#333] py-3 rounded-lg font-bold uppercase transition-all hover:bg-gray-100 cursor-pointer"
                         onClick={() => navigate(-1)}
                     >
                         Cancel
                     </button>
-                </div>
+                </form>
             </div>
         </div>
     );

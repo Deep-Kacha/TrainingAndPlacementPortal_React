@@ -69,7 +69,10 @@ const Login = () => {
         </div>
 
         {/* Login Card */}
-        <div className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md">
+        <form 
+          onSubmit={(e) => { e.preventDefault(); handleLogin(); }} 
+          className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md"
+        >
 
           <h2 className="text-xl font-bold text-center mb-2">
             Welcome Back
@@ -147,12 +150,13 @@ const Login = () => {
 
           {/* Login Button */}
           <button
-            onClick={handleLogin}
+            type="submit"
             className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3"
           >
             Login
           </button>
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="w-full border border-black py-2 rounded-md hover:bg-gray-100 transition"
           >
@@ -170,7 +174,7 @@ const Login = () => {
             </p>
           </div>
 
-        </div>
+        </form>
       </div>
 
       <Footer/>

@@ -91,7 +91,7 @@ const ForgotPassword = () => {
           </h1>
         </div>
 
-        <div className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md">
+        <form onSubmit={handleSubmit} className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md">
 
           <h2 className="text-xl font-bold text-center mb-2">
             Forgot Password
@@ -207,20 +207,21 @@ const ForgotPassword = () => {
           {/* BUTTONS */}
 
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3"
           >
             Confirm Password
           </button>
 
           <button
+            type="button"
             onClick={() => navigate(-1)}
             className="w-full border border-black py-2 rounded-md hover:bg-gray-100 transition"
           >
             Cancel
           </button>
 
-        </div>
+        </form>
 
       </div>
 
