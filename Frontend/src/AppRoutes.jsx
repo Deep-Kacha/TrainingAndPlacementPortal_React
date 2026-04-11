@@ -38,7 +38,6 @@ import AdminInterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
 import AdminStudentsManagement from "./Pages/Admin/StudentsManagement";
 import AdminPlacementHistory from "./Pages/Admin/PlacementHistory";
 
-
 function AppRoutes() {
   return (
     <Routes>
@@ -78,7 +77,6 @@ function AppRoutes() {
         <Route path="/AdminStudentsManagement" element={<AdminStudentsManagement />} />
         <Route path="/AdminPlacementHistory" element={<AdminPlacementHistory />} />
       </Route>
-      <Route path="/AdminForgotPassword" element={<AdminForgotPassword />} />
 
     </Routes>
   );
