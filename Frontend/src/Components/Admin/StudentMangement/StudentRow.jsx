@@ -1,6 +1,6 @@
 import { FaTrash } from "react-icons/fa";
 
-const StudentRow = ({ student, onDelete }) => {
+const StudentRow = ({ student, onDelete, onApprove }) => {
 
   return (
     <tr className="bg-[#d8cfc3] border-t">
@@ -20,7 +20,8 @@ const StudentRow = ({ student, onDelete }) => {
       <td className="p-4 text-center">
         <input
           type="checkbox"
-          defaultChecked={student.approved}
+          checked={student.approved}
+          onChange={(e) => onApprove(student.id, e.target.checked)}
           className="accent-purple-600"
         />
       </td>

@@ -1,170 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import StudentRow from "../../Components/Admin/StudentMangement/StudentRow";
 
 const AdminStudentsManagement = () => {
 
-  const [students, setStudents] = useState([
-    {
-      id:1,
-      name:"Aarav Patel",
-      enrollment:"21SOECE11001",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.9",
-      email:"aarav.patel@rku.ac.in",
-      approved:true
-    },
-    {
-      id:2,
-      name:"Vivaan Shah",
-      enrollment:"21SOEIT11023",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.8",
-      email:"vivaan.shah@rku.ac.in",
-      approved:true
-    },
-    {
-      id:3,
-      name:"Diya Mehta",
-      enrollment:"21SOECE11045",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"9.2",
-      email:"diya.mehta@rku.ac.in",
-      approved:true
-    },
-    {
-      id:4,
-      name:"Ishaan Gupta",
-      enrollment:"21SOEIT11056",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"8.1",
-      email:"ishaan.gupta@rku.ac.in",
-      approved:true
-    },
-    {
-      id:5,
-      name:"Riya Singh",
-      enrollment:"21SOECE11089",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.5",
-      email:"riya.singh@rku.ac.in",
-      approved:true
-    },
-    {
-      id:6,
-      name:"Ananya Roy",
-      enrollment:"21SOEIT11012",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.6",
-      email:"ananya.roy@rku.ac.in",
-      approved:true
-    },
-    {
-      id:7,
-      name:"Vihaan Kumar",
-      enrollment:"21SOECE11034",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.7",
-      email:"vihaan.kumar@rku.ac.in",
-      approved:true
-    },
-    {
-      id:8,
-      name:"Aditya Joshi",
-      enrollment:"21SOEIT11067",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"9.0",
-      email:"aditya.joshi@rku.ac.in",
-      approved:true
-    },
-    {
-      id:9,
-      name:"Aisha Sharma",
-      enrollment:"21SOECE11099",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.2",
-      email:"aisha.sharma@rku.ac.in",
-      approved:true
-    },
-    {
-      id:10,
-      name:"Rohan Verma",
-      enrollment:"21SOEIT11078",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.9",
-      email:"rohan.verma@rku.ac.in",
-      approved:true
-    },
-    {
-      id:11,
-      name:"Priya Reddy",
-      enrollment:"21SOECE11015",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"9.5",
-      email:"priya.reddy@rku.ac.in",
-      approved:true
-    },
-    {
-      id:12,
-      name:"Arjun Nair",
-      enrollment:"21SOEIT11042",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"8.8",
-      email:"arjun.nair@rku.ac.in",
-      approved:true
-    },
-    {
-      id:13,
-      name:"Saanvi Singh",
-      enrollment:"21SOECE11063",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.0",
-      email:"saanvi.singh@rku.ac.in",
-      approved:true
-    },
-    {
-      id:14,
-      name:"Kabir Das",
-      enrollment:"21SOEIT11081",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.5",
-      email:"kabir.das@rku.ac.in",
-      approved:true
-    },
-    {
-      id:15,
-      name:"Myra Desai",
-      enrollment:"21SOECE11029",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"9.1",
-      email:"myra.desai@rku.ac.in",
-      approved:true
-    },
-    {
-      id:16,
-      name:"Advik Rao",
-      enrollment:"21SOEIT11095",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"8.4",
-      email:"advik.rao@rku.ac.in",
-      approved:true
+  const [students, setStudents] = useState([]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  const fetchStudents = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const res = await fetch('/api/admin/students', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if(res.ok) {
+        const data = await res.json();
+        setStudents(data);
+      }
+    } catch (err) {
+      console.error(err);
     }
-  ]);
+  };
+
+  const toggleApprove = async (id, approved) => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch(`/api/admin/students/${id}/approve`, {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ approved })
+      });
+      if(res.ok) {
+        setStudents(students.map(s => s.id === id ? { ...s, approved } : s));
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const deleteStudent = (id) => {
     setStudents(students.filter((s) => s.id !== id));
@@ -217,6 +95,7 @@ const AdminStudentsManagement = () => {
                   key={student.id}
                   student={student}
                   onDelete={deleteStudent}
+                  onApprove={toggleApprove}
                 />
               ))}
 

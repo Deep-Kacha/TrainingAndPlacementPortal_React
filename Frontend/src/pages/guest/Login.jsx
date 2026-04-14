@@ -25,7 +25,7 @@ const Login = () => {
         return errorMessage;
     };
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         const roleErr = validate("role", role);
         const emailErr = validate("email", email);
         const passErr = validate("password", password);
@@ -36,20 +36,25 @@ const Login = () => {
         }
 
         setError(""); // Clear previous errors
-        if (role === "Student") {
-            if (email === "student@rku.ac.in" && password === "Student@123") {
-                navigate("/StudDashboard");
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, role })
+            });
+            const data = await response.json();
+            
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+                
+                if (data.user.role === 'student') navigate("/StudDashboard");
+                else if (data.user.role === 'admin') navigate("/AdminDashboard");
             } else {
-                setError("Invalid Student email or password");
+                setError(data.error || "Login failed.");
             }
-        } else if (role === "Admin") {
-            if (email === "admin@rku.ac.in" && password === "Admin@123") {
-                navigate("/AdminDashboard");
-            } else {
-                setError("Invalid Admin email or password");
-            }
-        } else {
-            setError("Please select a valid role");
+        } catch (err) {
+            setError("Network error. Please try again later.");
         }
     };
 

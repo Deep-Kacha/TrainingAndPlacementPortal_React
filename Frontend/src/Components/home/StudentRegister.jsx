@@ -3,6 +3,7 @@
 // Visual output is identical to the original.
 
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PersonalInfoSection from "./student/Personalinfosection";
 import AcademicDetailsSection from "./student/Academicdetailssection";
 import ParentInfoSection from "./student/Parentinfosection";
@@ -19,6 +20,7 @@ const INITIAL_STATE = {
 };
 
 const StudentRegister = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [errors, setErrors]     = useState({});
 
@@ -115,11 +117,37 @@ const StudentRegister = () => {
     setErrors({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form Submitted:", formData);
-      // TODO: Replace with your API call — e.g. axios.post("/api/student/register", formData)
+      try {
+        const payload = {
+            name: formData.name,
+            universityEmail: formData.universityEmail,
+            password: formData.password,
+            enrollment: formData.enrollment,
+            branch: formData.branch,
+            semester: formData.semester,
+            cgpa: formData.cgpa,
+            mobile: formData.mobile
+        };
+        const response = await fetch("/api/auth/register", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert(data.message); // Will say "Pending admin approval"
+            handleClear();
+            navigate("/");
+        } else {
+            alert("Error: " + data.error);
+        }
+      } catch (err) {
+         alert("Network error occurred.");
+      }
     }
   };
 

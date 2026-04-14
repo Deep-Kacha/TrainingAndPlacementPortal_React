@@ -2,16 +2,18 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
-const { connectDB } = require('./db');
-
-// Connect to PostgreSQL
-connectDB();
+// Connect to PostgreSQL via config/db.js
+require('./config/db');
 
 const app = express();
 
 // Middleware
 app.use(cors()); // Allows frontend to make requests
 app.use(express.json()); // Parses incoming JSON payloads
+
+// Register API Routes
+app.use('/api/auth', require('./routes/guest/AuthRoutes'));
+app.use('/api/admin', require('./routes/Admin/StudentManagerRoutes'));
 
 // Basic Health Check Route
 app.get('/', (req, res) => {
