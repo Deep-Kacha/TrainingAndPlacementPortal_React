@@ -17,11 +17,20 @@ const Login = () => {
 
     const validate = (name, value) => {
         let errorMessage = "";
-        if (name === "role" && !value) errorMessage = "Please select a role.";
-        else if (name === "email") {
-            if (!value) errorMessage = "Email is required.";
-            else if (!/^[^\s@]+@rku\.ac\.in$/.test(value)) errorMessage = "Only @rku.ac.in emails are allowed.";
-        } else if (name === "password" && !value) errorMessage = "Password is required.";
+        if (name === "role" && !value) {
+            errorMessage = "Please select a role.";
+        } else if (name === "email") {
+            if (!value) {
+                errorMessage = "Email is required.";
+            } else if (role === "Student" && !/^[^\s@]+@rku\.ac\.in$/.test(value)) {
+                // Only students must use the @rku.ac.in domain
+                errorMessage = "Students must use their @rku.ac.in college email.";
+            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                errorMessage = "Please enter a valid email address.";
+            }
+        } else if (name === "password" && !value) {
+            errorMessage = "Password is required.";
+        }
         return errorMessage;
     };
 
@@ -47,9 +56,9 @@ const Login = () => {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                
                 if (data.user.role === 'student') navigate("/StudDashboard");
                 else if (data.user.role === 'admin') navigate("/AdminDashboard");
+                else if (data.user.role === 'company') navigate("/CompanyDashboard");
             } else {
                 setError(data.error || "Login failed.");
             }

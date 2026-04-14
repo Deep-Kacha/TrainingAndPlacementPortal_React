@@ -50,19 +50,21 @@ const Sidebar = () => {
                     <li key={index}>
                         <NavLink
                             to={item.path}
+                            end={item.path === "/"}
                             onClick={() => setIsOpen(false)}
                             className={({ isActive }) => {
-                                const isLinkActive = isActive || 
+                                const isLinkActive = isActive ||
                                 (item.path === "/StudJobs" && location.pathname === "/StudJobDetails") ||
                                 (item.path === "/StudChangePass" && location.pathname === "/StudForgotPassword");
-                                return `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition
-                                ${isLinkActive
-                                    ? "bg-[rgb(175,172,172)] text-white"
-                                    : "bg-white hover:bg-gray-200"}`;
+                                return `flex items-center gap-3 p-3 rounded-lg cursor-pointer transition font-medium text-sm ${
+                                    isLinkActive
+                                        ? "bg-gray-500 text-white shadow-md"
+                                        : "bg-white text-gray-800 hover:bg-gray-200"
+                                }`;
                             }}
                         >
-                            <span className="text-xl">{item.icon}</span>
-                            <span className="font-medium">{item.name}</span>
+                            <span className="text-base">{item.icon}</span>
+                            <span>{item.name}</span>
                         </NavLink>
                     </li>
                 ))}

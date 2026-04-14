@@ -1,141 +1,41 @@
+import { useState, useEffect } from "react";
 import PlacementRow from "../../Components/Admin/PlacementHistory/PlacementRow";
+import { FaSpinner } from "react-icons/fa";
 
 const AdminPlacementHistory = () => {
+  const [placements, setPlacements] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const placements = [
-    {
-      id:1,
-      company:"Multiicon",
-      role:"PHP Developer",
-      package:"₹3.6 LPA",
-      offerDate:"Jan 12, 2026",
-      joiningDate:"July 12, 2026",
-      selected: 5,
-      status:"completed",
-      statusLabel:"Completed"
-    },
-    {
-      id:2,
-      company:"Gateway Group",
-      role:"Software Engineer",
-      package:"₹4.5 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"scheduled",
-      statusLabel:"Interview Scheduled"
-    },
-    {
-      id:3,
-      company:"Infinity IT",
-      role:"React Native Developer",
-      package:"₹5 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"hold",
-      statusLabel:"On Hold"
-    },
-    {
-      id:4,
-      company:"TCS Ltd",
-      role:"Software Development Engineer",
-      package:"₹8 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 12,
-      status:"applied",
-      statusLabel:"Applied"
-    },
-    {
-      id:5,
-      company:"Simform",
-      role:"DotNet Developer",
-      package:"₹5.5 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"rejected",
-      statusLabel:"Rejected"
-    },
-    {
-      id:6,
-      company:"TatvaSoft",
-      role:"Java Developer",
-      package:"₹6.5 LPA",
-      offerDate:"Feb 20, 2026",
-      joiningDate:"Aug 01, 2026",
-      selected: 3,
-      status:"approved",
-      statusLabel:"Approved"
-    },
-    {
-      id:7,
-      company:"Radixweb",
-      role:"QA Engineer",
-      package:"₹4.8 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"progress",
-      statusLabel:"In Progress"
-    },
-    {
-      id:8,
-      company:"Wipro",
-      role:"System Analyst",
-      package:"₹6 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"applied",
-      statusLabel:"Applied"
-    },
-    {
-      id:9,
-      company:"Capgemini",
-      role:"Project Engineer",
-      package:"₹4 LPA",
-      offerDate:"Mar 15, 2026",
-      joiningDate:"Sep 01, 2026",
-      selected: 8,
-      status:"completed",
-      statusLabel:"Completed"
-    },
-    {
-      id:10,
-      company:"Tech Mahindra",
-      role:"Analyst",
-      package:"₹3.8 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"scheduled",
-      statusLabel:"Interview Scheduled"
-    },
-    {
-      id:11,
-      company:"HCL Tech",
-      role:"Graduate Engineer Trainee",
-      package:"₹4.25 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"hold",
-      statusLabel:"On Hold"
-    },
-    {
-      id:12,
-      company:"Accenture",
-      role:"Software Associate",
-      package:"₹4.5 LPA",
-      offerDate:"-",
-      joiningDate:"-",
-      selected: 0,
-      status:"rejected",
-      statusLabel:"Rejected"
+  useEffect(() => {
+    fetchPlacements();
+  }, []);
+
+  const fetchPlacements = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/placements", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setPlacements(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch placement history", error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+        <p className="text-gray-500 font-medium">Loading history...</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="w-full">

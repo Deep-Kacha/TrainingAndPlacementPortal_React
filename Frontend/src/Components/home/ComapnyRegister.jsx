@@ -58,11 +58,31 @@ const CompanyRegister = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log("Form Data:", formData);
-      // TODO: Send formData to your backend API here
+      setIsSubmitting(true);
+      try {
+        const response = await fetch("/api/guest/submit-jd", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          alert("Success: " + data.message);
+          handleClear();
+        } else {
+          alert("Error: " + (data.error || "Submission failed."));
+        }
+      } catch (err) {
+        alert("Network error: Could not submit JD. Please try again later.");
+        console.error(err);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 

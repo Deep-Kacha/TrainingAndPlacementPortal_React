@@ -37,6 +37,13 @@ import AdminInterviewSchedule from "./Pages/Admin/InterviewSchedule";
 import AdminInterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
 import AdminStudentsManagement from "./Pages/Admin/StudentsManagement";
 import AdminPlacementHistory from "./Pages/Admin/PlacementHistory";
+import AdminManageApplications from "./Pages/Admin/ManageApplications";
+
+//Company Side Routes
+import CompanyLayout from "./Components/Company/CompanyLayout";
+import CompanyDashboard from "./Pages/Company/Dashboard";
+import CompanyJobs from "./Pages/Company/Jobs";
+import CompanyApplicants from "./Pages/Company/Applicants";
 
 function AppRoutes() {
   return (
@@ -76,6 +83,14 @@ function AppRoutes() {
         <Route path="/AdminInterviewScheduleForm" element={<AdminInterviewScheduleForm />} />
         <Route path="/AdminStudentsManagement" element={<AdminStudentsManagement />} />
         <Route path="/AdminPlacementHistory" element={<AdminPlacementHistory />} />
+        <Route path="/AdminManageApplications" element={<AdminManageApplications />} />
+      </Route>
+
+      {/* Company Side Routes (with Layout) */}
+      <Route element={<CompanyLayout />}>
+        <Route path="/CompanyDashboard" element={<CompanyDashboard />} />
+        <Route path="/CompanyJobs" element={<CompanyJobs />} />
+        <Route path="/CompanyApplicants" element={<CompanyApplicants />} />
       </Route>
 
     </Routes>

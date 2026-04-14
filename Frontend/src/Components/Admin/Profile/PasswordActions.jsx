@@ -6,23 +6,31 @@ const PasswordActions = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm">
 
-      <button
-        onClick={() => navigate("/AdminChangePassword")}
-        className="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700"
-      >
-        <FaEdit />
-        Click Here For Change Password
-      </button>
+      <h2 className="text-xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6">
+        Security Controls
+      </h2>
 
-      <button
-        onClick={() => navigate("/AdminForgotPassword")}
-        className="bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700"
-      >
-        <FaEdit />
-        Click Here For Forgot Password
-      </button>
+      <div className="flex flex-col gap-5">
+
+        <button
+          onClick={() => navigate("/AdminChangePassword")}
+          className="w-full bg-white border border-gray-300 text-gray-800 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 hover:border-gray-400 font-medium shadow-sm transition-all"
+        >
+          <FaEdit className="text-red-600" />
+          Change Password
+        </button>
+
+        <button
+          onClick={() => navigate("/AdminForgotPassword")}
+          className="w-full bg-white border border-gray-300 text-gray-800 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 hover:border-gray-400 font-medium shadow-sm transition-all"
+        >
+          <FaEdit className="text-red-600" />
+          Forgot Password
+        </button>
+
+      </div>
 
     </div>
   );

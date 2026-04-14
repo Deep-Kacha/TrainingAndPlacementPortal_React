@@ -54,7 +54,7 @@ const AdminChangePassword = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
     Object.keys(formData).forEach((key) => {
@@ -64,9 +64,33 @@ const AdminChangePassword = () => {
 
     const hasErrors = Object.values(newErrors).some(err => err !== "");
     if (!hasErrors) {
-      console.log("Password updated successfully", formData);
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/admin/change-password", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            currentPassword: formData.current,
+            newPassword: formData.new
+          })
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          alert("Password updated successfully!");
+          setFormData({ current: "", new: "", confirm: "" });
+        } else {
+          alert("Error: " + result.error);
+        }
+      } catch (error) {
+        alert("Failed to update password. Please check your connection.");
+      }
     }
   };
+
 
   const checkRequirement = (type) => {
     const val = formData.new;

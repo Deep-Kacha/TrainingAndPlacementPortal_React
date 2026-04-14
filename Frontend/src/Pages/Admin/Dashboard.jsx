@@ -1,9 +1,7 @@
-
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StatCard from "../../Components/Admin/Dashboard/StatCard";
 import QuickActionCard from "../../Components/Admin/Dashboard/QuickActionCard";
-import JdDetail from "./JdDetail";
-  
 
 import {
   FaUsers,
@@ -12,51 +10,84 @@ import {
   FaFileAlt,
   FaCheckCircle,
   FaTrophy,
-  FaSearch
+  FaSearch,
+  FaSpinner
 } from "react-icons/fa";
 
 const AdminDashboard = () => {
-
   const navigate = useNavigate();
+  const [statsData, setStatsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/stats", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setStatsData(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch stats", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const stats = [
     {
       title: "Total Students",
-      value: "2,847",
+      value: statsData?.totalStudents ?? "0",
       icon: <FaUsers className="text-blue-600 text-xl" />,
       bg: "bg-blue-100"
     },
     {
       title: "Pending Approvals",
-      value: "23",
+      value: statsData?.pendingApprovals ?? "0",
       icon: <FaClock className="text-red-600 text-xl" />,
       bg: "bg-red-100"
     },
     {
       title: "Active Job Drives",
-      value: "15",
+      value: statsData?.activeJobs ?? "0",
       icon: <FaBriefcase className="text-blue-600 text-xl" />,
       bg: "bg-blue-100"
     },
     {
       title: "Total Applications",
-      value: "1,256",
+      value: statsData?.totalApplications ?? "0",
       icon: <FaFileAlt className="text-blue-600 text-xl" />,
       bg: "bg-blue-100"
     },
     {
       title: "Shortlisted Students",
-      value: "342",
+      value: statsData?.shortlisted ?? "0",
       icon: <FaCheckCircle className="text-blue-600 text-xl" />,
       bg: "bg-blue-100"
     },
     {
       title: "Selected Students",
-      value: "189",
+      value: statsData?.selected ?? "0",
       icon: <FaTrophy className="text-blue-600 text-xl" />,
       bg: "bg-blue-100"
     }
   ];
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+        <p className="text-gray-500 font-medium">Loading Statistics...</p>
+      </div>
+    );
+  }
+
 
   return (
     <div className="w-full">

@@ -1,54 +1,37 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import InterviewCard from "../../Components/Admin/InterviewSchedule/InterviewCard";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { FaSearch, FaChevronDown, FaSpinner } from "react-icons/fa";
 
 const AdminInterviewSchedule = () => {
-
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
 
-  const allCompanies = [
-    {
-      id: 1,
-      name: "Multiicon",
-      role: "PHP Developer",
-      salary: "₹3.6 LPA",
-      location: "Rajkot, Gujarat",
-      process: "Aptitude + Technical Interview + HR",
-      status: "Scheduled Interview (Pending)"
-    },
-    {
-      id: 2,
-      name: "Gateway Group of Companies",
-      role: "Software Engineer",
-      salary: "₹4.5 LPA",
-      location: "Ahmedabad, Gujarat",
-      process: "Written Test + Technical Round + HR",
-      status: "Scheduled Interview (Pending)"
-    },
-    {
-      id: 3,
-      name: "Infinity IT Company",
-      role: "React Native Developer",
-      salary: "₹5 LPA",
-      location: "Surat, Gujarat",
-      process: "Online Test + Personal Interview",
-      status: "On Hold"
-    },
-    {
-      id: 4,
-      name: "TCS Ltd",
-      role:"Software Development Engineer",
-      salary:"₹8 LPA",
-      location: "Bangalore, Karnataka",
-      process: "Aptitude Test + Personal Interview + Practical Test + Panel Interview",
-      status: "Scheduled Interview (Complete)"
+  useEffect(() => {
+    fetchInterviews();
+  }, []);
+
+  const fetchInterviews = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/interviews", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setCompanies(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch interviews", error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
   const filteredCompanies = useMemo(() => {
-    return allCompanies.filter(company => {
+    return companies.filter(company => {
       const searchTermLower = searchTerm.toLowerCase();
       const statusMatch = filterStatus === "All" || company.status === filterStatus;
 
@@ -68,7 +51,17 @@ const AdminInterviewSchedule = () => {
       
       return field.toLowerCase().includes(searchTermLower);
     });
-  }, [allCompanies, searchTerm, searchCategory, filterStatus]);
+  }, [companies, searchTerm, searchCategory, filterStatus]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+        <p className="text-gray-500 font-medium">Loading Interview Schedules...</p>
+      </div>
+    );
+  }
+
 
 
   return (

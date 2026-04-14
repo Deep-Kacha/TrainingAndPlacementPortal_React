@@ -121,20 +121,39 @@ const StudentRegister = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const payload = {
-            name: formData.name,
-            universityEmail: formData.universityEmail,
-            password: formData.password,
-            enrollment: formData.enrollment,
-            branch: formData.branch,
-            semester: formData.semester,
-            cgpa: formData.cgpa,
-            mobile: formData.mobile
-        };
+        const formDataPayload = new FormData();
+        formDataPayload.append("name", formData.name);
+        formDataPayload.append("universityEmail", formData.universityEmail);
+        formDataPayload.append("password", formData.password);
+        formDataPayload.append("enrollment", formData.enrollment);
+        formDataPayload.append("branch", formData.branch);
+        formDataPayload.append("semester", formData.semester);
+        formDataPayload.append("cgpa", formData.cgpa);
+        formDataPayload.append("mobile", formData.mobile);
+        formDataPayload.append("personalEmail", formData.personalEmail);
+        formDataPayload.append("tenth", formData.tenth);
+        formDataPayload.append("twelfth", formData.twelfth);
+        formDataPayload.append("backlogs", formData.backlogs);
+        formDataPayload.append("parentName", formData.parentName);
+        formDataPayload.append("parentEmail", formData.parentEmail);
+        formDataPayload.append("parentMobile", formData.parentMobile);
+        formDataPayload.append("currentAddress", formData.currentAddress);
+        formDataPayload.append("permanentAddress", formData.permanentAddress);
+        formDataPayload.append("city", formData.city);
+        formDataPayload.append("state", formData.state);
+        formDataPayload.append("pincode", formData.pincode);
+        
+        if (formData.consentForm) {
+            formDataPayload.append("consentForm", formData.consentForm);
+        }
+        if (formData.paymentProof) {
+            formDataPayload.append("paymentProof", formData.paymentProof);
+        }
+
         const response = await fetch("/api/auth/register", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+            // DO NOT set Content-Type header manually when using FormData
+            body: formDataPayload
         });
         const data = await response.json();
         
