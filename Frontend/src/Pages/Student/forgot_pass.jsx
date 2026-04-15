@@ -85,148 +85,123 @@ const StudForgotPassword = () => {
     return (
         <div className="w-full">
 
-            {/* Header */}
-            <header className="page-header flex justify-between items-start mb-8">
-                <div>
-                    <h1 className="page-title text-[#e7000b] text-[2rem] font-bold m-0 mb-2">Forgot Password</h1>
-                    <p className="page-subtitle text-[#666] text-base m-0">Update your password to recover your account.</p>
-                </div>
-            </header>
+            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
+                Recover Account
+            </h1>
+            <p className="text-gray-600 mb-8">
+                Update your password to regain access to your placement portal.
+            </p>
 
             {/* Form */}
             <div className="flex justify-center">
-
-                <div className="bg-[#ece6da] border-[1.5px] border-[#e7000b] p-6 md:p-8 rounded-[12px] shadow-sm w-full max-w-lg">
-
+                <div className="w-full max-w-xl bg-[#d8cfc3] p-8 md:p-10 rounded-xl border border-gray-200 shadow-sm">
                     {/* Email */}
-                    <div className="mb-5">
-
-                        <label className="block text-sm font-semibold text-[#333] mb-2">
+                    <div className="mb-6">
+                        <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
                             Registered Email Address
                         </label>
-
                         <div className="relative">
-
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Enter your college email"
-                                className={`w-full p-3 bg-white rounded-lg pl-10 border outline-none text-[#333] ${errors.email ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
+                                className={`w-full p-4 pl-10 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.email ? "border-red-500" : "border-gray-300 focus:border-red-600"}`}
                             />
-
-                            <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-
+                            <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         </div>
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-
+                        {errors.email && <p className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{errors.email}</p>}
                     </div>
 
-
-                    {/* New Password */}
-                    <div className="mb-5">
-
-                        <label className="block text-sm font-semibold text-[#333] mb-2">
-                            New Password
-                        </label>
-
-                        <div className="relative">
-
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                name="newPassword"
-                                value={formData.newPassword}
-                                onChange={handleChange}
-                                placeholder="Enter new password"
-                                className={`w-full p-3 bg-white rounded-lg border outline-none text-[#333] ${errors.newPassword ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
-                            />
-
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                            >
-                                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        {/* New Password */}
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
+                                New Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="newPassword"
+                                    value={formData.newPassword}
+                                    onChange={handleChange}
+                                    placeholder="Enter new password"
+                                    className={`w-full p-4 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.newPassword ? "border-red-500" : "border-gray-300 focus:border-red-600 shadow-sm"}`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                >
+                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
+                                </button>
+                            </div>
+                            {errors.newPassword && <p className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{errors.newPassword}</p>}
                         </div>
-                        {errors.newPassword && <p className="text-red-500 text-xs mt-1">{errors.newPassword}</p>}
 
-                    </div>
-
-
-                    {/* Confirm Password */}
-                    <div className="mb-5">
-
-                        <label className="block text-sm font-semibold text-[#333] mb-2">
-                            Confirm Password
-                        </label>
-
-                        <div className="relative">
-
-                            <input
-                                type={showConfirm ? "text" : "password"}
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                placeholder="Re-enter new password"
-                                className={`w-full p-3 bg-white rounded-lg border outline-none text-[#333] ${errors.confirmPassword ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
-                            />
-
-                            <button
-                                type="button"
-                                onClick={() => setShowConfirm(!showConfirm)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-                            >
-                                {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                            </button>
-
+                        {/* Confirm Password */}
+                        <div>
+                            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
+                                Confirm Password
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type={showConfirm ? "text" : "password"}
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    placeholder="Re-enter password"
+                                    className={`w-full p-4 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.confirmPassword ? "border-red-500" : "border-gray-300 focus:border-red-600 shadow-sm"}`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirm(!showConfirm)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                                >
+                                    {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                                </button>
+                            </div>
+                            {errors.confirmPassword && <p className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{errors.confirmPassword}</p>}
                         </div>
-                        {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
-
                     </div>
-
 
                     {/* Password Rules */}
-                    <div className="bg-white border border-[#e0d8cc] p-4 rounded-lg mb-5 text-sm">
-                        <p className="font-bold text-[#333] mb-2">
-                            Password requirements:
+                    <div className="bg-white border border-gray-200 p-6 rounded-xl mb-8">
+                        <p className="text-[10px] font-bold text-gray-800 uppercase tracking-widest mb-4">
+                            Security Guidelines
                         </p>
-                        <ul className="space-y-1 text-[#666]">
-                            <li className={checkRequirement("length") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("length") ? "✔" : "○"} At least 8 characters long
-                            </li>
-                            <li className={checkRequirement("upper") && checkRequirement("lower") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("upper") && checkRequirement("lower") ? "✔" : "○"} Contains uppercase and lowercase letters
-                            </li>
-                            <li className={checkRequirement("number") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("number") ? "✔" : "○"} Contains at least one number
-                            </li>
-                            <li className={checkRequirement("special") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("special") ? "✔" : "○"} Contains at least one special character
-                            </li>
-                        </ul>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+                            {[
+                                { key: "length", label: "Min 8 Characters" },
+                                { key: "upper", label: "Upper & Lower" },
+                                { key: "number", label: "Include Number" },
+                                { key: "special", label: "Special Character" }
+                            ].map((req) => (
+                                <div key={req.key} className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider ${checkRequirement(req.key) ? "text-green-600" : "text-gray-400"}`}>
+                                    <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] border ${checkRequirement(req.key) ? "bg-green-600 border-green-600 text-white" : "border-gray-300"}`}>
+                                        {checkRequirement(req.key) ? "✓" : ""}
+                                    </div>
+                                    {req.label}
+                                </div>
+                            ))}
+                        </div>
                     </div>
 
-
-                    {/* Confirm Button */}
-                    <button
-                        onClick={handleSubmit}
-                        className="w-full bg-[#e7000b] text-white py-3 rounded-lg mb-3 font-bold uppercase transition-all hover:bg-red-700 border-none cursor-pointer"
-                    >
-                        Update Password
-                    </button>
-
-
-                    {/* Cancel Button */}
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="w-full bg-transparent border border-gray-400 text-[#333] py-3 rounded-lg font-bold uppercase transition-all hover:bg-gray-100 cursor-pointer"
-                    >
-                        Cancel
-                    </button>
-
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button
+                            onClick={handleSubmit}
+                            className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-black transition-all shadow-sm"
+                        >
+                            Update Password
+                        </button>
+                        <button
+                            onClick={() => navigate("/Authentication/login")}
+                            className="sm:w-32 bg-white text-gray-700 border border-gray-300 py-3 px-6 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-gray-50 transition-all shadow-sm"
+                        >
+                            Cancel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -12,6 +12,7 @@ import useSocketRefresh from "../../hooks/useSocketRefresh";
 const AdminStudentsManagement = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("All");
   const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -42,7 +43,8 @@ const AdminStudentsManagement = () => {
     permanentAddress:raw.permanentAddress|| "N/A",
     city:            raw.city            || "N/A",
     state:           raw.state           || "N/A",
-    pincode:         raw.pincode         || "N/A"
+    pincode:         raw.pincode         || "N/A",
+    registeredAt:    raw.registeredAt    || null
   });
 
   // ── Data fetching ─────────────────────────────────────────────────────────
@@ -116,16 +118,38 @@ const AdminStudentsManagement = () => {
     }
   };
 
+  // Filtered list
+  const filteredStudents = students.filter(s => {
+    if (filterStatus === "Approved") return s.isApproved;
+    if (filterStatus === "Pending") return !s.isApproved;
+    return true;
+  });
+
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="w-full">
       {/* Page header */}
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-red-600">Students Management</h1>
-        <p className="text-gray-600 text-sm md:text-base">
-          Manage student registrations and approvals.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-red-600">Students Management</h1>
+          <p className="text-gray-600 text-sm mt-1 font-medium">
+            Manage student registrations and verification docs.
+          </p>
+        </div>
+
+        {/* Filter Dropdown */}
+        <div className="relative w-full md:w-64">
+           <select 
+             value={filterStatus}
+             onChange={(e) => setFilterStatus(e.target.value)}
+             className="w-full appearance-none p-3 px-4 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-200 cursor-pointer text-sm font-bold text-gray-700 shadow-sm"
+           >
+             <option value="All">All Registrations</option>
+             <option value="Pending">Pending Verification</option>
+             <option value="Approved">Approved Students</option>
+           </select>
+        </div>
       </div>
 
       {/* Loading state */}
@@ -137,20 +161,22 @@ const AdminStudentsManagement = () => {
       )}
 
       {/* Empty state */}
-      {!loading && students.length === 0 && (
+      {!loading && filteredStudents.length === 0 && (
         <div className="text-center py-12 bg-white rounded-xl shadow">
           <FaUsers className="text-gray-300 text-5xl mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">No student registrations yet.</p>
+          <p className="text-gray-500 text-lg">
+            {filterStatus === "All" ? "No students registered yet." : `No students found matching "${filterStatus}".`}
+          </p>
           <p className="text-gray-400 text-sm mt-1">
-            Students will appear here after they register on the portal.
+            {filterStatus === "All" ? "Students will appear here after they register on the portal." : "Try switching your status filter to see other students."}
           </p>
         </div>
       )}
 
       {/* Data table */}
-      {!loading && students.length > 0 && (
+      {!loading && filteredStudents.length > 0 && (
         <StudentTable
-          students={students}
+          students={filteredStudents}
           onToggle={handleToggle}
           onDelete={handleDelete}
         />

@@ -10,7 +10,7 @@ async function seedTestData() {
     await pool.query('TRUNCATE placement_history, interview_participants, interview_schedules, applications, jobs, companies_profile, students_profile, users RESTART IDENTITY CASCADE');
     // 2. Insert Admin User (TPO)
     console.log('Inserting Admin User...');
-    const adminPasswordHash = await bcrypt.hash('Admi@123', 10);
+    const adminPasswordHash = await bcrypt.hash('Admin@123', 10);
     await pool.query(`
       INSERT INTO users (name, email, password_hash, role, is_approved)
       VALUES ($1, $2, $3, 'admin', true)

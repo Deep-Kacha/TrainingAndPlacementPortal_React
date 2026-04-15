@@ -1,5 +1,3 @@
-
-
 import React, { useState } from "react";
 import ContactInfoSection from "./company/Contactinfosection";
 import CompanyDetailsSection from "./company/Companydetailssection";
@@ -9,6 +7,7 @@ import SelectionProcessSection from "./company/Selectionprocesssection";
 import ContactPersonSection from "./company/Contactpersonsection";
 import UploadDocumentsSection from "./company/Uploaddocumentssection";
 import AdditionalDetailsSection from "./company/Additionaldetailssection";
+import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
 
 const INITIAL_STATE = {
   email: "", companyName: "", jobLocation: "", website: "", description: "",
@@ -19,12 +18,20 @@ const INITIAL_STATE = {
 };
 
 const CompanyRegister = () => {
-  const [formData, setFormData] = useState(INITIAL_STATE);
-  const [errors, setErrors]     = useState({});
+  const [formData,     setFormData]     = useState(INITIAL_STATE);
+  const [errors,       setErrors]       = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast,        setToast]        = useState({ visible: false, message: "", ok: true });
+
+  const showToast = (message, ok = true) => {
+    setToast({ visible: true, message, ok });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 5000);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const handleCheckbox = (fieldName, value) => {
@@ -45,7 +52,6 @@ const CompanyRegister = () => {
     if (!formData.website)          newErrors.website          = "Website is required";
     if (!formData.jobPosition)      newErrors.jobPosition      = "Job position is required";
     if (!formData.ctc)              newErrors.ctc              = "Annual CTC is required";
-    if (!formData.joinDate)         newErrors.joinDate         = "Date of joining is required";
     if (!formData.selectionProcess) newErrors.selectionProcess = "Selection process is required";
     if (!formData.driveDate)        newErrors.driveDate        = "Campus drive date is required";
     if (!formData.contactName)      newErrors.contactName      = "Contact name is required";
@@ -58,31 +64,31 @@ const CompanyRegister = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      setIsSubmitting(true);
-      try {
-        const response = await fetch("/api/guest/submit-jd", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-        const data = await response.json();
-        if (response.ok) {
-          alert("Success: " + data.message);
-          handleClear();
-        } else {
-          alert("Error: " + (data.error || "Submission failed."));
-        }
-      } catch (err) {
-        alert("Network error: Could not submit JD. Please try again later.");
-        console.error(err);
-      } finally {
-        setIsSubmitting(false);
+    if (!validateForm()) {
+      showToast("Please fill in all required fields correctly.", false);
+      return;
+    }
+    setIsSubmitting(true);
+    try {
+      const response = await fetch("/api/guest/submit-jd", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        showToast(data.message || "JD submitted successfully! Admin will review it shortly.", true);
+        handleClear();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        showToast(data.error || "Submission failed. Please try again.", false);
       }
+    } catch {
+      showToast("Network error. Could not submit JD. Please try again later.", false);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -95,11 +101,26 @@ const CompanyRegister = () => {
     <section className="bg-gray-100 min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-6">
 
+        {/* Toast Notification */}
+        {toast.visible && (
+          <div className={`mb-6 flex items-start gap-3 px-5 py-4 rounded-xl shadow-md text-sm font-medium transition-all ${
+            toast.ok
+              ? "bg-green-50 border border-green-200 text-green-800"
+              : "bg-red-50 border border-red-200 text-red-800"
+          }`}>
+            {toast.ok
+              ? <FaCheckCircle className="text-green-500 text-lg flex-shrink-0 mt-0.5" />
+              : <FaTimesCircle className="text-red-500 text-lg flex-shrink-0 mt-0.5" />
+            }
+            <span>{toast.message}</span>
+          </div>
+        )}
+
         {/* Page Title */}
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-800">Campus Placement Registration</h2>
           <p className="text-gray-500 text-sm mt-2">
-            RK University, Rajkot – Training & Placement Cell
+            RK University, Rajkot – Training &amp; Placement Cell
           </p>
         </div>
 
@@ -138,15 +159,17 @@ const CompanyRegister = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto"
+                className="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto text-sm"
               >
                 Clear Form
               </button>
               <button
                 type="submit"
-                className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto"
+                disabled={isSubmitting}
+                className="bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto flex items-center justify-center gap-2 text-sm"
               >
-                Submit Form
+                {isSubmitting && <FaSpinner className="animate-spin" />}
+                {isSubmitting ? "Submitting..." : "Submit Form"}
               </button>
             </div>
             <p className="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto px-4 sm:px-0">

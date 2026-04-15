@@ -12,12 +12,6 @@ const AdminCompanyManagement = () => {
   const [searchCategory, setSearchCategory] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
 
-  useEffect(() => {
-    fetchCompanies();
-  }, []);
-
-  useSocketRefresh('REFRESH_JOBS', fetchCompanies);
-
   const fetchCompanies = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -34,6 +28,12 @@ const AdminCompanyManagement = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchCompanies();
+  }, []);
+
+  useSocketRefresh('REFRESH_JOBS', fetchCompanies);
 
   const updateStatusInBackend = async (id, status) => {
     try {
@@ -163,8 +163,8 @@ const AdminCompanyManagement = () => {
               className="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm"
             >
               <option value="All">All Status</option>
-              <option value="pending">Pending</option>
-              <option value="verified">Verified</option>
+              <option value="pending">Pending Approval</option>
+              <option value="approved">Approved / Open</option>
               <option value="rejected">Rejected</option>
             </select>
             <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />

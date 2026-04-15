@@ -1,10 +1,16 @@
 import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const AdminChangePassword = () => {
 
   const navigate = useNavigate();
+  const [toast, setToast] = useState({ visible: false, message: "", ok: true });
+
+  const showToast = (message, ok = true) => {
+    setToast({ visible: true, message, ok });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 4000);
+  };
 
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
@@ -80,13 +86,13 @@ const AdminChangePassword = () => {
 
         const result = await res.json();
         if (result.success) {
-          alert("Password updated successfully!");
+          showToast("Password updated successfully!", true);
           setFormData({ current: "", new: "", confirm: "" });
         } else {
-          alert("Error: " + result.error);
+          showToast(result.error || "Failed to update password.", false);
         }
-      } catch (error) {
-        alert("Failed to update password. Please check your connection.");
+      } catch {
+        showToast("Network error. Please check your connection.", false);
       }
     }
   };
@@ -115,6 +121,16 @@ const AdminChangePassword = () => {
         <p className="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">
           Update your account password for better security.
         </p>
+
+        {/* Toast */}
+        {toast.visible && (
+          <div className={`mb-6 flex items-center gap-3 px-5 py-3 rounded-xl shadow-sm text-sm font-medium ${
+            toast.ok ? "bg-green-50 border border-green-200 text-green-800" : "bg-red-50 border border-red-200 text-red-800"
+          }`}>
+            {toast.ok ? <FaCheckCircle className="text-green-500" /> : <FaTimesCircle className="text-red-500" />}
+            {toast.message}
+          </div>
+        )}
 
         {/* Form Container */}
         <div className="flex justify-center">

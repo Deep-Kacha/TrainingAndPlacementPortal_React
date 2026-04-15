@@ -1,45 +1,13 @@
 import { useState } from "react";
-import { FaMapMarkerAlt, FaCalendarAlt, FaTrashAlt, FaPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { FaMapMarkerAlt, FaCalendarAlt, FaTrashAlt, FaChevronDown, FaChevronUp, FaCalendarPlus } from "react-icons/fa";
 
 const MODE_ICON = { Online: "💻", Offline: "🏢", Hybrid: "🔀" };
 
 const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
+  const navigate      = useNavigate();
   const [expanded,    setExpanded]    = useState(false);
-  const [showForm,    setShowForm]    = useState(false);
-  const [saving,      setSaving]      = useState(false);
   const [schedules,   setSchedules]   = useState(data.schedules || []);
-  const [newRound, setNewRound] = useState({
-    round_name: "", interview_date: "", interview_time: "", mode: "Online", venue_or_link: ""
-  });
-
-  const handleCreate = async () => {
-    if (!newRound.round_name || !newRound.interview_date || !newRound.interview_time) {
-      alert("Round name, date and time are required.");
-      return;
-    }
-    setSaving(true);
-    try {
-      const token = localStorage.getItem("token");
-      const res   = await fetch("/api/admin/interviews", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ job_id: data.id, ...newRound })
-      });
-      const result = await res.json();
-      if (result.success) {
-        setSchedules(prev => [...prev, result.data]);
-        setNewRound({ round_name: "", interview_date: "", interview_time: "", mode: "Online", venue_or_link: "" });
-        setShowForm(false);
-        onScheduleCreated?.();
-      } else {
-        alert("Failed: " + result.error);
-      }
-    } catch {
-      alert("Network error.");
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleDelete = async (scheduleId) => {
     if (!confirm("Delete this schedule round?")) return;
@@ -64,121 +32,104 @@ const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
     return `${hr > 12 ? hr - 12 : hr || 12}:${m} ${hr >= 12 ? "PM" : "AM"}`;
   };
 
+  const handleManageSchedule = () => {
+    navigate("/AdminInterviewScheduleForm", { state: { company: data } });
+  };
+
   return (
-    <div className="bg-[#d8cfc3] p-6 rounded-xl shadow flex flex-col gap-3">
+    <div className="bg-[#d8cfc3] p-6 rounded-xl shadow-md border border-gray-200 flex flex-col gap-3 group hover:shadow-lg transition-all">
 
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0">
+        <div className="bg-red-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0 shadow-sm">
           {data?.name?.charAt(0).toUpperCase() || "C"}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-lg truncate">{data?.name || "Company Name"}</h3>
-          <p className="text-gray-600 text-sm truncate">{data?.role || "Job Role"}</p>
+          <h3 className="font-bold text-lg truncate text-gray-800">{data?.name || "Company Name"}</h3>
+          <p className="text-gray-500 text-xs font-bold uppercase tracking-wider truncate">{data?.role || "Job Role"}</p>
         </div>
-        <span className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full flex-shrink-0 ${
-          data.status?.includes("Complete") ? "bg-gray-200 text-gray-600" : "bg-green-100 text-green-700"
+        <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-lg flex-shrink-0 border ${
+          data.status?.includes("Complete") ? "bg-gray-100 text-gray-400 border-gray-200" : "bg-green-50 text-green-700 border-green-100"
         }`}>
-          {data.status?.includes("Complete") ? "Complete" : "Pending"}
+          {data.status?.includes("Complete") ? "COMPLETED" : "IN PROGRESS"}
         </span>
       </div>
 
-      {/* Meta */}
-      <p className="text-red-600 font-bold text-lg">{data?.salary || "—"}</p>
-      <p className="flex items-center gap-2 text-gray-600 text-sm">
-        <FaMapMarkerAlt />{data?.location || "Not specified"}
-      </p>
-      {data?.driveDate && (
-        <p className="flex items-center gap-2 text-gray-600 text-sm">
-          <FaCalendarAlt /> Drive: {formatDate(data.driveDate)}
-        </p>
-      )}
-      <p className="text-gray-600 text-sm line-clamp-2">{data?.process || "—"}</p>
+      {/* Meta Grid */}
+      <div className="grid grid-cols-2 gap-4 my-2">
+        <div>
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Package</p>
+            <p className="text-lg font-bold text-red-600">{data?.salary || "—"}</p>
+        </div>
+        <div>
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Location</p>
+            <p className="text-sm font-semibold text-gray-700 flex items-center gap-1.5 line-clamp-1">
+                <FaMapMarkerAlt className="text-gray-400" /> {data?.location || "Not specified"}
+            </p>
+        </div>
+      </div>
+
+      <div className="space-y-2 border-t border-white/40 pt-3">
+        {data?.driveDate && (
+            <p className="flex items-center gap-2 text-gray-600 text-[11px] font-bold uppercase tracking-wide">
+            <FaCalendarAlt className="text-red-600" /> Planned Drive: {formatDate(data.driveDate)}
+            </p>
+        )}
+      </div>
 
       {/* Schedule rounds toggle */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="flex items-center justify-between w-full bg-white/60 rounded-lg px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-white/80 transition"
-      >
-        <span>Interview Rounds ({schedules.length})</span>
-        {expanded ? <FaChevronUp /> : <FaChevronDown />}
-      </button>
+      <div className="flex gap-2 items-stretch mt-2">
+        <button
+            onClick={() => setExpanded(!expanded)}
+            className="flex-1 flex items-center justify-between bg-white border border-gray-100 rounded-lg px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-gray-600 hover:bg-gray-50 transition shadow-sm"
+        >
+            <span>Rounds ({schedules.length})</span>
+            {expanded ? <FaChevronUp className="text-red-600" /> : <FaChevronDown />}
+        </button>
+        <button
+            onClick={handleManageSchedule}
+            className="bg-red-600 text-white rounded-lg px-4 flex items-center justify-center hover:bg-black transition shadow-sm"
+            title="Schedule New Rounds"
+        >
+            <FaCalendarPlus />
+        </button>
+      </div>
 
       {expanded && (
-        <div className="space-y-2">
+        <div className="space-y-2 mt-2 animate-in fade-in duration-300">
           {schedules.length === 0 && (
-            <p className="text-gray-500 text-sm text-center py-3">No rounds scheduled yet.</p>
+            <div className="bg-white/40 border border-dashed border-gray-300 rounded-lg py-6 text-center">
+                <p className="text-gray-400 text-xs font-medium">No rounds scheduled yet.</p>
+                <button onClick={handleManageSchedule} className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 hover:underline">
+                    Schedule Now
+                </button>
+            </div>
           )}
           {schedules.map((s) => (
-            <div key={s.id} className="bg-white rounded-lg px-4 py-3 flex items-start justify-between gap-3">
+            <div key={s.id} className="bg-white border border-gray-100 rounded-xl px-4 py-3 flex items-start justify-between gap-3 shadow-sm">
               <div>
                 <p className="font-bold text-gray-800 text-sm">{s.round_name}</p>
-                <p className="text-gray-500 text-xs mt-0.5">
-                  {formatDate(s.interview_date)} · {formatTime(s.interview_time)}
-                </p>
-                <p className="text-gray-500 text-xs">
-                  {MODE_ICON[s.mode] || "📍"} {s.mode} {s.venue_or_link ? `— ${s.venue_or_link}` : ""}
+                <div className="flex items-center gap-3 mt-1.5">
+                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded border">
+                        <FaCalendarAlt className="text-red-500" /> {formatDate(s.interview_date)}
+                    </p>
+                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">
+                        {s.time ? s.time.slice(0, 5) : "—"}
+                    </p>
+                </div>
+                <p className="text-gray-400 font-medium text-[10px] mt-2 flex items-center gap-1">
+                  {MODE_ICON[s.mode] || "📍"} {s.mode.toUpperCase()} {s.venue_or_link ? `— ${s.venue_or_link}` : ""}
                 </p>
               </div>
               <button
                 onClick={() => handleDelete(s.id)}
-                className="text-gray-400 hover:text-red-600 transition flex-shrink-0 mt-1"
+                className="text-gray-300 hover:text-red-600 transition flex-shrink-0 mt-1"
+                title="Remove Round"
               >
-                <FaTrashAlt />
+                <FaTrashAlt size={14} />
               </button>
             </div>
           ))}
-
-          {/* Add round form */}
-          {showForm ? (
-            <div className="bg-white rounded-lg p-4 space-y-3 mt-2">
-              <p className="text-sm font-bold text-gray-700 mb-1">Add New Round</p>
-              <input
-                type="text" placeholder="Round Name (e.g. Aptitude Test)"
-                value={newRound.round_name}
-                onChange={e => setNewRound(p => ({ ...p, round_name: e.target.value }))}
-                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-red-300"
-              />
-              <div className="grid grid-cols-2 gap-2">
-                <input type="date" value={newRound.interview_date}
-                  onChange={e => setNewRound(p => ({ ...p, interview_date: e.target.value }))}
-                  className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-red-300"
-                />
-                <input type="time" value={newRound.interview_time}
-                  onChange={e => setNewRound(p => ({ ...p, interview_time: e.target.value }))}
-                  className="border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-red-300"
-                />
-              </div>
-              <select value={newRound.mode}
-                onChange={e => setNewRound(p => ({ ...p, mode: e.target.value }))}
-                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-red-300"
-              >
-                <option>Online</option>
-                <option>Offline</option>
-                <option>Hybrid</option>
-              </select>
-              <input type="text" placeholder="Venue / Meeting Link (Optional)"
-                value={newRound.venue_or_link}
-                onChange={e => setNewRound(p => ({ ...p, venue_or_link: e.target.value }))}
-                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-red-300"
-              />
-              <div className="flex gap-2 justify-end">
-                <button onClick={() => setShowForm(false)}
-                  className="px-4 py-2 border rounded-lg text-sm hover:bg-gray-50">Cancel</button>
-                <button onClick={handleCreate} disabled={saving}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 disabled:opacity-60">
-                  {saving ? "Saving..." : "Save Round"}
-                </button>
-              </div>
-            </div>
-          ) : (
-            <button
-              onClick={() => setShowForm(true)}
-              className="flex items-center gap-2 text-sm text-blue-600 font-semibold hover:text-blue-700 mt-1"
-            >
-              <FaPlus className="text-xs" /> Add Round
-            </button>
-          )}
         </div>
       )}
     </div>

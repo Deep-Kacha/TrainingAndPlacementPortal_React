@@ -20,12 +20,6 @@ const AdminDashboard = () => {
   const [statsData, setStatsData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchStats();
-  }, []);
-
-  useSocketRefresh('REFRESH_STATS', fetchStats);
-
   const fetchStats = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -42,6 +36,12 @@ const AdminDashboard = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  useSocketRefresh('REFRESH_STATS', fetchStats);
 
   const stats = [
     {
@@ -174,8 +174,66 @@ const AdminDashboard = () => {
 
         </div>
 
+        {/* Analytics — Placements by Company */}
+        {statsData?.placementsByCompany?.length > 0 && (
+          <div className="mt-10">
+            <h2 className="text-xl md:text-2xl font-bold text-red-600 mb-4">
+              Placements by Company
+            </h2>
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-100">
+                    <th className="px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Company</th>
+                    <th className="px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 text-center">Applicants</th>
+                    <th className="px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400 text-center">Placed</th>
+                    <th className="px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Conversion</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-50">
+                  {statsData.placementsByCompany.map((row, i) => {
+                    const pct = row.total > 0 ? Math.round((row.placed / row.total) * 100) : 0;
+                    return (
+                      <tr key={i} className="hover:bg-gray-50/60 transition-colors">
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-red-600 text-white flex items-center justify-center font-bold text-xs uppercase">
+                              {row.company?.[0] || 'C'}
+                            </div>
+                            <span className="font-semibold text-gray-800 text-sm">{row.company}</span>
+                          </div>
+                        </td>
+                        <td className="px-5 py-3 text-center">
+                          <span className="text-sm font-bold text-gray-700">{row.total}</span>
+                        </td>
+                        <td className="px-5 py-3 text-center">
+                          <span className={`text-sm font-bold ${row.placed > 0 ? 'text-green-600' : 'text-gray-400'}`}>
+                            {row.placed}
+                          </span>
+                        </td>
+                        <td className="px-5 py-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 bg-gray-100 rounded-full h-1.5 max-w-[100px]">
+                              <div
+                                className="bg-green-500 h-1.5 rounded-full transition-all"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <span className="text-xs font-bold text-gray-500">{pct}%</span>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
     </div>
   );
 };
+
 
 export default AdminDashboard;

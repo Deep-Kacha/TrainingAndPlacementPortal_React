@@ -10,11 +10,11 @@ const getAppliedCompanies = async (req, res) => {
         const query = `
             SELECT 
                 j.id as "jobPostingId", 
-                cp.company_name as "companyName", 
+                COALESCE(cp.company_name, j.company_name, 'Unknown Company') as "companyName", 
                 j.job_title as "jobRole",
                 (SELECT COUNT(*) FROM applications a WHERE a.job_id = j.id) as "applicationCount"
             FROM jobs j
-            JOIN companies_profile cp ON j.company_id = cp.id
+            LEFT JOIN companies_profile cp ON j.company_id = cp.id
             WHERE (SELECT COUNT(*) FROM applications a WHERE a.job_id = j.id) > 0
             ORDER BY j.created_at DESC
         `;

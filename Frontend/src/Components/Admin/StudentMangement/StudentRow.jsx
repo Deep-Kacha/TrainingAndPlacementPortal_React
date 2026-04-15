@@ -10,8 +10,12 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const registeredDate = student.registeredAt
-    ? new Date(student.registeredAt).toLocaleDateString()
+    ? new Date(student.registeredAt).toLocaleDateString("en-GB", {
+        day: "numeric", month: "short", year: "numeric"
+      })
     : "N/A";
+
+  const BASE_URL = "http://localhost:5000/uploads";
 
   return (
     <>
@@ -40,15 +44,33 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
 
         <td className="p-5 text-xs font-bold text-gray-600 lowercase">{student.email}</td>
 
-        <td className="p-5">
-          <PaymentBadge status={student.paymentStatus} />
+        <td className="p-5 text-center">
+          {student.paymentProofPath ? (
+            <a 
+              href={`${BASE_URL}/${student.paymentProofPath}`} 
+              target="_blank" 
+              rel="noreferrer"
+              className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase bg-green-100 text-green-700 border border-green-200 hover:bg-green-200 transition-colors"
+            >
+              VIEW PROOF
+            </a>
+          ) : (
+            <PaymentBadge status={student.paymentStatus} />
+          )}
         </td>
 
-        <td className="p-5">
+        <td className="p-5 text-center">
           {student.consentFormPath ? (
-              <span className="text-blue-600 font-bold text-[10px] uppercase">UPLOADED</span>
+            <a 
+              href={`${BASE_URL}/${student.consentFormPath}`} 
+              target="_blank" 
+              rel="noreferrer"
+              className="text-white bg-blue-600 hover:bg-blue-700 font-bold text-[9px] uppercase px-2 py-1 rounded shadow-sm transition-colors"
+            >
+              VIEW FORM
+            </a>
           ) : (
-              <span className="text-gray-400 text-[10px] font-bold uppercase tracking-tight">MISSING</span>
+            <span className="text-gray-400 text-[10px] font-bold uppercase tracking-tight">MISSING</span>
           )}
         </td>
 
@@ -73,10 +95,10 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
 
       {isExpanded && (
         <tr className="bg-gray-50 border-b border-[#c4b5a6]/30">
-          <td colSpan="10" className="p-6">
+          <td colSpan="11" className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                  <h4 className="text-[10px] font-extrabold uppercase text-gray-400 mb-2">Academic Profile</h4>
+                  <h4 className="text-[10px] font-extrabold uppercase text-gray-400 mb-2 font-black tracking-widest">Academic Profile</h4>
                   <div className="text-xs space-y-1">
                     <p><span className="text-gray-500">10th:</span> <span className="font-bold">{student.tenth}%</span></p>
                     <p><span className="text-gray-500">12th:</span> <span className="font-bold">{student.twelfth}%</span></p>
@@ -84,15 +106,19 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-[10px] font-extrabold uppercase text-gray-400 mb-2">Guardian Context</h4>
+                  <h4 className="text-[10px] font-extrabold uppercase text-gray-400 mb-2 font-black tracking-widest">Guardian Context</h4>
                   <div className="text-xs space-y-1">
                     <p><span className="text-gray-500">Parent:</span> <span className="font-bold">{student.parentName}</span></p>
                     <p><span className="text-gray-500">Mobile:</span> <span className="font-bold">{student.parentMobile}</span></p>
+                    <p><span className="text-gray-500">Personal Email:</span> <span className="font-bold">{student.personalEmail}</span></p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="text-[10px] font-extrabold uppercase text-gray-400 mb-2">Location</h4>
-                  <p className="text-xs font-bold text-gray-800">{student.city}, {student.state}</p>
+                  <h4 className="text-[10px] font-extrabold uppercase text-gray-400 mb-2 font-black tracking-widest">Submission Info</h4>
+                  <div className="text-xs space-y-1">
+                    <p><span className="text-gray-500">Location:</span> <span className="font-bold text-gray-800">{student.city}, {student.state}</span></p>
+                    <p><span className="text-gray-500">Registered On:</span> <span className="font-bold text-blue-600">{registeredDate}</span></p>
+                  </div>
                 </div>
             </div>
           </td>

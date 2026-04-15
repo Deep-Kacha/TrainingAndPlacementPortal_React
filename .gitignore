@@ -27,7 +27,7 @@ yarn-error.log*
 logs/
 *.log
 
-# Coverage
+# Coverage  
 coverage/
 *.lcov
 
@@ -41,4 +41,4 @@ coverage/
 
 # OS files
 .DS_Store
-Thumbs.db   
+Thumbs.db

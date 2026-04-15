@@ -78,6 +78,10 @@ const ManageApplications = () => {
   };
 
   const handleStatusChange = async (applicationId, newStatus) => {
+    const STATUS_LABELS = {
+      applied: 'Pending', shortlisted: 'Shortlisted',
+      interview: 'In Progress', selected: 'Selected', rejected: 'Rejected'
+    };
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(`/api/applications/admin/${applicationId}/status`, {
@@ -90,7 +94,7 @@ const ManageApplications = () => {
       });
       const result = await res.json();
       if (result.success) {
-        showToast(`Status updated to ${newStatus}`, "success");
+        showToast(`Status updated → ${STATUS_LABELS[newStatus] || newStatus}`, "success");
         if (selectedJob) fetchStudents(selectedJob);
       } else {
         showToast("Failed to update status", "error");

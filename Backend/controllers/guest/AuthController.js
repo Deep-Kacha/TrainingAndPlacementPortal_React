@@ -79,6 +79,11 @@ const login = async (req, res) => {
             return res.status(403).json({ error: "Your account is pending admin approval." });
         }
 
+        // Reject if admin account is disabled by super admin
+        if (user.role === 'admin' && !user.is_approved) {
+            return res.status(403).json({ error: "Your admin account has been disabled. Contact super admin." });
+        }
+
         // Sign JWT
         const token = jwt.sign(
             { id: user.id, role: user.role, name: user.name }, 
@@ -89,7 +94,7 @@ const login = async (req, res) => {
         res.status(200).json({ 
             message: "Login successful", 
             token, 
-            user: { id: user.id, name: user.name, role: user.role } 
+            user: { id: user.id, name: user.name, role: user.role, email: user.email } 
         });
 
     } catch (error) {

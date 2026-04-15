@@ -33,23 +33,31 @@ const AdminInterviewSchedule = () => {
   const filteredCompanies = useMemo(() => {
     return companies.filter(company => {
       const searchTermLower = searchTerm.toLowerCase();
-      const statusMatch = filterStatus === "All" || company.status === filterStatus;
+      
+      // Backend returns "Scheduled Interview (Pending)" or "Scheduled Interview (Complete)"
+      const statusMatch =
+        filterStatus === "All" ||
+        (filterStatus === "Pending" && company.status?.includes("Pending")) ||
+        (filterStatus === "Completed" && company.status?.includes("Complete"));
 
       if (!statusMatch) return false;
 
+      const name     = company.name?.toLowerCase()     || "";
+      const role     = company.role?.toLowerCase()     || "";
+      const location = company.location?.toLowerCase() || "";
+      const salary   = company.salary?.toLowerCase()   || "";
+
       if (searchCategory === "All") {
-        return company.name.toLowerCase().includes(searchTermLower) ||
-          company.role.toLowerCase().includes(searchTermLower) ||
-          company.location.toLowerCase().includes(searchTermLower) ||
-          company.salary.toLowerCase().includes(searchTermLower);
+        return name.includes(searchTermLower) || role.includes(searchTermLower) ||
+          location.includes(searchTermLower)  || salary.includes(searchTermLower);
       }
 
-      const field = searchCategory === "Company" ? company.name :
-                    searchCategory === "Role" ? company.role :
-                    searchCategory === "Location" ? company.location :
-                    searchCategory === "Salary" ? company.salary : "";
-      
-      return field.toLowerCase().includes(searchTermLower);
+      const field = searchCategory === "Company"  ? name :
+                    searchCategory === "Role"     ? role :
+                    searchCategory === "Location" ? location :
+                    searchCategory === "Salary"   ? salary : "";
+
+      return field.includes(searchTermLower);
     });
   }, [companies, searchTerm, searchCategory, filterStatus]);
 

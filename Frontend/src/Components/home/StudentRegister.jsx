@@ -1,14 +1,15 @@
-// pages/StudentRegister.jsx
+// StudentRegister.jsx
 // Refactored: state + validation live here; UI is fully delegated to section components.
-// Visual output is identical to the original.
+// alert() replaced with inline toast for better UX.
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PersonalInfoSection from "./student/Personalinfosection";
+import PersonalInfoSection    from "./student/Personalinfosection";
 import AcademicDetailsSection from "./student/Academicdetailssection";
-import ParentInfoSection from "./student/Parentinfosection";
-import AddressSection from "./student/Addresssection";
-import ConsentPaymentSection from "./student/Consentpaymentsection ";
+import ParentInfoSection      from "./student/Parentinfosection";
+import AddressSection         from "./student/Addresssection";
+import ConsentPaymentSection  from "./student/Consentpaymentsection ";
+import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
 
 const INITIAL_STATE = {
   enrollment: "", name: "", branch: "", semester: "",
@@ -21,29 +22,37 @@ const INITIAL_STATE = {
 
 const StudentRegister = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(INITIAL_STATE);
-  const [errors, setErrors]     = useState({});
+  const [formData,     setFormData]     = useState(INITIAL_STATE);
+  const [errors,       setErrors]       = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toast,        setToast]        = useState({ visible: false, message: "", ok: true });
+
+  const showToast = (message, ok = true) => {
+    setToast({ visible: true, message, ok });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 5000);
+  };
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setFormData((prev) => ({ ...prev, [name]: files ? files[0] : value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
     let newErrors = {};
 
     // Personal
-    if (!formData.enrollment)     newErrors.enrollment     = "Enrollment number is required";
-    if (!formData.name)           newErrors.name           = "Full name is required";
-    if (!formData.branch)         newErrors.branch         = "Branch is required";
-    if (!formData.semester)       newErrors.semester       = "Semester is required";
+    if (!formData.enrollment)      newErrors.enrollment      = "Enrollment number is required";
+    if (!formData.name)            newErrors.name            = "Full name is required";
+    if (!formData.branch)          newErrors.branch          = "Branch is required";
+    if (!formData.semester)        newErrors.semester        = "Semester is required";
     if (!formData.universityEmail) {
       newErrors.universityEmail = "University email is required";
     } else if (!/\S+@\S+\.\S+/.test(formData.universityEmail)) {
       newErrors.universityEmail = "Invalid email format";
     }
-    if (!formData.personalEmail)  newErrors.personalEmail  = "Personal email is required";
-    if (!formData.password)       newErrors.password       = "Password is required";
+    if (!formData.personalEmail)   newErrors.personalEmail   = "Personal email is required";
+    if (!formData.password)        newErrors.password        = "Password is required";
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = "Please confirm your password";
     } else if (formData.password !== formData.confirmPassword) {
@@ -119,60 +128,78 @@ const StudentRegister = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      try {
-        const formDataPayload = new FormData();
-        formDataPayload.append("name", formData.name);
-        formDataPayload.append("universityEmail", formData.universityEmail);
-        formDataPayload.append("password", formData.password);
-        formDataPayload.append("enrollment", formData.enrollment);
-        formDataPayload.append("branch", formData.branch);
-        formDataPayload.append("semester", formData.semester);
-        formDataPayload.append("cgpa", formData.cgpa);
-        formDataPayload.append("mobile", formData.mobile);
-        formDataPayload.append("personalEmail", formData.personalEmail);
-        formDataPayload.append("tenth", formData.tenth);
-        formDataPayload.append("twelfth", formData.twelfth);
-        formDataPayload.append("backlogs", formData.backlogs);
-        formDataPayload.append("parentName", formData.parentName);
-        formDataPayload.append("parentEmail", formData.parentEmail);
-        formDataPayload.append("parentMobile", formData.parentMobile);
-        formDataPayload.append("currentAddress", formData.currentAddress);
-        formDataPayload.append("permanentAddress", formData.permanentAddress);
-        formDataPayload.append("city", formData.city);
-        formDataPayload.append("state", formData.state);
-        formDataPayload.append("pincode", formData.pincode);
-        
-        if (formData.consentForm) {
-            formDataPayload.append("consentForm", formData.consentForm);
-        }
-        if (formData.paymentProof) {
-            formDataPayload.append("paymentProof", formData.paymentProof);
-        }
+    if (!validateForm()) {
+      showToast("Please fill in all required fields correctly.", false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
 
-        const response = await fetch("/api/auth/register", {
-            method: 'POST',
-            // DO NOT set Content-Type header manually when using FormData
-            body: formDataPayload
-        });
-        const data = await response.json();
-        
-        if (response.ok) {
-            alert(data.message); // Will say "Pending admin approval"
-            handleClear();
-            navigate("/");
-        } else {
-            alert("Error: " + data.error);
-        }
-      } catch (err) {
-         alert("Network error occurred.");
+    setIsSubmitting(true);
+    try {
+      const formDataPayload = new FormData();
+      formDataPayload.append("name",             formData.name);
+      formDataPayload.append("universityEmail",  formData.universityEmail);
+      formDataPayload.append("password",         formData.password);
+      formDataPayload.append("enrollment",       formData.enrollment);
+      formDataPayload.append("branch",           formData.branch);
+      formDataPayload.append("semester",         formData.semester);
+      formDataPayload.append("cgpa",             formData.cgpa);
+      formDataPayload.append("mobile",           formData.mobile);
+      formDataPayload.append("personalEmail",    formData.personalEmail);
+      formDataPayload.append("tenth",            formData.tenth);
+      formDataPayload.append("twelfth",          formData.twelfth);
+      formDataPayload.append("backlogs",         formData.backlogs || 0);
+      formDataPayload.append("parentName",       formData.parentName);
+      formDataPayload.append("parentEmail",      formData.parentEmail);
+      formDataPayload.append("parentMobile",     formData.parentMobile);
+      formDataPayload.append("currentAddress",   formData.currentAddress);
+      formDataPayload.append("permanentAddress", formData.permanentAddress);
+      formDataPayload.append("city",             formData.city);
+      formDataPayload.append("state",            formData.state);
+      formDataPayload.append("pincode",          formData.pincode);
+
+      if (formData.consentForm)  formDataPayload.append("consentForm",  formData.consentForm);
+      if (formData.paymentProof) formDataPayload.append("paymentProof", formData.paymentProof);
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        body: formDataPayload   // Do NOT set Content-Type — browser sets it with boundary
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        showToast(data.message || "Registration successful! Your account is pending admin approval.", true);
+        handleClear();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        setTimeout(() => navigate("/"), 3000);
+      } else {
+        showToast(data.error || "Registration failed. Please try again.", false);
       }
+    } catch {
+      showToast("Network error. Please check your connection and try again.", false);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <section className="bg-gray-100 min-h-screen py-12">
       <div className="max-w-4xl mx-auto px-6">
+
+        {/* Toast Notification */}
+        {toast.visible && (
+          <div className={`mb-6 flex items-start gap-3 px-5 py-4 rounded-xl shadow-md text-sm font-medium transition-all ${
+            toast.ok
+              ? "bg-green-50 border border-green-200 text-green-800"
+              : "bg-red-50 border border-red-200 text-red-800"
+          }`}>
+            {toast.ok
+              ? <FaCheckCircle className="text-green-500 text-lg flex-shrink-0 mt-0.5" />
+              : <FaTimesCircle className="text-red-500 text-lg flex-shrink-0 mt-0.5" />
+            }
+            <span>{toast.message}</span>
+          </div>
+        )}
 
         {/* Page Title */}
         <div className="text-center mb-8">
@@ -209,15 +236,17 @@ const StudentRegister = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto"
+                className="px-10 py-3 border border-gray-300 rounded-md font-medium hover:bg-gray-50 transition w-full sm:w-auto text-sm"
               >
                 Clear Form
               </button>
               <button
                 type="submit"
-                className="bg-red-600 hover:bg-red-700 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto"
+                disabled={isSubmitting}
+                className="bg-red-600 hover:bg-red-700 disabled:opacity-60 text-white px-10 py-3 rounded-md font-medium shadow transition w-full sm:w-auto flex items-center justify-center gap-2 text-sm"
               >
-                Submit Form
+                {isSubmitting && <FaSpinner className="animate-spin" />}
+                {isSubmitting ? "Submitting..." : "Submit Form"}
               </button>
             </div>
             <p className="text-xs text-gray-400 mt-3 text-center max-w-md mx-auto px-4 sm:px-0">

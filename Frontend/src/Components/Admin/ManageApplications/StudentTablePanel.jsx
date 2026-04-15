@@ -54,6 +54,7 @@ const StudentTablePanel = ({ selectedJob, students, loading, onStatusChange }) =
                     <th className="px-6 py-4">Student</th>
                     <th className="px-6 py-4 text-center">CGPA</th>
                     <th className="px-6 py-4">Applied Date</th>
+                    <th className="px-6 py-4 text-center">Current Status</th>
                     <th className="px-6 py-4 text-center">Update Status</th>
                   </tr>
                 </thead>

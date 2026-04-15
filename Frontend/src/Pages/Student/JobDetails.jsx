@@ -1,159 +1,239 @@
-import React from 'react';
-// import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { 
+  FaBriefcase, FaMapMarkerAlt, FaRegClock, FaCheckCircle, 
+  FaGlobe, FaScroll, FaUserGraduate, FaClipboardList, 
+  FaMoneyBillWave, FaSpinner, FaChevronLeft
+} from 'react-icons/fa';
+import Toast from "../../Components/common/Toast";
 
 const StudJobDetails = () => {
-  // const navigate = useNavigate();
-  // const location = useLocation();
-  const job = location.state?.job || {
-    company: "TechCorp Solutions",
-    role: "Software Development Engineer",
-    location: "Bangalore, India",
-    salary: "₹8 LPA",
-    cgpa: "7.0",
-    id: 1,
-    status: "Apply"
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { job, isPlacedGlobally } = location.state || {};
+  
+  const [applying, setApplying] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+
+  if (!job) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <p className="text-gray-500 font-bold uppercase tracking-widest text-xs mb-4">No job data selected</p>
+        <button onClick={() => navigate('/StudJobs')} className="text-red-600 font-bold hover:underline">Back to Jobs</button>
+      </div>
+    );
+  }
+
+  const showToast = (message, type = "success") => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 4000);
+  };
+
+  const handleApply = async () => {
+    if (isPlacedGlobally) {
+      showToast("Placement Policy: You are already placed and cannot apply for further drives.", "error");
+      return;
+    }
+    
+    setApplying(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/student/apply/${job.id}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        showToast("Application submitted successfully! 🎉", "success");
+        job.applicationStatus = 'applied';
+        job.isApplied = true;
+      } else {
+        showToast(result.error || "Failed to apply.", "error");
+      }
+    } catch {
+      showToast("Network error. Please try again.", "error");
+    } finally {
+      setApplying(false);
+    }
   };
 
   return (
-    <div className="w-full">
-      <div className="page-header">
-        <h1 className="page-title">Company Job Description</h1>
-        <p className="page-subtitle">Read All Information Properly Before Apply</p>
-      </div>
+    <div className="w-full pb-10">
+      <Toast {...toast} />
+      
+      <button 
+        onClick={() => navigate(-1)} 
+        className="flex items-center gap-2 text-gray-500 font-semibold text-xs hover:text-red-600 transition-colors mb-4"
+      >
+        <FaChevronLeft /> Back to Listings
+      </button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Section */}
+      <h1 className="text-2xl md:text-3xl font-bold text-red-600">
+        Job Opportunity Details
+      </h1>
+      <p className="text-gray-600 mb-8">
+        Review all eligibility and terms thoroughly before applying.
+      </p>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left Column: Core Info */}
         <div className="lg:col-span-2 space-y-6">
+          
+          {/* Main Card */}
+          <div className="bg-[#d8cfc3] rounded-xl border border-gray-200 shadow-sm p-8">
+             <div className="flex flex-col md:flex-row gap-6 items-start md:items-center mb-8">
+                <div className="w-20 h-20 bg-red-600 text-white rounded-lg flex items-center justify-center font-bold text-3xl shadow-sm">
+                  {job.company?.[0]}
+                </div>
+                <div>
+                   <h2 className="text-2xl font-bold text-gray-800 mb-1">
+                     {job.role}
+                   </h2>
+                   <div className="flex flex-wrap gap-4 items-center">
+                      <span className="text-red-600 font-semibold text-sm flex items-center gap-2">
+                        <FaBriefcase /> {job.company}
+                      </span>
+                      <span className="text-gray-500 font-semibold text-sm flex items-center gap-2">
+                        <FaMapMarkerAlt className="text-gray-400" /> {job.location || "Multiple Locations"}
+                      </span>
+                   </div>
+                </div>
+             </div>
 
-          {/* Header Card */}
-          <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex items-center gap-6">
-            <div className="w-16 h-16 bg-blue-500 rounded-xl shadow-sm flex items-center justify-center shrink-0 text-white font-bold text-3xl">
-              {job.company.charAt(0)}
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 m-0 mb-2">{job.role}</h2>
-              <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700 font-medium">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-blue-600">🏢</span> {job.company}
+             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 border-t border-gray-200 pt-6">
+                <div>
+                   <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] mb-1">Package</p>
+                   <p className="text-red-600 font-bold text-xl">{job.salary || "—"}</p>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-blue-600">📍</span> {job.location}
+                <div>
+                   <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] mb-1">Drive Date</p>
+                   <p className="text-gray-800 font-bold text-sm">{job.driveDate || "TBA"}</p>
                 </div>
-              </div>
-            </div>
+                <div>
+                   <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] mb-1">Deadline</p>
+                   <p className="text-gray-800 font-bold text-sm">{job.deadline || "—"}</p>
+                </div>
+             </div>
           </div>
 
-          {/* Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="bg-[#eafdf0] rounded-xl p-5 shadow-sm border border-[#d1f4da]">
-              <div className="text-green-600 text-xl font-bold mb-1">{job.salary}</div>
-              <div className="text-gray-600 text-sm font-medium">Annual CTC</div>
+          {/* Description */}
+          <div className="bg-[#d8cfc3] rounded-xl border border-gray-200 p-8">
+            <h3 className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-4 pb-2 border-b border-gray-200">
+               <FaClipboardList className="text-red-600" /> Overview
+            </h3>
+            <div className="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">
+              {job.description || "No detailed description available."}
             </div>
-            <div className="bg-[#eff6ff] rounded-xl p-5 shadow-sm border border-[#dbeafe]">
-              <div className="text-blue-700 text-xl font-bold mb-1">Full-time</div>
-              <div className="text-gray-600 text-sm font-medium">Employment Type</div>
-            </div>
+            
+            {(job.requiredSkills || job.selectionProcess) && (
+              <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-200">
+                {job.requiredSkills && (
+                  <div>
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-red-600 mb-3">Skills</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.isArray(job.requiredSkills) ? job.requiredSkills.map(s => (
+                        <span key={s} className="bg-white px-3 py-1 rounded-md text-xs font-semibold text-gray-800 border border-gray-100">{s}</span>
+                      )) : <span className="text-gray-700 text-xs font-semibold">{job.requiredSkills}</span>}
+                    </div>
+                  </div>
+                )}
+                {job.selectionProcess && (
+                  <div>
+                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-red-600 mb-3">Process</h4>
+                    <div className="text-xs font-medium text-gray-700 whitespace-pre-wrap">
+                      {job.selectionProcess}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
-          {/* Description Content */}
-          <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2">Job Description</h3>
-              <p className="text-sm text-gray-700 mb-3 leading-relaxed">
-                We are looking for a talented Software Development Engineer to join our dynamic team. You will be responsible for developing and maintaining high-quality software applications, working with cutting-edge technologies, and contributing to innovative projects that impact millions of users.
-              </p>
-              <p className="text-sm text-gray-700 leading-relaxed">
-                As part of our engineering team, you'll collaborate with cross-functional teams to design, develop, and deploy scalable software solutions. This is an excellent opportunity for recent graduates to kickstart their career in software development with mentorship from senior engineers.
-              </p>
-            </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2">Key Responsibilities</h3>
-              <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
-                <li>Design and develop web applications using React.js and Node.js</li>
-                <li>Write clean, maintainable, and efficient code</li>
-                <li>Collaborate with product managers and designers to implement user-friendly interfaces</li>
-                <li>Participate in code reviews and maintain coding standards</li>
-                <li>Debug and troubleshoot application issues</li>
-                <li>Stay updated with latest technology trends and best practices</li>
-              </ul>
-            </div>
-
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2">Required Skills</h3>
-              <div className="flex flex-wrap gap-3">
-                <span className="text-sm font-semibold text-blue-600">React.js</span>
-                <span className="text-sm font-semibold text-green-600">Node.js</span>
-                <span className="text-sm font-semibold text-yellow-600">JavaScript</span>
-                <span className="text-sm font-semibold text-purple-600">HTML/CSS</span>
-                <span className="text-sm font-semibold text-red-500">Git</span>
-                <span className="text-sm font-semibold text-indigo-600">MongoDB</span>
-              </div>
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3 border-b border-gray-300 pb-2">What We Offer</h3>
-              <ul className="list-disc pl-5 text-sm text-gray-700 space-y-2">
-                <li>Competitive salary and benefits package</li>
-                <li>Health insurance and wellness programs</li>
-                <li>Professional development opportunities</li>
-                <li>Flexible working hours and remote work options</li>
-              </ul>
+          {/* Policy Section */}
+          <div className="bg-gray-800 text-white rounded-xl p-8">
+            <h3 className="flex items-center gap-2 text-lg font-bold mb-4">
+               <FaScroll className="text-red-500" /> Terms
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+               <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Bond</p>
+                  <p className="text-sm font-semibold">{job.bond || "No Bond"}</p>
+               </div>
+               <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Internship</p>
+                  <p className="text-sm font-semibold">{job.internshipDuration || "N/A"}</p>
+               </div>
+               <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Stipend</p>
+                  <p className="text-sm font-bold text-red-400">{job.stipend || "TBA"}</p>
+               </div>
+               <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Website</p>
+                  {job.companyWebsite ? (
+                    <a href={job.companyWebsite} target="_blank" rel="noreferrer" className="text-sm font-bold text-blue-400 hover:underline">
+                      Visit Site →
+                    </a>
+                  ) : <p className="text-sm font-semibold">N/A</p>}
+               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Section */}
-        <div className="lg:col-span-1 space-y-6">
-
-          <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Eligibility Criteria</h3>
-
+        {/* Right Column: Eligibility & Action */}
+        <div className="space-y-6">
+          
+          {/* Eligibility Card */}
+          <div className="bg-[#d8cfc3] rounded-xl border border-gray-200 p-8 shadow-sm">
+            <h3 className="flex items-center gap-2 text-lg font-bold text-gray-800 mb-6">
+               <FaUserGraduate className="text-red-600" /> Eligibility
+            </h3>
             <div className="space-y-4">
-              <div>
-                <div className="text-sm font-bold text-gray-900">CGPA Requirement</div>
-                <div className="text-sm text-gray-600">Minimum {job.cgpa}</div>
-              </div>
-              <div>
-                <div className="text-sm font-bold text-gray-900">Branch</div>
-                <div className="text-sm text-gray-600">CS/IT</div>
-              </div>
-              <div>
-                <div className="text-sm font-bold text-gray-900">Graduation Year</div>
-                <div className="text-sm text-gray-600">2026</div>
-              </div>
+               <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500 font-bold uppercase tracking-wider">Course</span>
+                  <span className="text-gray-800 font-bold">
+                    {Array.isArray(job.eligibleCourses) ? job.eligibleCourses.join(", ") : (job.eligibleCourses || "All")}
+                  </span>
+               </div>
+               <div className="flex justify-between items-center bg-white/40 p-3 rounded-lg">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Min CGPA</span>
+                  <span className="bg-red-600 text-white px-3 py-1 rounded-md font-bold text-xs">{job.eligibilityCriteria || "All"}</span>
+               </div>
+               <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500 font-bold uppercase tracking-wider">Batch</span>
+                  <span className="text-gray-800 font-bold">
+                    {Array.isArray(job.eligibleBatches) ? job.eligibleBatches.join(", ") : (job.eligibleBatches || "All")}
+                  </span>
+               </div>
             </div>
           </div>
 
-          {/* <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Key Dates</h3>
-
-            <div className="space-y-4">
-              <div className="flex justify-between items-center bg-gray-50/50 -mx-2 px-2 py-1 rounded">
-                <span className="text-sm text-gray-600">Application Deadline</span>
-                <span className="text-sm font-bold text-gray-900">Dec 30, 2024</span>
+          {/* Action Card */}
+          <div className="bg-white border-2 border-[#d8cfc3] p-8 rounded-xl text-center shadow-sm">
+            <h4 className="text-xl font-bold text-gray-800 mb-2">Apply Now</h4>
+            <p className="text-xs text-gray-500 mb-6">Review all details before applying.</p>
+            
+            {job.isApplied ? (
+              <div className="w-full bg-green-50 text-green-700 py-3 rounded-lg font-bold text-xs uppercase tracking-widest border border-green-100">
+                Applied Successfully
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Online Test</span>
-                <span className="text-sm font-bold text-gray-900">Jan 5, 2025</span>
+            ) : job.deadlinePassed ? (
+              <div className="w-full bg-red-50 text-red-700 py-3 rounded-lg font-bold text-xs uppercase tracking-widest border border-red-100">
+                Deadline Expired
               </div>
-              <div className="flex justify-between items-center bg-gray-50/50 -mx-2 px-2 py-1 rounded">
-                <span className="text-sm text-gray-600">Interview Round</span>
-                <span className="text-sm font-bold text-gray-900">Jan 12, 2025</span>
+            ) : isPlacedGlobally ? (
+              <div className="w-full bg-gray-50 text-gray-500 py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest border border-gray-100">
+                Already Placed
               </div>
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">Result Declaration</span>
-                <span className="text-sm font-bold text-gray-900">Jan 20, 2025</span>
-              </div>
-            </div>
-          </div> */}
-
-          <div className="pt-2 flex flex-col items-center">
-            <button className="w-full py-4 rounded-xl font-bold text-white uppercase bg-primary-red hover:bg-red-700 transition-colors shadow-md flex items-center justify-center gap-2 mb-3">
-              APPLY NOW <span className="text-xl leading-none">→</span>
-            </button>
+            ) : (
+              <button 
+                onClick={handleApply}
+                disabled={applying}
+                className="w-full py-3 bg-red-600 text-white rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-black transition-all disabled:opacity-50"
+              >
+                {applying ? "Submitting..." : "Apply Job"}
+              </button>
+            )}
           </div>
-
         </div>
       </div>
     </div>

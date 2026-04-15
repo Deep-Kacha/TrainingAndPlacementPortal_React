@@ -3,10 +3,16 @@ import ProfileCard from "../../Components/Admin/Profile/ProfileCard";
 import ProfileInfoForm from "../../Components/Admin/Profile/ProfileInfoForm";
 import AddPortalUser from "../../Components/Admin/Profile/AddPortalUser";
 import PasswordActions from "../../Components/Admin/Profile/PasswordActions";
-import { FaSpinner } from "react-icons/fa";
+import { FaSpinner, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const AdminProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", ok: true });
+
+  const showToast = (message, ok = true) => {
+    setToast({ visible: true, message, ok });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 4000);
+  };
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState({
     name: "",
@@ -85,12 +91,12 @@ const AdminProfile = () => {
         });
         const result = await res.json();
         if (result.success) {
-          alert("Profile updated successfully!");
+          showToast("Profile updated successfully!", true);
         } else {
-          alert("Error: " + result.error);
+          showToast(result.error || "Failed to update profile.", false);
         }
-      } catch (error) {
-        alert("Failed to save profile.");
+      } catch {
+        showToast("Failed to save profile. Check your connection.", false);
       }
     }
     setIsEditing(!isEditing);
@@ -110,7 +116,17 @@ const AdminProfile = () => {
 
           {/* Header */}
           <h1 className="text-2xl md:text-3xl font-bold text-red-600">Profile</h1>
-          <p className="text-gray-600 mb-8">Update your information.</p>
+          <p className="text-gray-600 mb-6">Update your information.</p>
+
+          {/* Toast */}
+          {toast.visible && (
+            <div className={`mb-6 flex items-center gap-3 px-5 py-3 rounded-xl shadow-sm text-sm font-medium ${
+              toast.ok ? "bg-green-50 border border-green-200 text-green-800" : "bg-red-50 border border-red-200 text-red-800"
+            }`}>
+              {toast.ok ? <FaCheckCircle className="text-green-500" /> : <FaTimesCircle className="text-red-500" />}
+              {toast.message}
+            </div>
+          )}
 
           {/* Top Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -56,7 +56,12 @@ const getPlacementSummary = async (req, res) => {
                 j.ctc_package                             as "package",
                 j.status,
                 j.drive_date                              as "driveDate",
-                j.joining_date                            as "joiningDate"
+                j.joining_date                            as "joiningDate",
+                (
+                    SELECT COUNT(*)
+                    FROM applications a
+                    WHERE a.job_id = j.id AND a.status = 'selected'
+                )::int                                    as "placedCount"
             FROM jobs j
             LEFT JOIN companies_profile cp ON j.company_id = cp.id
             WHERE j.status IN ('approved', 'closed')
@@ -66,7 +71,7 @@ const getPlacementSummary = async (req, res) => {
 
         const data = result.rows.map(row => ({
             ...row,
-            statusLabel: row.status.charAt(0).toUpperCase() + row.status.slice(1),
+            statusLabel: row.status === 'closed' ? 'Completed' : 'In Progress',
             driveDate: row.driveDate
                 ? new Date(row.driveDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
                 : '—',
@@ -81,6 +86,7 @@ const getPlacementSummary = async (req, res) => {
         res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
+
 
 /**
  * POST /api/admin/placements

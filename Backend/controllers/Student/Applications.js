@@ -18,6 +18,7 @@ const getAppliedJobs = async (req, res) => {
                 j.job_title as "role", 
                 j.ctc_package as "salary", 
                 j.location, 
+                j.drive_date as "driveDate",
                 a.status, 
                 a.applied_at as "appliedAt"
             FROM applications a
@@ -28,11 +29,21 @@ const getAppliedJobs = async (req, res) => {
         `;
         const result = await pool.query(query, [studentId]);
 
+        const STATUS_LABELS = {
+            applied:     'Pending Review',
+            shortlisted: 'Shortlisted',
+            interview:   'In Interview',
+            selected:    'Selected 🎉',
+            rejected:    'Not Selected'
+        };
+
         const formatted = result.rows.map(app => ({
             ...app,
             appliedAt: new Date(app.appliedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-            statusLabel: app.status.charAt(0).toUpperCase() + app.status.slice(1)
+            driveDate: app.driveDate ? new Date(app.driveDate).toLocaleDateString('en-IN') : '—',
+            statusLabel: STATUS_LABELS[app.status] || app.status
         }));
+
 
         res.status(200).json({ success: true, data: formatted });
     } catch (error) {

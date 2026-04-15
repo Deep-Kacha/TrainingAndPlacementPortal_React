@@ -33,102 +33,125 @@ const StudDashboard = () => {
     useSocketRefresh('REFRESH_STATS', fetchStats);
     useSocketRefresh('REFRESH_APPLICATIONS', fetchStats);
 
-    const statusCards = [
-        { 
-            title: 'T&P Status', 
-            status: stats?.counts?.isPlaced ? 'PLACED' : 'APPROVED', 
-            detail: stats?.counts?.isPlaced ? 'Hired & Confirmed' : 'Registration Approved', 
-            colorClass: stats?.counts?.isPlaced ? 'text-blue-700 bg-blue-100' : 'text-green-700 bg-[#e8f5e9]', 
-            icon: stats?.counts?.isPlaced ? <FaTrophy /> : <FaCalendarCheck /> 
-        },
-        { 
-            title: 'Applied', 
-            status: stats?.counts?.applied ?? '0', 
-            detail: 'Job Applications', 
-            colorClass: 'text-indigo-700 bg-indigo-100', 
-            icon: <FaBriefcase /> 
-        },
-        { 
-            title: 'Interviews', 
-            status: stats?.counts?.interviews ?? '0', 
-            detail: 'Upcoming Rounds', 
-            colorClass: 'text-orange-700 bg-orange-100', 
-            icon: <FaCalendarCheck /> 
-        }
-    ];
-
-    const quickActions = [
-        { title: 'Browse Jobs', desc: 'Explore available opportunities', linkText: 'View Jobs', onclick: () => navigate("/StudJobs"), icon: '🔍' },
-        { title: 'My Applied', desc: 'Track application status', linkText: 'View Applied', onclick: () => navigate("/StudApplications"), icon: '📋' },
-        { title: 'Profile', desc: 'Update your information', linkText: 'Edit Profile', onclick: () => navigate("/StudProfile"), icon: '👤' },
-        { title: 'Interviews', desc: 'Manage interview schedule', linkText: 'View Schedule', onclick: () => navigate("/StudInterviewSchedule"), icon: '🗓️' }
-    ];
-
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[400px]">
                 <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
-                <p className="text-gray-500 font-medium font-bold uppercase tracking-wider">Gathering your placement data...</p>
+                <p className="text-gray-500 font-medium">Loading Statistics...</p>
             </div>
         );
     }
 
     return (
         <div className="w-full">
-            <header className="mb-10">
-                <div className="flex items-center gap-4">
-                    <div className="bg-red-100 text-red-600 p-3 rounded-full hidden md:block">
-                        <FaUserCircle className="text-3xl" />
-                    </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
+                Welcome, {stats?.studentName || "Student"}
+            </h1>
+            <p className="text-gray-600 mb-8">
+                Enrollment: {stats?.enrollment || "PENDING"} | Overview of your placement progress.
+            </p>
+
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div 
+                    onClick={() => navigate("/StudApplications")}
+                    className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm cursor-pointer hover:bg-[#cec3b3] transition-colors group"
+                >
                     <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-gray-900 m-0">
-                            Welcome {stats?.studentName || "Student"}
-                        </h1>
-                        <p className="text-gray-500 font-medium m-0 mt-1 uppercase tracking-widest text-xs">
-                            Enrollment: {stats?.enrollment || "RKU-XXXXX"}
-                        </p>
+                        <p className="text-gray-600 font-medium text-sm">Applied Jobs</p>
+                        <h2 className="text-2xl font-bold text-blue-700">{stats?.counts?.applied || 0}</h2>
+                    </div>
+                    <div className="p-3 rounded-lg bg-blue-100 text-blue-600 text-xl group-hover:scale-110 transition-transform">
+                        <FaBriefcase />
                     </div>
                 </div>
-            </header>
 
-            {/* Status Cards */}
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                {statusCards.map((card, index) => (
-                    <div key={index} className="bg-[#ece6da] p-6 rounded-xl border border-[#e0dacd] shadow-sm transition-all hover:shadow-md">
-                        <div className="flex justify-between items-start mb-6">
-                            <div className="text-2xl p-3 bg-[#d8cfc3] rounded-xl text-gray-800">
-                                {card.icon}
-                            </div>
-                            <span className={`font-extrabold text-[10px] px-3 py-1.5 rounded-full uppercase tracking-widest ${card.colorClass}`}>
-                                {card.status}
-                            </span>
-                        </div>
-                        <div>
-                            <h3 className="m-0 text-xl font-bold text-gray-900">{card.title}</h3>
-                            <p className="mt-1 text-sm font-medium text-gray-600 uppercase tracking-widest text-[10px]">{card.detail}</p>
-                        </div>
+                <div 
+                    onClick={() => navigate("/StudInterviewSchedule")}
+                    className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm cursor-pointer hover:bg-[#cec3b3] transition-colors group"
+                >
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">Active Rounds</p>
+                        <h2 className="text-2xl font-bold text-orange-700">{stats?.counts?.interviews || 0}</h2>
                     </div>
-                ))}
-            </section>
+                    <div className="p-3 rounded-lg bg-orange-100 text-orange-600 text-xl group-hover:scale-110 transition-transform">
+                        <FaCalendarCheck />
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">Status</p>
+                        <h2 className={`text-xl font-bold ${stats?.counts?.isPlaced ? 'text-green-700' : 'text-blue-700'}`}>
+                            {stats?.counts?.isPlaced ? 'PLACED' : 'APPROVED'}
+                        </h2>
+                    </div>
+                    <div className={`p-3 rounded-lg text-xl ${stats?.counts?.isPlaced ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                        <FaTrophy />
+                    </div>
+                </div>
+
+                {/* Extra Slot or Branding */}
+                <div className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">RKU Portal</p>
+                        <h2 className="text-lg font-bold text-gray-800">Verified</h2>
+                    </div>
+                    <div className="p-3 rounded-lg bg-red-100 text-red-600 text-xl">
+                        <FaUserCircle />
+                    </div>
+                </div>
+            </div>
 
             {/* Quick Actions */}
-            <section>
-                <h2 className="text-2xl font-bold mb-6 text-gray-900">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {quickActions.map((action, index) => (
-                        <div key={index} className="bg-[#ece6da] border border-[#e0dacd] p-6 rounded-xl cursor-pointer hover:shadow-md transition-all flex flex-col items-center text-center group" onClick={action.onclick}>
-                            <div className="w-16 h-16 bg-[#e9e2d5] rounded-full flex items-center justify-center mb-5 text-2xl group-hover:bg-red-50 transition-colors">
-                                {action.icon}
-                            </div>
-                            <h3 className="text-lg font-bold text-gray-900 mb-2">{action.title}</h3>
-                            <p className="text-gray-600 text-xs font-medium mb-5 leading-relaxed">{action.desc}</p>
-                            <span className="text-red-600 font-bold text-xs uppercase tracking-widest mt-auto border-b border-transparent group-hover:border-red-600">
-                                {action.linkText} ➔
-                            </span>
-                        </div>
-                    ))}
+            <h2 className="text-xl md:text-2xl font-bold text-red-600 mb-6 font-semibold">
+                Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-orange-500">
+                        🔍
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">Browse Jobs</h3>
+                    <p className="text-gray-600 text-sm">Explore opportunities</p>
+                    <button onClick={() => navigate("/StudJobs")} className="mt-4 font-semibold text-orange-600">
+                        View Jobs →
+                    </button>
                 </div>
-            </section>
+
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-blue-600">
+                        📋
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">My Applied</h3>
+                    <p className="text-gray-600 text-sm">Track your progress</p>
+                    <button onClick={() => navigate("/StudApplications")} className="mt-4 font-semibold text-blue-700">
+                        View History →
+                    </button>
+                </div>
+
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-purple-600">
+                        👤
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">My Profile</h3>
+                    <p className="text-gray-600 text-sm">Update info</p>
+                    <button onClick={() => navigate("/StudProfile")} className="mt-4 font-semibold text-purple-600">
+                        Edit Profile →
+                    </button>
+                </div>
+
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-green-600">
+                        🏆
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">Placement</h3>
+                    <p className="text-gray-600 text-sm">View achievements</p>
+                    <button onClick={() => navigate("/StudPlacementHistory")} className="mt-4 font-semibold text-green-700">
+                        View Records →
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };

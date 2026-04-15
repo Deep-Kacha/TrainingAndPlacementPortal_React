@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   FaThLarge,
   FaUser,
@@ -26,6 +26,7 @@ const ADMIN_SUBPAGE_MAP = {
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate  = useNavigate();
 
   const menu = [
     { name: "Dashboard",            path: "/AdminDashboard",           icon: <FaThLarge /> },
@@ -36,13 +37,19 @@ const Sidebar = () => {
     { name: "Interview Schedule",   path: "/AdminInterviewSchedule",   icon: <FaCalendarAlt /> },
     { name: "Placement History",    path: "/AdminPlacementHistory",    icon: <FaHistory /> },
     { name: "Change Password",      path: "/AdminChangePassword",      icon: <FaLock /> },
-    { name: "Logout",               path: "/",                         icon: <FaSignOutAlt /> },
   ];
 
   const isItemActive = (itemPath, reactRouterIsActive) => {
     if (reactRouterIsActive) return true;
     const subpages = ADMIN_SUBPAGE_MAP[itemPath] || [];
     return subpages.includes(location.pathname);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsOpen(false);
+    navigate("/Authentication/login");
   };
 
   return (
@@ -65,7 +72,7 @@ const Sidebar = () => {
           <li key={index}>
             <NavLink
               to={item.path}
-              end={item.path === "/"}
+              end={item.path === "/AdminDashboard"}
               onClick={() => setIsOpen(false)}
               className={({ isActive }) => {
                 const active = isItemActive(item.path, isActive);
@@ -81,6 +88,17 @@ const Sidebar = () => {
             </NavLink>
           </li>
         ))}
+
+        {/* Logout Button — clears token before navigating */}
+        <li>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition font-medium text-sm w-full bg-white text-gray-800 hover:bg-red-50 hover:text-red-600"
+          >
+            <span className="text-base"><FaSignOutAlt /></span>
+            <span>Logout</span>
+          </button>
+        </li>
       </ul>
     </div>
   );

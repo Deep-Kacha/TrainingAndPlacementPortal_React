@@ -181,7 +181,7 @@ const Login = () => {
             <p>
               Don't have an account?{" "}
               <span className="font-semibold cursor-pointer hover:underline"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/Register")}
               >
                 Register ?
               </span>
