@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import StatCard from "../../Components/Admin/Dashboard/StatCard";
 import QuickActionCard from "../../Components/Admin/Dashboard/QuickActionCard";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 import {
   FaUsers,
@@ -22,6 +23,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     fetchStats();
   }, []);
+
+  useSocketRefresh('REFRESH_STATS', fetchStats);
 
   const fetchStats = async () => {
     try {

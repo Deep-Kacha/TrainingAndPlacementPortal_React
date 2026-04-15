@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaEye, FaEyeSlash, FaUserShield, FaCalendarAlt } from "react-icons/fa";
 
 const AddPortalUser = () => {
   const [form, setForm] = useState({
@@ -12,6 +12,29 @@ const AddPortalUser = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [createdUser, setCreatedUser] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [adminUsers, setAdminUsers] = useState([]);
+  const [fetchingUsers, setFetchingUsers] = useState(true);
+
+  useEffect(() => {
+    fetchAdminUsers();
+  }, []);
+
+  const fetchAdminUsers = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setAdminUsers(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch admin users", error);
+    } finally {
+      setFetchingUsers(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,7 +58,6 @@ const AddPortalUser = () => {
   };
 
   const handleAddUser = async () => {
-    // Force validation
     const newErrors = {};
     if (!form.email) newErrors.email = "Email is required";
     if (!form.password) newErrors.password = "Password is required";
@@ -62,6 +84,7 @@ const AddPortalUser = () => {
       if (result.success) {
         setCreatedUser(result.data);
         setForm({ email: "", password: "", confirmPassword: "" });
+        fetchAdminUsers(); // Refresh the list
       } else {
         alert("Error: " + result.error);
       }
@@ -72,98 +95,135 @@ const AddPortalUser = () => {
     }
   };
 
+  const formatDate = (dateStr) => {
+    return new Date(dateStr).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    });
+  };
+
   return (
-    <div className="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm h-full flex flex-col">
+    <div className="flex flex-col gap-6">
+      {/* ADD USER FORM */}
+      <div className="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm flex flex-col">
+        <h2 className="text-xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6">
+          Add Another Portal User
+        </h2>
 
-      <h2 className="text-xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6">
-        Add Another Portal User
-      </h2>
-
-      <div className="space-y-5 flex-grow">
-
-        <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Enter Email Address</label>
-          <input
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            placeholder="Enter verified email"
-            className="w-full rounded-md p-2.5 outline-none transition-all bg-white border border-gray-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-gray-900"
-          />
-          {errors.email && <p className="text-red-500 text-xs mt-1.5">{errors.email}</p>}
-        </div>
-
-        <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Enter Password</label>
-          <div className="relative">
+        <div className="space-y-5">
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Enter Email Address</label>
             <input
-              name="password"
-              value={form.password}
+              name="email"
+              value={form.email}
               onChange={handleChange}
-              type={showPass ? "text" : "password"}
-              placeholder="Enter new password"
+              placeholder="Enter verified email"
               className="w-full rounded-md p-2.5 outline-none transition-all bg-white border border-gray-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-gray-900"
             />
-            <button
-              type="button"
-              onClick={() => setShowPass(!showPass)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-            >
-              {showPass ? <FaEyeSlash /> : <FaEye />}
-            </button>
+            {errors.email && <p className="text-red-500 text-xs mt-1.5">{errors.email}</p>}
           </div>
-          {errors.password && <p className="text-red-500 text-xs mt-1.5">{errors.password}</p>}
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Enter Password</label>
+            <div className="relative">
+              <input
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                type={showPass ? "text" : "password"}
+                placeholder="Enter new password"
+                className="w-full rounded-md p-2.5 outline-none transition-all bg-white border border-gray-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-gray-900"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPass(!showPass)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPass ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {errors.password && <p className="text-red-500 text-xs mt-1.5">{errors.password}</p>}
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <div className="relative">
+              <input
+                name="confirmPassword"
+                value={form.confirmPassword}
+                onChange={handleChange}
+                type={showConfirm ? "text" : "password"}
+                placeholder="Re-enter new password"
+                className="w-full rounded-md p-2.5 outline-none transition-all bg-white border border-gray-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-gray-900"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showConfirm ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5">{errors.confirmPassword}</p>}
+          </div>
         </div>
 
-        <div className="flex flex-col">
-          <label className="text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-          <div className="relative">
-            <input
-              name="confirmPassword"
-              value={form.confirmPassword}
-              onChange={handleChange}
-              type={showConfirm ? "text" : "password"}
-              placeholder="Re-enter new password"
-              className="w-full rounded-md p-2.5 outline-none transition-all bg-white border border-gray-300 focus:border-red-500 focus:ring-1 focus:ring-red-500 text-gray-900"
-            />
-            <button
-              type="button"
-              onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
-            >
-              {showConfirm ? <FaEyeSlash /> : <FaEye />}
-            </button>
-          </div>
-          {errors.confirmPassword && <p className="text-red-500 text-xs mt-1.5">{errors.confirmPassword}</p>}
+        <div className="flex gap-4 mt-8">
+          <button 
+            onClick={handleAddUser}
+            disabled={loading}
+            className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-medium shadow transition-colors disabled:bg-red-400"
+          >
+            {loading ? "Adding..." : "Add User"}
+          </button>
+          <button 
+            onClick={() => { setForm({email: "", password: "", confirmPassword: ""}); setErrors({}); }}
+            className="flex-1 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 font-medium shadow-sm transition-colors"
+          >
+            Cancel
+          </button>
         </div>
 
+        {createdUser && (
+          <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+            <h3 className="text-sm font-bold text-green-800 mb-2">Successfully Created!</h3>
+            <p className="text-sm text-gray-700"><span className="font-semibold">Email:</span> {createdUser.email}</p>
+            <p className="text-sm text-gray-700"><span className="font-semibold">Password:</span> {createdUser.password}</p>
+            <p className="text-xs text-gray-500 mt-2 italic">Copy these credentials safely. The password will not be shown again.</p>
+          </div>
+        )}
       </div>
 
-      <div className="flex gap-4 mt-8">
-        <button 
-          onClick={handleAddUser}
-          disabled={loading}
-          className="flex-1 bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 font-medium shadow transition-colors disabled:bg-red-400"
-        >
-          {loading ? "Adding..." : "Add User"}
-        </button>
-        <button 
-          onClick={() => { setForm({email: "", password: "", confirmPassword: ""}); setErrors({}); }}
-          className="flex-1 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg hover:bg-gray-50 font-medium shadow-sm transition-colors"
-        >
-          Cancel
-        </button>
+      {/* ADMIN USERS LIST */}
+      <div className="bg-[#d8cfc3] rounded-xl p-6 md:p-8 shadow-sm flex flex-col">
+        <h2 className="text-xl font-bold text-gray-800 border-b border-gray-300 pb-4 mb-6">
+          Added Portal Users
+        </h2>
+        
+        {fetchingUsers ? (
+          <p className="text-gray-500 text-sm text-center py-4 italic">Loading portal users...</p>
+        ) : adminUsers.length === 0 ? (
+          <p className="text-gray-500 text-sm text-center py-4 italic">No additional portal users added yet.</p>
+        ) : (
+          <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1 custom-scrollbar">
+            {adminUsers.map((user) => (
+              <div key={user.id} className="bg-white/70 rounded-lg p-4 flex items-center gap-4 border border-white/50 shadow-sm">
+                <div className="bg-red-100 p-3 rounded-full text-red-600">
+                  <FaUserShield className="text-lg" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-gray-900 truncate">{user.email}</p>
+                  <p className="text-xs text-gray-500 flex items-center gap-1.5 mt-0.5">
+                    <FaCalendarAlt className="text-[10px]" /> Added on {formatDate(user.created_at)}
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-wider bg-red-600 text-white px-2 py-0.5 rounded">Admin</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-
-      {createdUser && (
-        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-          <h3 className="text-sm font-bold text-green-800 mb-2">Successfully Created!</h3>
-          <p className="text-sm text-gray-700"><span className="font-semibold">Email:</span> {createdUser.email}</p>
-          <p className="text-sm text-gray-700"><span className="font-semibold">Password:</span> {createdUser.password}</p>
-          <p className="text-xs text-gray-500 mt-2 italic">Copy these credentials safely. The password will not be shown again.</p>
-        </div>
-      )}
-
     </div>
   );
 };

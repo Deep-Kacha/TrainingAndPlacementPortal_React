@@ -1,82 +1,142 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FaSpinner, FaBriefcase, FaMapMarkerAlt, FaCheckCircle, FaSearch, FaRegLightbulb } from 'react-icons/fa';
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
+/**
+ * Student › Jobs list page.
+ * Fetches all approved jobs and student's personal application status.
+ */
 const StudJobs = () => {
     const navigate = useNavigate();
-    // Mock data for jobs based on the image
-    const [jobs, setJobs] = useState([
-        { id: 1, company: "TCS", role: "Software Development Engineer", salary: "₹8.0 LPA", location: "Pune, Maharashtra", cgpa: "7.5", status: "Apply" },
-        { id: 2, company: "Infosys", role: "Systems Engineer", salary: "₹6.5 LPA", location: "Bangalore, Karnataka", cgpa: "7.0", status: "Applied" },
-        { id: 3, company: "Wipro", role: "Project Engineer", salary: "₹7.0 LPA", location: "Hyderabad, Telangana", cgpa: "6.5", status: "Applied" },
-        { id: 4, company: "HCL Technologies", role: "Software Engineer", salary: "₹8.5 LPA", location: "Noida, Uttar Pradesh", cgpa: "7.0", status: "Apply" },
-        { id: 5, company: "Tech Mahindra", role: "Software Developer", salary: "₹6.0 LPA", location: "Pune, Maharashtra", cgpa: "6.0", status: "Apply" },
-        { id: 6, company: "Larsen & Toubro", role: "Embedded Engineer", salary: "₹9.0 LPA", location: "Chennai, Tamil Nadu", cgpa: "7.5", status: "Applied" }
-    ]);
+    const [jobs, setJobs] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [applyingId, setApplyingId] = useState(null);
 
-    const handleApply = (id) => {
-        setJobs(jobs.map(job =>
-            job.id === id ? { ...job, status: 'Applied' } : job
-        ));
+    useEffect(() => {
+        fetchJobs();
+    }, []);
+
+    useSocketRefresh('REFRESH_JOBS', fetchJobs);
+
+    const fetchJobs = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/jobs", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) setJobs(result.data);
+        } catch (error) {
+            console.error("Failed to fetch student jobs", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleApply = async (jobId) => {
+        if (!confirm("Are you sure you want to apply for this position?")) return;
+        
+        setApplyingId(jobId);
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(`/api/student/apply/${jobId}`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert("Application submitted successfully!");
+                fetchJobs(); // Refresh statuses
+            } else {
+                alert("Error: " + result.error);
+            }
+        } catch (error) {
+            alert("Network error while applying.");
+        } finally {
+            setApplyingId(null);
+        }
     };
 
     return (
         <div className="w-full">
-            <header className="page-header">
-                <h1 className="page-title">Companies for Apply</h1>
-                <p className="page-subtitle">Here you can Apply for Interviews</p>
+            <header className="mb-10">
+                <h1 className="text-2xl md:text-3xl font-bold text-red-600">Career Opportunities</h1>
+                <p className="text-gray-600 text-sm md:text-base mt-1 font-medium">
+                    Explore and apply for verified campus drives.
+                </p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {jobs.map(job => (
-                    <div className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm flex flex-col" key={job.id}>
-                        <div className="flex items-start gap-4 mb-5">
-                            <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-2xl shrink-0">
-                                {job.company.charAt(0)}
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-24">
+                    <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Finding available positions...</p>
+                </div>
+            ) : jobs.length === 0 ? (
+                <div className="text-center py-20 bg-[#ece6da] rounded-xl border border-[#e0dacd] shadow-sm">
+                    <FaBriefcase className="text-gray-300 text-6xl mx-auto mb-4" />
+                    <p className="text-gray-600 text-lg font-bold">No active job drives found.</p>
+                    <p className="text-gray-500 text-xs uppercase tracking-widest mt-2">Check back later for new opportunities.</p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {jobs.map(job => (
+                        <div className="bg-[#ece6da] p-6 rounded-xl border border-[#e0dacd] shadow-sm flex flex-col transition-all hover:shadow-md h-full" key={job.id}>
+                            <div className="flex items-start gap-4 mb-6">
+                                <div className="w-14 h-14 bg-red-600 rounded-xl flex items-center justify-center text-white font-extrabold text-2xl shrink-0 shadow-sm uppercase">
+                                    {job.company?.[0] || 'C'}
+                                </div>
+                                <div className="min-w-0">
+                                    <h2 className="text-xl font-extrabold m-0 text-gray-900 truncate uppercase tracking-tighter">{job.company || "Company"}</h2>
+                                    <p className="text-gray-600 text-xs font-bold m-0 mt-0.5 uppercase tracking-widest leading-snug">{job.role || "Job Role"}</p>
+                                </div>
                             </div>
-                            <div>
-                                <h2 className="text-xl font-bold m-0 mb-1 text-gray-900">{job.company}</h2>
-                                <p className="text-gray-600 text-sm font-medium m-0">{job.role}</p>
-                            </div>
-                        </div>
 
-                        <div className="text-primary-red text-2xl font-bold mb-4">
-                            {job.salary}
-                        </div>
-
-                        <div className="mb-6">
-                            <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
-                                <span className="text-base">📍</span>
-                                <span>{job.location}</span>
+                            <div className="text-red-700 text-3xl font-black mb-6 tracking-tighter">
+                                {job.salary || "—"}
                             </div>
-                            <div className="flex items-center gap-2 text-green-700 text-sm font-semibold">
-                                <span className="text-base">✅</span>
-                                <span>CGPA ≥ {job.cgpa} ✔</span>
-                            </div>
-                        </div>
 
-                        <div className="flex gap-3 mt-auto">
-                            <button 
-                                className="btn-outline flex-1"
-                                onClick={() => navigate('/StudJobDetails', { state: { job } })}
-                            >
-                                View Details
-                            </button>
-                            {job.status === 'Applied' ? (
-                                <button className="btn-disabled flex-1" disabled>
-                                    Applied
-                                </button>
-                            ) : (
-                                <button
-                                    className="btn-primary flex-1"
-                                    onClick={() => handleApply(job.id)}
+                            <div className="space-y-3 mb-8">
+                                <div className="flex items-center gap-3 text-gray-700 text-sm font-bold uppercase tracking-widest text-[10px]">
+                                    <FaMapMarkerAlt className="text-red-600 text-xs" />
+                                    <span>{job.location || "Location TBD"}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-green-700 text-sm font-bold uppercase tracking-widest text-[10px]">
+                                    <FaCheckCircle className="text-green-600 text-xs" />
+                                    <span>Eligible for your profile ✔</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-gray-500 text-sm font-bold uppercase tracking-widest text-[10px]">
+                                    <FaRegLightbulb className="text-orange-500 text-xs" />
+                                    <span>Deadline: {job.deadline}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-4 mt-auto">
+                                <button 
+                                    className="flex-1 border border-gray-400 text-gray-700 py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-white/50 transition-colors shadow-sm"
+                                    onClick={() => navigate('/StudJobDetails', { state: { job } })}
                                 >
-                                    Apply
+                                    VIEW DETAILS
                                 </button>
-                            )}
+                                {job.status === 'Applied' ? (
+                                    <button className="flex-1 bg-gray-400 text-white py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest cursor-not-allowed shadow-none" disabled>
+                                        ✓ APPLIED
+                                    </button>
+                                ) : (
+                                    <button
+                                        className="flex-1 bg-red-600 text-white py-3 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-black transition-colors shadow-md disabled:bg-red-300"
+                                        onClick={() => handleApply(job.id)}
+                                        disabled={applyingId === job.id}
+                                    >
+                                        {applyingId === job.id ? "APPLYING..." : "APPLY NOW"}
+                                    </button>
+                                )}
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

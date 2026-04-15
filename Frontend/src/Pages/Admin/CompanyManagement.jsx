@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import CompanyCard from "../../Components/Admin/CompanyMangement/CompanyCard";
 import { FaSearch, FaChevronDown } from "react-icons/fa";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 const AdminCompanyManagement = () => {
   const [companies, setCompanies] = useState([]);
@@ -14,6 +15,8 @@ const AdminCompanyManagement = () => {
   useEffect(() => {
     fetchCompanies();
   }, []);
+
+  useSocketRefresh('REFRESH_JOBS', fetchCompanies);
 
   const fetchCompanies = async () => {
     try {

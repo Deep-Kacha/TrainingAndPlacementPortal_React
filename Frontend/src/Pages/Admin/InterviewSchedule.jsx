@@ -62,8 +62,6 @@ const AdminInterviewSchedule = () => {
     );
   }
 
-
-
   return (
     <div className="w-full">
 
@@ -72,7 +70,7 @@ const AdminInterviewSchedule = () => {
           Interview Schedule
         </h1>
         <p className="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">
-          Manage interview schedules.
+          Manage interview schedules across all job drives.
         </p>
 
         {/* Search and Filter Section */}
@@ -114,26 +112,25 @@ const AdminInterviewSchedule = () => {
               className="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm"
             >
               <option value="All">All Status</option>
-              <option value="On Hold">On Hold</option>
-              <option value="Scheduled Interview (Pending)">Scheduled Interview (Pending)</option>
-              <option value="Scheduled Interview (Complete)">Scheduled Interview (Complete)</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
             </select>
             <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
           </div>
 
         </div>
 
-        {/* Cards */}
+        {/* Interview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredCompanies.map((company) => (
             <InterviewCard
               key={company.id}
               data={company}
+              onScheduleCreated={fetchInterviews}
+              onScheduleDeleted={fetchInterviews}
             />
           ))}
-
         </div>
-
     </div>
   );
 };

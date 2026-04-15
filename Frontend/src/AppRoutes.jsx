@@ -1,30 +1,30 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 //Guest Side Routes
-import Login from "./pages/guest/Login";
+import Login from "./Pages/guest/Login";
 import ForgotPassword from "./Components/Authentication/Forgotpassword";
 import ChangePassword from "./Components/Authentication/Changepassword";
 import ResetPassword from "./Components/Authentication/Resetpassword";
-import Home from "./pages/guest/Home";
-import SubmitJd from "./pages/guest/SubmitJd";
-import Register from "./pages/guest/Register";
-import AuthHeader from "./components/common/AuthHeader";
+import Home from "./Pages/guest/Home";
+import SubmitJd from "./Pages/guest/SubmitJd";
+import Register from "./Pages/guest/Register";
+import AuthHeader from "./Components/common/AuthHeader";
 
 // Layouts
 import StudentLayout from "./Components/Student/StudentLayout";
 import AdminLayout from "./Components/Admin/AdminLayout";
 
 //Student Side Routes
-import StudDashboard from "./pages/Student/Dashboard";
-import StudProfile from "./pages/Student/Profile";
-import StudJobs from "./pages/Student/Jobs";
-import StudApplications from "./pages/Student/Applications";
-import StudInterviewSchedule from "./pages/Student/Interview_schedule";
-import StudPlacementHistory from "./pages/Student/Placement_history";
-import StudChangePass from "./pages/Student/Change_pass";
-import StudLogout from "./pages/Student/Logout";
-import StudJobDetails from "./pages/Student/JobDetails";
-import StudForgotPassword from "./pages/Student/forgot_pass";
+import StudDashboard from "./Pages/Student/Dashboard";
+import StudProfile from "./Pages/Student/Profile";
+import StudJobs from "./Pages/Student/Jobs";
+import StudApplications from "./Pages/Student/Applications";
+import StudInterviewSchedule from "./Pages/Student/Interview_schedule";
+import StudPlacementHistory from "./Pages/Student/Placement_history";
+import StudChangePass from "./Pages/Student/Change_pass";
+import StudLogout from "./Pages/Student/Logout";
+import StudJobDetails from "./Pages/Student/JobDetails";
+import StudForgotPassword from "./Pages/Student/forgot_pass";
 
 //Admin Side Routes
 import AdminDashboard from "./Pages/Admin/Dashboard";
@@ -48,6 +48,11 @@ import CompanyApplicants from "./Pages/Company/Applicants";
 function AppRoutes() {
   return (
     <Routes>
+      {/* Redirect Aliases for ease of use */}
+      <Route path="/login" element={<Navigate to="/Authentication/login" replace />} />
+      <Route path="/AdminLogin" element={<Navigate to="/Authentication/login" replace />} />
+      <Route path="/submit-jd" element={<Navigate to="/SubmitJd" replace />} />
+
       {/* Guest Side Routes */}
       <Route path="/" element={<Home/>} />
       <Route path="/Register" element={<Register />} />

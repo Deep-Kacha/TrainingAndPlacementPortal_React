@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FaUsers, FaSpinner } from "react-icons/fa";
 import StudentTable from "../../Components/Admin/StudentMangement/StudentTable";
 import Toast from "../../Components/common/Toast";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 /**
  * Admin › Students Management page.
@@ -68,6 +69,8 @@ const AdminStudentsManagement = () => {
   useEffect(() => {
     fetchStudents();
   }, []);
+
+  useSocketRefresh('REFRESH_STUDENTS', fetchStudents);
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 

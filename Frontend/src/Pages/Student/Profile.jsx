@@ -1,141 +1,179 @@
-import { useState } from 'react';
-import { FaEdit } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
+import { FaEdit, FaSpinner, FaUserCircle, FaSave, FaTimes } from 'react-icons/fa';
 
 const StudProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [recentApplications, setRecentApplications] = useState([]);
     const [profileData, setProfileData] = useState({
-        fullName: 'Raj Patel',
-        // studentTitle: 'Computer Science Student',
-        enrollmentNo: '2023CS001',
-        branch: 'Computer Engineering',
-        cgpa: 8.2, // Number type
-        mobileNumber: '+91 98765 43210',
-        parentsName: 'Aman Patel',
-        parentsMobile: '+91 98765 43210',
-        emailAddress: 'raj.patel@rku.ac.in',
-        dateOfBirth: '2001-08-15',
-        academicYear: '2023-2024',
-        semester: '3rd Semester'
+        name: '',
+        enrollment_no: '',
+        department: '',
+        cgpa: 0,
+        contact_number: '',
+        parent_name: '',
+        parent_mobile: '',
+        email: '',
+        personal_email: '',
+        current_year: '',
+        semester: ''
     });
 
-    const recentApplications = [
-        { id: 1, position: 'Software Developer', type: 'Full-time', company: 'TechCorp Solutions', status: 'Interview Scheduled', statusClass: 'scheduled' },
-        { id: 2, position: 'Frontend Developer', type: 'Internship', company: 'Digital Innovations', status: 'Under Review', statusClass: 'review' },
-        { id: 3, position: 'Data Analyst', type: 'Full-time', company: 'Analytics Pro', status: 'Not Selected', statusClass: 'rejected' }
-    ];
+    useEffect(() => {
+        fetchProfile();
+        fetchRecentApps();
+    }, []);
+
+    const fetchProfile = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/profile", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) setProfileData(result.data);
+        } catch (error) {
+            console.error("Failed to fetch student profile", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchRecentApps = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/applications", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) setRecentApplications(result.data.slice(0, 3));
+        } catch (error) {
+            console.error("Failed to fetch recent apps", error);
+        }
+    };
 
     const handleInputChange = (e) => {
-        const { name, value, type } = e.target;
-        let newValue = value;
+        const { name, value } = e.target;
+        setProfileData(prev => ({ ...prev, [name]: value }));
+    };
 
-        if (name === 'fullName' || name === 'parentsName' || name === 'branch') {
-            newValue = value.replace(/[^a-zA-Z\s]/g, '');
-        } else if (name === 'academicYear') {
-            newValue = value.replace(/[^0-9\-\s]/g, '');
-        } else if (name === 'cgpa') {
-            newValue = value.replace(/[^0-9.]/g, '');
-            const parts = newValue.split('.');
-            if (parts.length > 2) newValue = parts[0] + '.' + parts.slice(1).join('');
-        } else if (name === 'mobileNumber' || name === 'parentsMobile') {
-            newValue = value.replace(/\D/g, '');
-        } else if (name === 'dateOfBirth') {
-            newValue = value;
+    const handleSave = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/profile", {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(profileData)
+            });
+            const result = await res.json();
+            if (result.success) {
+                alert("Profile updated successfully!");
+                setIsEditing(false);
+            } else {
+                alert("Error: " + result.error);
+            }
+        } catch (error) {
+            alert("Failed to save profile.");
         }
-
-        setProfileData(prev => ({
-            ...prev,
-            [name]: type === 'number' ? parseFloat(newValue) || 0 : newValue
-        }));
     };
 
-    const toggleEdit = () => {
-        setIsEditing(!isEditing);
-    };
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
+                <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+                <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Loading profile from RKU Database...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full max-w-6xl mx-auto">
-            <header className="page-header">
-                <h1 className="page-title">Your Profile</h1>
-                <p className="page-subtitle">Read All Information Properly If Any Mistakes You can Edit It</p>
+            <header className="mb-8">
+                <h1 className="text-2xl md:text-3xl font-bold text-red-600">Student Profile</h1>
+                <p className="text-gray-600 text-sm md:text-base mt-2 font-medium">Please ensure your information is accurate for placement verification.</p>
             </header>
 
-            <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-8 mb-10">
+            <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-8 mb-10">
                 {/* Left Side: Identity Card */}
-                <div className="bg-white rounded-xl py-10 px-8 text-center flex flex-col items-center border border-gray-200 shadow-sm">
-                    <div className="w-24 h-24 bg-[#e7000b] rounded-full text-white flex items-center justify-center text-4xl font-bold mb-5 shadow-md">
-                        {profileData.fullName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'ST'}
+                <div className="bg-[#ece6da] rounded-xl py-10 px-8 text-center flex flex-col items-center border border-[#e0dacd] shadow-sm">
+                    <div className="w-24 h-24 bg-red-600 rounded-full text-white flex items-center justify-center text-4xl font-bold mb-6 shadow-md uppercase">
+                        {profileData.name?.[0] || 'S'}
                     </div>
-                    {isEditing ? (
-                        <>
-                            <input
-                                type="text"
-                                name="fullName"
-                                value={profileData.fullName}
-                                onChange={handleInputChange}
-                                className="text-[22px] mb-1 font-bold text-center bg-white border border-[#e7000b] focus:outline-none rounded-md p-1 w-full"
-                            />
-                        </>
+                    
+                    <h2 className="text-xl mb-1 text-gray-900 font-black uppercase tracking-tighter">
+                        {profileData.name}
+                    </h2>
+                    <p className="text-gray-500 text-[10px] mb-8 font-extrabold uppercase tracking-widest">
+                        {profileData.department} Student
+                    </p>
+
+                    <div className="w-full border-t border-[#d8cfc3] pt-4 pb-4 flex justify-between items-center text-xs font-bold uppercase tracking-widest text-[#64748b]">
+                        <span>Enrollment</span>
+                        <span className="text-gray-900">{profileData.enrollment_no}</span>
+                    </div>
+                    <div className="w-full border-t border-[#d8cfc3] pt-4 pb-4 flex justify-between items-center text-xs font-bold uppercase tracking-widest text-[#64748b]">
+                        <span>CGPA</span>
+                        <span className="text-blue-700 font-black text-sm">{profileData.cgpa}</span>
+                    </div>
+                    <div className="w-full border-t border-b border-[#d8cfc3] pt-4 pb-4 flex justify-between items-center text-xs font-bold uppercase tracking-widest text-[#64748b]">
+                        <span>Semester</span>
+                        <span className="text-gray-900">{profileData.semester}</span>
+                    </div>
+
+                    {!isEditing ? (
+                        <button 
+                            className="bg-red-600 text-white rounded-lg mt-8 w-full py-3 px-4 font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-black transition-colors shadow-md"
+                            onClick={() => setIsEditing(true)}
+                        >
+                            <FaEdit /> EDIT PROFILE
+                        </button>
                     ) : (
-                        <>
-                            <h2 className="text-[22px] mb-1 text-gray-900 font-bold">{profileData.fullName}</h2>
-                            <p className="text-[#64748b] text-[14px] mb-8 font-medium">{profileData.studentTitle}</p>
-                        </>
+                        <div className="flex gap-2 w-full mt-8">
+                            <button 
+                                className="flex-1 bg-green-700 text-white rounded-lg py-3 px-4 font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-green-800 transition-colors shadow-md"
+                                onClick={handleSave}
+                            >
+                                <FaSave /> SAVE
+                            </button>
+                            <button 
+                                className="flex-1 bg-white border border-gray-300 text-gray-700 rounded-lg py-3 px-4 font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors shadow-sm"
+                                onClick={() => setIsEditing(false)}
+                            >
+                                <FaTimes /> CANCEL
+                            </button>
+                        </div>
                     )}
-
-                    <div className="w-full border-t border-[#e7000b] pt-4 pb-4 flex justify-between items-center text-[14px]">
-                        <span className="text-gray-500 font-medium whitespace-nowrap mr-2">Enrollment No.</span>
-                        {isEditing ? (
-                            <input type="text" name="enrollmentNo" value={profileData.enrollmentNo} onChange={handleInputChange} className="font-bold bg-white border border-[#e7000b] focus:outline-none rounded p-1 w-2/3 text-right" />
-                        ) : (
-                            <span className="font-bold text-gray-900">{profileData.enrollmentNo}</span>
-                        )}
-                    </div>
-                    <div className="w-full border-t border-gray-200 pt-4 pb-4 flex justify-between items-center text-[14px]">
-                        <span className="text-gray-500 font-medium whitespace-nowrap mr-2">Branch</span>
-                        {isEditing ? (
-                            <input type="text" name="branch" value={profileData.branch} onChange={handleInputChange} className="font-bold bg-white border border-[#e7000b] focus:outline-none rounded p-1 w-2/3 text-right" />
-                        ) : (
-                            <span className="font-bold text-gray-900">{profileData.branch}</span>
-                        )}
-                    </div>
-                    <div className="w-full border-t border-b border-gray-200 pt-4 pb-4 flex justify-between items-center text-[14px]">
-                        <span className="text-gray-500 font-medium whitespace-nowrap mr-2">CGPA</span>
-                        {isEditing ? (
-                            <input type="number" step="0.01" name="cgpa" value={profileData.cgpa} onChange={handleInputChange} className="font-bold text-[#168a48] text-base bg-white border border-[#e7000b] focus:outline-none rounded p-1 w-1/3 text-right" />
-                        ) : (
-                            <span className="font-bold text-[#168a48] text-base">{profileData.cgpa}</span>
-                        )}
-                    </div>
-
-                    <button className="bg-[#c72027] text-white rounded-md mt-6 w-full py-3 px-4 font-bold text-sm tracking-wide flex items-center justify-center gap-2 hover:bg-red-800 transition shadow-sm" onClick={toggleEdit}>
-                        <FaEdit />
-                        {isEditing ? 'SAVE PROFILE' : 'EDIT CONTACT'}
-                    </button>
                 </div>
 
                 {/* Right Side: Detailed Profile Info */}
-                <div className="bg-white rounded-xl p-8 border border-gray-200 shadow-sm">
-                    <h3 className="text-[20px] mb-8 text-gray-900 font-bold">Profile Information</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-5">
+                <div className="bg-[#ece6da] rounded-xl p-8 border border-[#e0dacd] shadow-sm">
+                    <h3 className="text-lg font-bold mb-8 text-gray-900 uppercase tracking-widest flex items-center gap-3">
+                        <FaUserCircle className="text-red-600" /> Information Details
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-6">
                         {[
-                            { label: "Full Name", name: "fullName", type: "text" },
-                            { label: "Mobile Number", name: "mobileNumber", type: "tel" },
-                            { label: "Parents Name", name: "parentsName", type: "text" },
-                            { label: "Parents Mobile Number", name: "parentsMobile", type: "tel" },
-                            { label: "Email Address", name: "emailAddress", type: "email" },
-                            { label: "Date of Birth", name: "dateOfBirth", type: "date" },
-                            { label: "Academic Year", name: "academicYear", type: "text" },
-                            { label: "Semester", name: "semester", type: "select", options: ["1st Semester", "2nd Semester", "3rd Semester", "4th Semester", "5th Semester", "6th Semester", "7th Semester", "8th Semester"] },
+                            { label: "Full Name", name: "name", type: "text" },
+                            { label: "Phone Number", name: "contact_number", type: "tel" },
+                            { label: "Parents Name", name: "parent_name", type: "text" },
+                            { label: "Parents Mobile", name: "parent_mobile", type: "tel" },
+                            { label: "Official Email", name: "email", type: "email", disabled: true },
+                            { label: "Personal Email", name: "personal_email", type: "email" },
+                            { label: "Department", name: "department", type: "text" },
+                            { label: "Current Year", name: "current_year", type: "number" },
                         ].map(field => (
                             <div className="flex flex-col gap-2" key={field.name}>
-                                <label className="text-[13px] font-medium text-[#475569]">{field.label}</label>
-                                {field.type === "select" ? (
-                                    <select name={field.name} value={profileData[field.name]} onChange={handleInputChange} disabled={!isEditing} className="p-[14px] rounded-lg border-none bg-white text-[15px] font-medium text-gray-800 disabled:opacity-95 disabled:cursor-not-allowed shadow-sm outline-none focus:ring-2 focus:ring-[#c72027]">
-                                        {field.options.map(opt => <option key={opt}>{opt}</option>)}
-                                    </select>
-                                ) : (
-                                    <input type={field.type} step={field.step} name={field.name} value={profileData[field.name]} onChange={handleInputChange} disabled={!isEditing} className="p-[14px] rounded-lg border-none bg-white text-[15px] font-medium text-gray-800 disabled:opacity-95 disabled:cursor-not-allowed shadow-sm outline-none focus:ring-2 focus:ring-[#c72027]" />
-                                )}
+                                <label className="text-[10px] font-extrabold text-[#64748b] uppercase tracking-widest">{field.label}</label>
+                                <input 
+                                    type={field.type} 
+                                    name={field.name} 
+                                    value={profileData[field.name] || ""} 
+                                    onChange={handleInputChange} 
+                                    disabled={!isEditing || field.disabled} 
+                                    className="p-3.5 rounded-lg border border-transparent bg-white text-sm font-bold text-gray-800 disabled:opacity-80 disabled:cursor-not-allowed shadow-inner outline-none focus:border-red-600" 
+                                />
                             </div>
                         ))}
                     </div>
@@ -143,36 +181,43 @@ const StudProfile = () => {
             </div>
 
             {/* Bottom Section: Recent Applications */}
-            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden pb-0 mb-6 shadow-sm">
-                <div className="px-8 py-6 pb-4">
-                    <h3 className="m-0 text-[18px] font-bold text-gray-900">Recent Applications</h3>
+            <div className="bg-[#ece6da] rounded-xl border border-[#e0dacd] overflow-hidden shadow-sm mb-10">
+                <div className="px-8 py-6 border-b border-[#d8cfc3] flex justify-between items-center">
+                    <h3 className="m-0 text-lg font-bold text-gray-900 uppercase tracking-widest">Recent Applications</h3>
+                    <button className="text-red-600 font-bold text-[10px] uppercase tracking-widest hover:underline" onClick={() => navigate("/StudApplications")}>View All</button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
-                        <thead>
-                            <tr className="bg-gray-50">
-                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold whitespace-nowrap border-b border-gray-200">Job Position</th>
-                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold border-b border-gray-200">Company</th>
-                                <th className="text-center md:text-left py-4 px-8 text-[13px] text-gray-800 font-bold border-b border-gray-200">Status</th>
+                        <thead className="bg-[#d8cfc3]/30">
+                            <tr>
+                                <th className="text-left py-4 px-8 text-[10px] text-gray-700 font-extrabold uppercase tracking-widest">Job Role</th>
+                                <th className="text-left py-4 px-8 text-[10px] text-gray-700 font-extrabold uppercase tracking-widest border-b border-[#d8cfc3]">Company</th>
+                                <th className="text-left py-4 px-8 text-[10px] text-gray-700 font-extrabold uppercase tracking-widest border-b border-[#d8cfc3]">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
+                        <tbody className="divide-y divide-[#d8cfc3]">
                             {recentApplications.map(app => (
-                                <tr key={app.id} className="bg-white">
+                                <tr key={app.id || app.applicationId} className="hover:bg-white/30 transition-colors">
                                     <td className="py-5 px-8">
-                                        <p className="font-bold text-[15px] text-gray-900 m-0 whitespace-nowrap">{app.position}</p>
-                                        <p className="text-[13px] font-medium text-[#64748b] mt-1 m-0">{app.type}</p>
+                                        <p className="font-bold text-sm text-gray-900 m-0 uppercase tracking-tighter">{app.role}</p>
                                     </td>
-                                    <td className="py-5 px-8 text-center md:text-left">
-                                        <span className="font-bold text-[15px] text-gray-800 whitespace-nowrap">{app.company}</span>
+                                    <td className="py-5 px-8">
+                                        <span className="font-bold text-xs text-red-700 uppercase tracking-widest">{app.company}</span>
                                     </td>
-                                    <td className="py-5 px-8 text-center md:text-left">
-                                        <span className={`font-semibold text-[13px] whitespace-nowrap ${app.statusClass === 'scheduled' ? 'text-[#a16f2b]' : app.statusClass === 'review' ? 'text-blue-600' : 'text-red-600'}`}>
+                                    <td className="py-5 px-8">
+                                        <span className="font-bold text-[10px] uppercase tracking-widest p-1.5 rounded-lg bg-gray-100 text-gray-600 border border-gray-200">
                                             {app.status}
                                         </span>
                                     </td>
                                 </tr>
                             ))}
+                            {recentApplications.length === 0 && (
+                                <tr>
+                                    <td colSpan="3" className="py-10 text-center text-gray-500 font-bold text-[10px] uppercase tracking-widest italic">
+                                        No recent job applications to show.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

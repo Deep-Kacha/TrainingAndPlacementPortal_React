@@ -5,8 +5,15 @@ const pool = require('../../config/db');
 // POST /api/auth/register
 const registerStudent = async (req, res) => {
     try {
-        const { name, universityEmail, password, enrollment, branch, semester, cgpa, mobile } = req.body;
+        const { 
+            name, universityEmail, password, enrollment, branch, semester, cgpa, mobile,
+            personalEmail, tenth, twelfth, backlogs, parentName, parentEmail, parentMobile, 
+            currentAddress, permanentAddress, city, state, pincode
+        } = req.body;
         
+        const consentForm = req.files && req.files['consentForm'] ? req.files['consentForm'][0].filename : null;
+        const paymentProof = req.files && req.files['paymentProof'] ? req.files['paymentProof'][0].filename : null;
+
         // Basic validation
         if (!name || !universityEmail || !password || !enrollment) {
             return res.status(400).json({ error: "Please provide all required fields." });
@@ -28,8 +35,17 @@ const registerStudent = async (req, res) => {
         const userId = userInsert.rows[0].id;
 
         await pool.query(
-            "INSERT INTO students_profile (user_id, enrollment_no, department, semester, cgpa, contact_number) VALUES ($1, $2, $3, $4, $5, $6)",
-            [userId, enrollment, branch, semester, cgpa, mobile]
+            `INSERT INTO students_profile (
+                user_id, enrollment_no, department, semester, cgpa, contact_number, 
+                consent_form_url, payment_proof_url, personal_email, tenth_percentage, 
+                twelfth_percentage, backlogs, parent_name, parent_email, parent_mobile, 
+                current_address, permanent_address, city, state, pincode
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+            [
+                userId, enrollment, branch, semester, cgpa, mobile, consentForm, paymentProof,
+                personalEmail, tenth, twelfth, backlogs || 0, parentName, parentEmail, parentMobile,
+                currentAddress, permanentAddress, city, state, pincode
+            ]
         );
 
         await pool.query('COMMIT');

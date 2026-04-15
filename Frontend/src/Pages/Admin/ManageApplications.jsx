@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import JobListPanel from "../../Components/Admin/ManageApplications/JobListPanel";
 import StudentTablePanel from "../../Components/Admin/ManageApplications/StudentTablePanel";
 import Toast from "../../Components/common/Toast";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 /**
  * Admin › Manage Applications page.
@@ -57,6 +58,11 @@ const ManageApplications = () => {
   useEffect(() => {
     fetchJobs();
   }, []);
+
+  useSocketRefresh('REFRESH_APPLICATIONS', () => {
+    fetchJobs();
+    if (selectedJob) fetchStudents(selectedJob);
+  });
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
