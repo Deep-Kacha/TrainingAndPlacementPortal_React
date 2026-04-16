@@ -14,6 +14,7 @@ const PublicRoute = () => {
         // Redirect to respective dashboard if already logged in
         if (role === "admin") return <Navigate to="/AdminDashboard" replace />;
         if (role === "student") return <Navigate to="/StudDashboard" replace />;
+        if (role === "company") return <Navigate to="/CompanyDashboard" replace />;
     }
 
     // Not authenticated, allow access to public page

@@ -1,15 +1,9 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { logout } from "../../utils/auth";
 
 const StudLogout = () => {
-    const navigate = useNavigate();
-
     useEffect(() => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        const timer = setTimeout(() => navigate("/Authentication/login"), 800);
-        return () => clearTimeout(timer);
-    }, [navigate]);
+        logout();
+    }, []);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[400px]">

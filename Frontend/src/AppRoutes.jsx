@@ -17,6 +17,7 @@ import Unauthorized from "./Pages/guest/Unauthorized";
 // Layouts
 import StudentLayout from "./Components/Student/StudentLayout";
 import AdminLayout from "./Components/Admin/AdminLayout";
+import CompanyLayout from "./Components/Company/CompanyLayout";
 
 //Student Side Routes
 import StudDashboard from "./Pages/Student/Dashboard";
@@ -42,6 +43,11 @@ import AdminInterviewScheduleForm from "./Pages/Admin/InterviewScheduleForm";
 import AdminStudentsManagement from "./Pages/Admin/StudentsManagement";
 import AdminPlacementHistory from "./Pages/Admin/PlacementHistory";
 import AdminManageApplications from "./Pages/Admin/ManageApplications";
+
+//Company Side Routes
+import CompanyDashboard from "./Pages/Company/Dashboard";
+import CompanyJobs from "./Pages/Company/Jobs";
+import CompanyApplicants from "./Pages/Company/Applicants";
 
 function AppRoutes() {
   return (
@@ -92,6 +98,15 @@ function AppRoutes() {
           <Route path="/AdminStudentsManagement" element={<AdminStudentsManagement />} />
           <Route path="/AdminPlacementHistory" element={<AdminPlacementHistory />} />
           <Route path="/AdminManageApplications" element={<AdminManageApplications />} />
+        </Route>
+      </Route>
+
+      {/* Company Protected Routes */}
+      <Route element={<ProtectedRoute allowedRoles={["company"]} />}>
+        <Route element={<CompanyLayout />}>
+          <Route path="/CompanyDashboard" element={<CompanyDashboard />} />
+          <Route path="/CompanyJobs" element={<CompanyJobs />} />
+          <Route path="/CompanyApplicants" element={<CompanyApplicants />} />
         </Route>
       </Route>
 

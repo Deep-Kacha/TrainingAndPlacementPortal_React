@@ -30,5 +30,6 @@ export const getUserRole = () => {
 export const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    window.location.href = "/Authentication/login";
+    // Use replace to prevent back-button issues after logout
+    window.location.replace("/Authentication/login");
 };

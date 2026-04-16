@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import { logout } from "../../utils/auth";
 import {
   FaThLarge,
   FaBriefcase,
@@ -19,8 +20,12 @@ const CompanySidebar = () => {
     { name: "Dashboard",   path: "/CompanyDashboard",  icon: <FaThLarge /> },
     { name: "My Postings", path: "/CompanyJobs",       icon: <FaBriefcase /> },
     { name: "Applicants",  path: "/CompanyApplicants", icon: <FaUsers /> },
-    { name: "Logout",      path: "/",                  icon: <FaSignOutAlt /> },
   ];
+
+  const handleLogout = () => {
+    logout();
+    setIsOpen(false);
+  };
 
   return (
     <div
@@ -57,6 +62,17 @@ const CompanySidebar = () => {
             </NavLink>
           </li>
         ))}
+
+        {/* Logout Button */}
+        <li>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 p-3 rounded-lg cursor-pointer transition font-medium text-sm w-full bg-white text-gray-800 hover:bg-red-50 hover:text-red-600"
+          >
+            <span className="text-base"><FaSignOutAlt /></span>
+            <span>Logout</span>
+          </button>
+        </li>
       </ul>
     </div>
   );

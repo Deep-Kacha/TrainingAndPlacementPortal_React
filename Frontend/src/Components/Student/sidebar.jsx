@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { logout } from "../../utils/auth";
 import {
     FaThLarge,
     FaUser,
@@ -41,10 +42,8 @@ const Sidebar = () => {
     };
 
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        logout();
         setIsOpen(false);
-        navigate("/Authentication/login");
     };
 
     return (
