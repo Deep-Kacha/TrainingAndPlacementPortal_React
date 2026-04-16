@@ -64,20 +64,27 @@ const getPlacementSummary = async (req, res) => {
                 )::int                                    as "placedCount"
             FROM jobs j
             LEFT JOIN companies_profile cp ON j.company_id = cp.id
-            WHERE j.status IN ('approved', 'closed')
             ORDER BY j.drive_date DESC NULLS LAST
         `;
         const result = await pool.query(query);
 
+        const formatDate = (date) => {
+            if (!date) return '—';
+            const d = new Date(date);
+            return isNaN(d.getTime()) ? '—' : d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+        };
+
+        const STATUS_MAP = {
+            'approved': 'In Progress',
+            'pending':  'Pending',
+            'rejected': 'Rejected'
+        };
+
         const data = result.rows.map(row => ({
             ...row,
-            statusLabel: row.status === 'closed' ? 'Completed' : 'In Progress',
-            driveDate: row.driveDate
-                ? new Date(row.driveDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                : '—',
-            joiningDate: row.joiningDate
-                ? new Date(row.joiningDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-                : '—'
+            statusLabel: STATUS_MAP[row.status] || 'Unknown',
+            driveDate:   formatDate(row.driveDate),
+            joiningDate: formatDate(row.joiningDate)
         }));
 
         res.status(200).json({ success: true, data });

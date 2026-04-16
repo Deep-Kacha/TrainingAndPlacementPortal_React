@@ -6,6 +6,7 @@ import {
   FaMoneyBillWave, FaSpinner, FaChevronLeft
 } from 'react-icons/fa';
 import Toast from "../../Components/common/Toast";
+import { getAvatarColor } from "../../utils/ui";
 
 const StudJobDetails = () => {
   const navigate = useNavigate();
@@ -82,8 +83,8 @@ const StudJobDetails = () => {
           {/* Main Card */}
           <div className="bg-[#d8cfc3] rounded-xl border border-gray-200 shadow-sm p-8">
              <div className="flex flex-col md:flex-row gap-6 items-start md:items-center mb-8">
-                <div className="w-20 h-20 bg-red-600 text-white rounded-lg flex items-center justify-center font-bold text-3xl shadow-sm">
-                  {job.company?.[0]}
+                <div className={`${getAvatarColor(job.company)} text-white w-20 h-20 rounded-lg flex items-center justify-center font-bold text-3xl shadow-sm`}>
+                  {job.company?.[0] || 'C'}
                 </div>
                 <div>
                    <h2 className="text-2xl font-bold text-gray-800 mb-1">

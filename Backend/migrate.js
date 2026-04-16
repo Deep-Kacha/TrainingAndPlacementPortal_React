@@ -35,6 +35,13 @@ async function migrate() {
             FOR EACH ROW EXECUTE PROCEDURE update_applications_modtime()
         `);
         console.log('✅ Trigger created on applications table');
+        // Add payment status to students_profile
+        await client.query(`
+            ALTER TABLE students_profile 
+            ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE,
+            ADD COLUMN IF NOT EXISTS razorpay_order_id VARCHAR(255)
+        `);
+        console.log('✅ students_profile.is_paid and razorpay_order_id added');
 
         await client.query('COMMIT');
         console.log('\n🎉 Migration completed successfully!\n');

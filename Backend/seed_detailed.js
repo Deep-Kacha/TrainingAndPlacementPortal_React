@@ -18,15 +18,22 @@ async function seedTestData() {
     `, ['TPO Admin', 'admin@rku.ac.in', adminPasswordHash]);
 
     // 3. Insert Companies
-    console.log('Inserting Companies...');
+    console.log('Inserting Companies (Gujarat IT Hubs)...');
     const companyRes = await pool.query(`
       INSERT INTO companies_profile (company_name, industry, website, hr_contact_name, hr_contact_phone, location)
       VALUES 
-        ('Tata Consultancy Services', 'IT Services', 'https://www.tcs.com', 'Rajesh Iyer', '9876543210', 'Mumbai, India'),
-        ('Infosys Technologies', 'IT Consulting', 'https://www.infosys.com', 'Sudha Murthy', '9876543211', 'Bangalore, India'),
-        ('Wipro Technologies', 'IT & Business Process', 'https://www.wipro.com', 'Azim Premji', '9876543212', 'Bangalore, India'),
-        ('Reliance Jio', 'Telecommunications', 'https://www.jio.com', 'Akash Ambani', '9876543213', 'Navi Mumbai, India'),
-        ('HCL Technologies', 'Software Services', 'https://www.hcltech.com', 'Roshni Nadar', '9876543214', 'Noida, India')
+        ('TatvaSoft', 'Software Development', 'https://www.tatvasoft.com', 'Hardik Shah', '9988776655', 'Ahmedabad, Gujarat'),
+        ('Gateway Group', 'IT Solutions', 'https://www.thegatewaycorp.com', 'Nilesh Shah', '9988776656', 'Ahmedabad, Gujarat'),
+        ('Silver Touch Technologies', 'IT Consulting', 'https://www.silvertouch.com', 'Vipul Thakkar', '9988776657', 'Gandhinagar, Gujarat'),
+        ('Bacancy Technology', 'Agile Software Development', 'https://www.bacancytechnology.com', 'Chandresh Patel', '9988776658', 'Ahmedabad, Gujarat'),
+        ('Sophos Technologies', 'Cybersecurity', 'https://www.sophos.com', 'Abhijit Varma', '9988776659', 'Ahmedabad, Gujarat'),
+        ('eInfochips (Arrow Electronics)', 'Product Engineering', 'https://www.einfochips.com', 'Pratul Shroff', '9988776660', 'Ahmedabad, Gujarat'),
+        ('Simform', 'Digital Product Engineering', 'https://www.simform.com', 'Hiren Dhaduk', '9988776661', 'Ahmedabad, Gujarat'),
+        ('Solution Analysts', 'Mobile & Web Solutions', 'https://www.solutionanalysts.com', 'Kalpesh Patel', '9988776662', 'Ahmedabad, Gujarat'),
+        ('Maruti Techlabs', 'AI & Cloud Computing', 'https://www.marutitech.com', 'Nishant Shah', '9988776663', 'Ahmedabad, Gujarat'),
+        ('Infolabz IT Services', 'Software & Training', 'https://www.infolabz.in', 'Kunal Patel', '9988776664', 'Rajkot, Gujarat'),
+        ('Radixweb', 'Custom Software Development', 'https://radixweb.com', 'Dharmesh Acharya', '9988776665', 'Ahmedabad, Gujarat'),
+        ('Logoscorp IT', 'Enterprise Solutions', 'https://logoscorp.com', 'Sanjay Mehta', '9988776666', 'Surat, Gujarat')
       RETURNING id, company_name
     `);
     const companies = companyRes.rows;
@@ -35,7 +42,9 @@ async function seedTestData() {
     console.log('Inserting Students...');
     const studentNames = [
       'Test Student', 'Aarav Patel', 'Diya Sharma', 'Siddharth Mehta', 'Ishani Iyer', 'Vivaan Reddy',
-      'Ananya Gupta', 'Kabir Malhotra', 'Zoya Khan', 'Arjun Singh', 'Saanvi Joshi'
+      'Ananya Gupta', 'Kabir Malhotra', 'Zoya Khan', 'Arjun Singh', 'Saanvi Joshi', 'Rohan Verma',
+      'Priya Nair', 'Aditya Kulkarni', 'Meera Deshmukh', 'Aryan Jain', 'Tanvi Shah', 'Rahul Chawla',
+      'Neelam Bhat', 'Karan Oberoi', 'Sneha Kapoor', 'Vikram Rathore', 'Simran Gill'
     ];
     const passwordHash = await bcrypt.hash('Student@123', 10);
     const students = [];
@@ -44,7 +53,7 @@ async function seedTestData() {
         const name = studentNames[i];
         let email = `${name.toLowerCase().replace(' ', '.')}@rku.ac.in`;
         if (name === 'Test Student') email = 'student@rku.ac.in';
-      const isApproved = i < 7; // 7 approved, 3 pending
+      const isApproved = i < 18; // 18 approved, rest pending
 
       const userRes = await pool.query(`
         INSERT INTO users (name, email, password_hash, role, is_approved)
@@ -53,8 +62,8 @@ async function seedTestData() {
       
       const userId = userRes.rows[0].id;
       const enrollment = `RKU2026${(100 + i)}`;
-      const dept = i % 2 === 0 ? 'B.Tech CSE' : 'B.Tech IT';
-      const city = i % 3 === 0 ? 'Rajkot' : (i % 3 === 1 ? 'Ahmedabad' : 'Surat');
+      const dept = i % 3 === 0 ? 'B.Tech CSE' : (i % 3 === 1 ? 'B.Tech IT' : 'MCA');
+      const city = i % 4 === 0 ? 'Rajkot' : (i % 4 === 1 ? 'Ahmedabad' : (i % 4 === 2 ? 'Surat' : 'Gandhinagar'));
 
       const profileRes = await pool.query(`
         INSERT INTO students_profile (
@@ -65,11 +74,11 @@ async function seedTestData() {
         RETURNING id
       `, [
         userId, enrollment, dept, 
-        (8.5 + (i * 0.1)).toFixed(2), 
+        (7.5 + (i * 0.1)).toFixed(2), 
         `998877665${i}`, 
         `${name.toLowerCase().replace(' ', '')}@gmail.com`,
-        (85 + i).toFixed(2), (80 + i).toFixed(2),
-        `Parent of ${name}`,
+        (80 + i % 15).toFixed(2), (75 + i % 20).toFixed(2),
+        `Mr. ${name.split(' ')[1]}`,
         city
       ]);
 
@@ -79,38 +88,53 @@ async function seedTestData() {
     // 4. Insert Jobs
     console.log('Inserting Jobs...');
     const jobs = [];
-    const jobTitles = ['Software Engineer', 'Graduate Engineer Trainee', 'Data Analyst', 'Web Developer', 'Systems Engineer'];
-    const salaries = ['7.5 LPA', '6.0 LPA', '9.0 LPA', '12 LPA', '5.5 LPA'];
+    const jobTitles = ['Software Engineer', 'Graduate Engineer Trainee', 'Data Analyst', 'Web Developer', 'Systems Engineer', 'Cloud Associate', 'QA Engineer', 'Backend Developer', 'Mobile App Dev', 'Full Stack Developer', 'Network Engineer', 'Product Manager Trainee', 'UI/UX Designer', 'DevOps Specialist', 'Security Analyst'];
+    const salaries = ['3.6 LPA', '4.5 LPA', '6.0 LPA', '7.5 LPA', '8.5 LPA', '9.2 LPA', '11 LPA', '12.5 LPA', '15 LPA', '18.2 LPA', '5.8 LPA', '4.2 LPA'];
 
-    for (let i = 0; i < 10; i++) {
-      const comp = companies[i % companies.length];
-      const title = jobTitles[i % jobTitles.length];
-      const salary = salaries[i % salaries.length];
-      const status = i < 6 ? 'approved' : (i < 8 ? 'pending' : 'rejected');
+    // Shuffle companies to avoid sequential repetition
+    const shuffledCompanies = [...companies].sort(() => Math.random() - 0.5);
+
+    for (let i = 0; i < 25; i++) {
+      const comp = shuffledCompanies[i % shuffledCompanies.length];
+      // Randomly pick title and salary to avoid predictable patterns
+      const titleLabel = jobTitles[Math.floor(Math.random() * jobTitles.length)];
+      const salaryLabel = salaries[Math.floor(Math.random() * salaries.length)];
+      
+      // Status distribution: 15 Approved, 6 Pending, rest Rejected
+      const status = i < 15 ? 'approved' : (i < 21 ? 'pending' : 'rejected');
+      
       const deadline = new Date();
-      deadline.setDate(deadline.getDate() + 30);
+      deadline.setDate(deadline.getDate() + (Math.floor(Math.random() * 20) + 1));
+
+      const drDate = new Date();
+      drDate.setDate(drDate.getDate() - (Math.floor(Math.random() * 30))); 
+      const joDate = new Date(drDate);
+      joDate.setMonth(joDate.getMonth() + 4);
 
       const jobRes = await pool.query(`
         INSERT INTO jobs (
           company_id, job_title, job_position, job_type, description, status,
-          ctc_package, location, application_deadline, eligible_batches, eligible_courses
-        ) VALUES ($1, $2, $3, 'Full Time', $4, $5, $6, $7, $8, $9, $10)
-        RETURNING id, status
+          ctc_package, location, application_deadline, eligible_batches, eligible_courses,
+          drive_date, joining_date
+        ) VALUES ($1, $2, $3, 'Full Time', $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        RETURNING id, status, job_title
       `, [
-        comp.id, title, title,
-        `Exciting role at ${comp.company_name} for fresh graduates. Apply now!`,
-        status, salary, comp.location, deadline,
-        ['2025', '2026'], ['B.Tech CSE', 'B.Tech IT', 'MCA']
+        comp.id, titleLabel, titleLabel,
+        `Join ${comp.company_name} as a ${titleLabel}. Work on cutting-edge tech in ${comp.location}.`,
+        status, salaryLabel, comp.location, deadline,
+        ['2025', '2026'], ['B.Tech CSE', 'B.Tech IT', 'MCA'],
+        status !== 'rejected' && status !== 'pending' ? drDate : null,
+        status === 'closed' ? joDate : null
       ]);
       jobs.push(jobRes.rows[0]);
     }
 
     // 5. Insert Applications
     console.log('Inserting Applications...');
-    const appStatuses = ['applied', 'shortlisted', 'shortlisted', 'interview', 'interview', 'selected', 'selected', 'rejected'];
-    for (let i = 0; i < 30; i++) {
+    const appStatuses = ['applied', 'shortlisted', 'shortlisted', 'interview', 'interview', 'selected', 'selected', 'rejected', 'applied'];
+    for (let i = 0; i < 60; i++) {
         const student = students[i % students.length];
-        const job = jobs[(i + 1) % jobs.length]; // Offset to avoid duplicate pairs
+        const job = jobs[i % jobs.length];
         const status = appStatuses[i % appStatuses.length];
 
         await pool.query(`
@@ -122,17 +146,26 @@ async function seedTestData() {
 
     // 6. Insert Interview Schedules
     console.log('Inserting Interview Schedules...');
-    for (const job of jobs) {
-        if (job.status === 'approved') {
-            await pool.query(`
-                INSERT INTO interview_schedules (job_id, round_name, interview_date, interview_time, mode, venue_or_link)
-                VALUES ($1, $2, CURRENT_DATE + 1, '10:00', 'Online', 'Google Meet Link')
-            `, [job.id, 'Aptitude Test']);
+    const roundSets = [
+        ['Pre-Placement Talk', 'Aptitude Test'],
+        ['Coding Round', 'Technical Interview 1', 'HR Round'],
+        ['Group Discussion', 'Technical Interview', 'Final Round'],
+        ['Technical Interview 1', 'Technical Interview 2', 'Managerial Round', 'HR Round'],
+        ['Online Assessment']
+    ];
 
-            await pool.query(`
-                INSERT INTO interview_schedules (job_id, round_name, interview_date, interview_time, mode, venue_or_link)
-                VALUES ($1, $2, CURRENT_DATE + 3, '14:30', 'Online', 'Zoom Invite')
-            `, [job.id, 'Technical Interview']);
+    for (let i = 0; i < jobs.length; i++) {
+        const job = jobs[i];
+        if (job.status === 'approved') {
+            const rounds = roundSets[i % roundSets.length];
+            for (let r = 0; r < rounds.length; r++) {
+                const rDate = new Date();
+                rDate.setDate(rDate.getDate() + r + 2);
+                await pool.query(`
+                    INSERT INTO interview_schedules (job_id, round_name, interview_date, interview_time, mode, venue_or_link)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                `, [job.id, rounds[r], rDate, `${9 + r}:00`, r % 2 === 0 ? 'Online' : 'In-Person', r % 2 === 0 ? 'Zoom Meeting' : 'RKU Block-A, Room 204']);
+            }
         }
     }
 
@@ -146,7 +179,7 @@ async function seedTestData() {
 
         await pool.query(`
             INSERT INTO placement_history (student_id, job_id, company_name, job_title, ctc_offered, placement_date)
-            VALUES ($1, $2, $3, $4, $5, CURRENT_DATE)
+            VALUES ($1, $2, $3, $4, $5, CURRENT_DATE - floor(random() * 10)::int)
         `, [student.profileId, app.job_id, job.c_name, job.job_title, job.ctc_package]);
     }
 

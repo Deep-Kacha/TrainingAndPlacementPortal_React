@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const pool = require('../../config/db');
 
 // POST /api/auth/register
@@ -8,11 +9,30 @@ const registerStudent = async (req, res) => {
         const { 
             name, universityEmail, password, enrollment, branch, semester, cgpa, mobile,
             personalEmail, tenth, twelfth, backlogs, parentName, parentEmail, parentMobile, 
-            currentAddress, permanentAddress, city, state, pincode
+            currentAddress, permanentAddress, city, state, pincode,
+            razorpay_order_id, razorpay_payment_id, razorpay_signature, is_demo_bypass
         } = req.body;
         
         const consentForm = req.files && req.files['consentForm'] ? req.files['consentForm'][0].filename : null;
         const paymentProof = req.files && req.files['paymentProof'] ? req.files['paymentProof'][0].filename : null;
+
+        // Verify Payment if provided
+        let isPaid = false;
+        if (is_demo_bypass === "true") {
+            isPaid = true;
+        } else if (razorpay_payment_id && razorpay_order_id && razorpay_signature) {
+            const body = razorpay_order_id + "|" + razorpay_payment_id;
+            const expectedSignature = crypto
+                .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+                .update(body.toString())
+                .digest("hex");
+            
+            if (expectedSignature === razorpay_signature) {
+                isPaid = true;
+            } else {
+                return res.status(400).json({ error: "Payment verification failed. Invalid signature." });
+            }
+        }
 
         // Basic validation
         if (!name || !universityEmail || !password || !enrollment) {
@@ -39,12 +59,12 @@ const registerStudent = async (req, res) => {
                 user_id, enrollment_no, department, semester, cgpa, contact_number, 
                 consent_form_url, payment_proof_url, personal_email, tenth_percentage, 
                 twelfth_percentage, backlogs, parent_name, parent_email, parent_mobile, 
-                current_address, permanent_address, city, state, pincode
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)`,
+                current_address, permanent_address, city, state, pincode, is_paid
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)`,
             [
                 userId, enrollment, branch, semester, cgpa, mobile, consentForm, paymentProof,
                 personalEmail, tenth, twelfth, backlogs || 0, parentName, parentEmail, parentMobile,
-                currentAddress, permanentAddress, city, state, pincode
+                currentAddress, permanentAddress, city, state, pincode, isPaid
             ]
         );
 

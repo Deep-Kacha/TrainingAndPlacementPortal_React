@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate, NavLink } from "react-router-dom";
 import CompanyCard from "../../Components/Admin/CompanyMangement/CompanyCard";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { FaSearch, FaChevronDown, FaTasks, FaCalendarAlt, FaHistory, FaArrowRight } from "react-icons/fa";
 import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 const AdminCompanyManagement = () => {
@@ -97,19 +98,25 @@ const AdminCompanyManagement = () => {
 
       if (!statusMatch) return false;
 
+      // Safe field access
+      const name     = company.name?.toLowerCase()     || "";
+      const role     = company.role?.toLowerCase()     || "";
+      const location = company.location?.toLowerCase() || "";
+      const salary   = company.salary?.toLowerCase()   || "";
+
       if (searchCategory === "All") {
-        return company.name.toLowerCase().includes(searchTermLower) ||
-          company.role.toLowerCase().includes(searchTermLower) ||
-          company.location.toLowerCase().includes(searchTermLower) ||
-          company.salary.toLowerCase().includes(searchTermLower);
+        return name.includes(searchTermLower) ||
+               role.includes(searchTermLower) ||
+               location.includes(searchTermLower) ||
+               salary.includes(searchTermLower);
       }
 
-      const field = searchCategory === "Company" ? company.name :
-                    searchCategory === "Role" ? company.role :
-                    searchCategory === "Location" ? company.location :
-                    searchCategory === "Salary" ? company.salary : "";
+      const field = searchCategory === "Company"  ? name :
+                    searchCategory === "Role"     ? role :
+                    searchCategory === "Location" ? location :
+                    searchCategory === "Salary"   ? salary : "";
       
-      return field.toLowerCase().includes(searchTermLower);
+      return field.includes(searchTermLower);
     });
   }, [companies, searchTerm, searchCategory, filterStatus]);
 

@@ -9,7 +9,7 @@ const getStudentDashboardStats = async (req, res) => {
         const userId = req.userId; // From verifyToken middleware
 
         // 1. Get student profile ID
-        const studentRes = await pool.query("SELECT id, name, enrollment_no FROM students_profile sp JOIN users u ON sp.user_id = u.id WHERE u.id = $1", [userId]);
+        const studentRes = await pool.query("SELECT sp.id, u.name, sp.enrollment_no, sp.is_paid FROM students_profile sp JOIN users u ON sp.user_id = u.id WHERE u.id = $1", [userId]);
         if (studentRes.rows.length === 0) {
             return res.status(404).json({ success: false, error: "Student profile not found" });
         }
@@ -35,6 +35,7 @@ const getStudentDashboardStats = async (req, res) => {
             data: {
                 studentName,
                 enrollment,
+                isPaid: studentRes.rows[0].is_paid,
                 counts: {
                     applied: parseInt(appliedCount.rows[0].count),
                     shortlisted: parseInt(shortlistedCount.rows[0].count),

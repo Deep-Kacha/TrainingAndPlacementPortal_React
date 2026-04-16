@@ -1,4 +1,5 @@
 import { FaChevronRight } from "react-icons/fa";
+import { getAvatarColor } from "../../../utils/ui";
 
 /**
  * A single row/item in the approved-jobs left panel.
@@ -16,16 +17,21 @@ const JobListItem = ({ job, isSelected, onSelect }) => {
       }`}
     >
       <div className="flex items-center justify-between mb-1">
-        <span
-          className={`font-bold text-base transition-colors ${
-            isSelected
-              ? "text-red-600"
-              : "text-gray-900 group-hover:text-red-600"
-          }`}
-        >
-          {job.companyName}
-        </span>
-        <FaChevronRight className="text-[10px] text-gray-300 group-hover:text-red-400" />
+        <div className="flex items-center gap-2 min-w-0">
+          <div className={`${getAvatarColor(job.companyName)} text-white w-6 h-6 flex items-center justify-center rounded text-[10px] font-bold flex-shrink-0 shadow-sm uppercase`}>
+            {job.companyName?.charAt(0).toUpperCase() || "C"}
+          </div>
+          <span
+            className={`font-bold text-base transition-colors truncate ${
+              isSelected
+                ? "text-red-600"
+                : "text-gray-900 group-hover:text-red-600"
+            }`}
+          >
+            {job.companyName}
+          </span>
+        </div>
+        <FaChevronRight className="text-[10px] text-gray-300 group-hover:text-red-400 flex-shrink-0" />
       </div>
 
       <div className="flex items-center gap-3">

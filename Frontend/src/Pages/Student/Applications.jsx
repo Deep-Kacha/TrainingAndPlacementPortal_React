@@ -4,6 +4,7 @@ import {
   FaTrophy, FaTimesCircle, FaCalendarAlt, FaSync
 } from "react-icons/fa";
 import useSocketRefresh from "../../hooks/useSocketRefresh";
+import { getAvatarColor } from "../../utils/ui";
 
 const STATUS_UI = {
   applied:     { icon: <FaHourglassHalf />, label: "Pending Review",   color: "text-blue-700 bg-blue-50 border-blue-200"     },
@@ -92,7 +93,7 @@ const StudApplications = () => {
                   <tr key={app.applicationId} className="hover:bg-gray-50/60 transition-colors">
                     <td className="px-6 py-5">
                       <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 bg-red-600 text-white rounded-lg flex items-center justify-center font-bold text-base uppercase shadow-sm">
+                        <div className={`${getAvatarColor(app.company)} text-white rounded-lg flex items-center justify-center font-bold text-base uppercase shadow-sm w-10 h-10`}>
                           {app.company?.[0] || 'C'}
                         </div>
                         <span className="font-semibold text-gray-800 text-sm">{app.company}</span>

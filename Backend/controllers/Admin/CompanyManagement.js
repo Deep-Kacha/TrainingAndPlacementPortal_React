@@ -38,7 +38,7 @@ const updateCompanyStatus = async (req, res) => {
         const { id } = req.params;
         const { status } = req.body;
 
-        const validStatuses = ['pending', 'approved', 'rejected', 'closed'];
+        const validStatuses = ['pending', 'approved', 'rejected'];
         if (!validStatuses.includes(status)) {
             return res.status(400).json({ success: false, error: "Invalid status value" });
         }

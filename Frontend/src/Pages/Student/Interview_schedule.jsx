@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaSpinner, FaCalendarDay, FaClock, FaVideo, FaBuilding, FaLink, FaMapMarkerAlt, FaLayerGroup, FaCalendarCheck } from "react-icons/fa";
+import { getAvatarColor } from "../../utils/ui";
 
 const StudInterviewSchedule = () => {
     const [interviews, setInterviews] = useState([]);
@@ -69,7 +70,7 @@ const StudInterviewSchedule = () => {
                         <div key={gIdx} className="space-y-6">
                             {/* Group Header */}
                             <div className="flex items-center gap-4 border-b border-gray-200 pb-4">
-                                <div className="w-12 h-12 bg-red-600 text-white rounded-lg flex items-center justify-center font-bold text-xl uppercase shadow-md">
+                                <div className={`${getAvatarColor(group.company)} text-white rounded-lg flex items-center justify-center font-bold text-xl uppercase shadow-md w-12 h-12`}>
                                     {group.company?.[0] || 'C'}
                                 </div>
                                 <div>

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const rateLimit = require('express-rate-limit');
 const { registerStudent, login } = require('../../controllers/guest/AuthController');
+const { createGuestOrder } = require('../../controllers/Student/PaymentController');
 const multer = require('multer');
 const path = require('path');
 
@@ -15,7 +17,16 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.post('/register', upload.fields([{ name: 'consentForm', maxCount: 1 }, { name: 'paymentProof', maxCount: 1 }]), registerStudent);
-router.post('/login', login);
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { error: "Too many attempts. Please try again after 15 minutes." },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+router.post('/register', authLimiter, upload.fields([{ name: 'consentForm', maxCount: 1 }, { name: 'paymentProof', maxCount: 1 }]), registerStudent);
+router.post('/login', authLimiter, login);
+router.post('/payment/create-order', createGuestOrder);
 
 module.exports = router;

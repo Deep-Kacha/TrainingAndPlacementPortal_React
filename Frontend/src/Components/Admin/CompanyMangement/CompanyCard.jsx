@@ -1,10 +1,10 @@
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { getAvatarColor } from "../../../utils/ui";
 
 const STATUS_STYLES = {
   approved: { badge: "bg-green-100 text-green-700", label: "Approved" },
   rejected:  { badge: "bg-red-100 text-red-700",   label: "Rejected"  },
-  closed:    { badge: "bg-gray-200 text-gray-600",  label: "Closed"    },
   pending:   { badge: "bg-yellow-100 text-yellow-700", label: "Pending" },
 };
 
@@ -22,7 +22,7 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
 
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="bg-blue-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0">
+        <div className={`${getAvatarColor(data?.name)} text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0`}>
           {data?.name ? data.name.charAt(0).toUpperCase() : "C"}
         </div>
         <div className="flex-1 min-w-0">
@@ -68,10 +68,10 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
             <button
               disabled
               className={`flex-1 text-white py-2 rounded cursor-not-allowed text-sm font-semibold ${
-                status === "approved" ? "bg-green-600" : status === "rejected" ? "bg-red-600" : "bg-gray-500"
+                status === "approved" ? "bg-green-600" : "bg-red-600"
               }`}
             >
-              {status === "approved" ? "✓ APPROVED" : status === "rejected" ? "✕ DECLINED" : "CLOSED"}
+              {status === "approved" ? "✓ APPROVED" : "✕ DECLINED"}
             </button>
             {isUndoable && (
               <button
@@ -99,7 +99,6 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
           EDIT DETAILS
         </button>
       </div>
-
     </div>
   );
 };

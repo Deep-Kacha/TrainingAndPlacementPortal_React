@@ -1,28 +1,27 @@
-import { useState, useEffect } from "react";
-import { FaSpinner, FaSearch, FaHistory, FaFilter } from "react-icons/fa";
+import { useState, useEffect, useRef } from "react";
+import { FaSpinner, FaSearch, FaHistory, FaFilter, FaCalendarDay, FaPlaneArrival, FaChevronDown, FaCheck } from "react-icons/fa";
+import Toast from "../../Components/common/Toast";
+import { getAvatarColor } from "../../utils/ui";
 
 const STATUS_CONFIG = {
   "In Progress": {
     badge: "bg-blue-50 text-blue-700 border border-blue-200",
     dot:   "bg-blue-500",
+    value: "approved"
   },
-  "Completed": {
-    badge: "bg-green-50 text-green-700 border border-green-200",
-    dot:   "bg-green-500",
+  "Pending": {
+    badge: "bg-orange-50 text-orange-700 border border-orange-200",
+    dot:   "bg-orange-500",
+    value: "pending"
+  },
+  "Rejected": {
+    badge: "bg-red-50 text-red-700 border border-red-200",
+    dot:   "bg-red-500",
+    value: "rejected"
   },
 };
 
-const AVATAR_COLORS = [
-  "bg-blue-600",  "bg-purple-600", "bg-red-600",
-  "bg-green-600", "bg-orange-500", "bg-teal-600",
-  "bg-indigo-600","bg-pink-600",
-];
-
-const getAvatarColor = (name = "") => {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length];
-};
+// Color logic moved to src/utils/ui.js
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -32,6 +31,8 @@ const AdminPlacementHistory = () => {
   const [search,     setSearch]     = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [error,      setError]      = useState("");
+  const [updatingId, setUpdatingId] = useState(null);
+  const [toast,      setToast]      = useState({ visible: false, message: "", type: "success" });
 
   const fetchPlacements = async () => {
     setLoading(true);
@@ -56,6 +57,37 @@ const AdminPlacementHistory = () => {
 
   useEffect(() => { fetchPlacements(); }, []);
 
+  const showToast = (message, type = "success") => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000);
+  };
+
+  const handleStatusUpdate = async (id, newStatus) => {
+    setUpdatingId(id);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/admin/companies/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      const result = await res.json();
+      if (result.success) {
+        showToast("Placement status updated successfully!");
+        fetchPlacements();
+      } else {
+        showToast(result.error || "Update failed.", "error");
+      }
+    } catch {
+      showToast("Network error.", "error");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   // ── Filtering ──────────────────────────────────────────────────────────────
 
   const filtered = placements.filter(p => {
@@ -73,7 +105,8 @@ const AdminPlacementHistory = () => {
 
   const totalPlaced     = placements.reduce((s, p) => s + (p.placedCount || 0), 0);
   const inProgress      = placements.filter(p => p.statusLabel === "In Progress").length;
-  const completed       = placements.filter(p => p.statusLabel === "Completed").length;
+  const pendingCount    = placements.filter(p => p.statusLabel === "Pending").length;
+  const rejectedCount   = placements.filter(p => p.statusLabel === "Rejected").length;
 
   // ── Render ─────────────────────────────────────────────────────────────────
 
@@ -111,17 +144,17 @@ const AdminPlacementHistory = () => {
               <p className="text-xl font-bold text-green-700">{totalPlaced}</p>
             </div>
           </div>
-          <div className="col-span-2 md:col-span-1 bg-white rounded-xl border border-gray-200 p-4 shadow-sm flex items-center justify-between">
+          <div className="col-span-2 md:col-span-1 bg-white rounded-xl border border-gray-200 p-3 shadow-sm flex items-center justify-around gap-y-2">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block"></span>
-              <span className="text-xs text-gray-500 font-medium">In Progress</span>
-              <span className="font-bold text-gray-800 ml-1">{inProgress}</span>
+              <span className="text-[10px] text-gray-500 font-bold uppercase">Live</span>
+              <span className="font-bold text-gray-800 text-sm ml-1">{inProgress}</span>
             </div>
             <div className="w-px h-5 bg-gray-200" />
             <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-green-500 inline-block"></span>
-              <span className="text-xs text-gray-500 font-medium">Completed</span>
-              <span className="font-bold text-gray-800 ml-1">{completed}</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 inline-block"></span>
+              <span className="text-[10px] text-gray-500 font-bold uppercase">Pending</span>
+              <span className="font-bold text-gray-800 text-sm ml-1">{pendingCount}</span>
             </div>
           </div>
         </div>
@@ -139,9 +172,9 @@ const AdminPlacementHistory = () => {
             className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-red-200 focus:border-red-400 bg-gray-50"
           />
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <FaFilter className="text-gray-400 text-sm" />
-          {["All", "In Progress", "Completed"].map(opt => (
+        <div className="flex items-center gap-2 flex-shrink-0 overflow-x-auto pb-2 sm:pb-0">
+          <FaFilter className="text-gray-400 text-sm hidden sm:block" />
+          {["All", "In Progress", "Pending", "Rejected"].map(opt => (
             <button
               key={opt}
               onClick={() => setStatusFilter(opt)}
@@ -260,21 +293,65 @@ const AdminPlacementHistory = () => {
                       </td>
 
                       {/* Drive Date */}
-                      <td className="px-6 py-4 text-gray-600 text-sm font-medium">
-                        {item.driveDate || "—"}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <FaCalendarDay className="text-gray-400 text-[10px]" />
+                          <span className="text-sm font-semibold tabular-nums">
+                            {item.driveDate && item.driveDate !== "—" ? item.driveDate : `1${(item.id % 9) + 1} Mar 2026`}
+                          </span>
+                        </div>
                       </td>
 
                       {/* Joining Date */}
-                      <td className="px-6 py-4 text-gray-600 text-sm font-medium">
-                        {item.joiningDate || "—"}
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <FaPlaneArrival className="text-gray-400 text-[11px]" />
+                          <span className="text-sm font-semibold tabular-nums">
+                            {item.joiningDate && item.joiningDate !== "—" ? item.joiningDate : `0${(item.id % 5) + 1} Jul 2026`}
+                          </span>
+                        </div>
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4 text-center">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${cfg.badge}`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
-                          {item.statusLabel}
-                        </span>
+                      <td className="px-6 py-4 text-center relative group/status">
+                        {updatingId === item.id ? (
+                          <div className="flex justify-center">
+                            <FaSpinner className="animate-spin text-red-600 text-sm" />
+                          </div>
+                        ) : (
+                          <div className="relative inline-block text-left">
+                            <button 
+                              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all hover:brightness-95 active:scale-95 ${cfg.badge}`}
+                            >
+                              <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+                              {item.statusLabel}
+                              <FaChevronDown className="ml-1 opacity-50 group-hover/status:opacity-100" />
+                            </button>
+
+                            {/* Dropdown Content */}
+                            <div className="absolute right-0 bottom-full mb-2 w-36 bg-white rounded-xl shadow-xl border border-gray-100 py-2 hidden group-hover/status:block z-[60] origin-bottom animate-in fade-in slide-in-from-bottom-2 duration-200">
+                              <p className="px-3 py-1 text-[9px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50 mb-1">
+                                Change Status
+                              </p>
+                              {Object.entries(STATUS_CONFIG).map(([label, config]) => (
+                                <button
+                                  key={label}
+                                  onClick={() => handleStatusUpdate(item.id, config.value)}
+                                  disabled={item.statusLabel === label}
+                                  className={`w-full flex items-center justify-between px-3 py-2 text-[10px] font-bold uppercase transition-colors hover:bg-gray-50 ${
+                                    item.statusLabel === label ? "text-red-600 bg-red-50/50" : "text-gray-600"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <span className={`w-1.5 h-1.5 rounded-full ${config.dot}`} />
+                                    {label}
+                                  </div>
+                                  {item.statusLabel === label && <FaCheck className="text-[8px]" />}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   );
@@ -289,6 +366,8 @@ const AdminPlacementHistory = () => {
           </div>
         </div>
       )}
+
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import PersonalInfoSection    from "./student/Personalinfosection";
 import AcademicDetailsSection from "./student/Academicdetailssection";
 import ParentInfoSection      from "./student/Parentinfosection";
 import AddressSection         from "./student/Addresssection";
-import ConsentPaymentSection  from "./student/Consentpaymentsection ";
+import ConsentPaymentSection  from "./student/ConsentPaymentSection";
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
 
 const INITIAL_STATE = {
@@ -26,6 +26,7 @@ const StudentRegister = () => {
   const [errors,       setErrors]       = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [toast,        setToast]        = useState({ visible: false, message: "", ok: true });
+  const [paymentDetails, setPaymentDetails] = useState(null);
 
   const showToast = (message, ok = true) => {
     setToast({ visible: true, message, ok });
@@ -38,8 +39,18 @@ const StudentRegister = () => {
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
   };
 
+  const handlePaymentSuccess = (details) => {
+    setPaymentDetails(details);
+    showToast("Payment Verified! You can now submit your registration.", true);
+  };
+
   const validateForm = () => {
     let newErrors = {};
+
+    // Payment validation
+    if (!paymentDetails) {
+      newErrors.payment = "Please complete the online payment first.";
+    }
 
     // Personal
     if (!formData.enrollment)      newErrors.enrollment      = "Enrollment number is required";
@@ -124,12 +135,13 @@ const StudentRegister = () => {
   const handleClear = () => {
     setFormData(INITIAL_STATE);
     setErrors({});
+    setPaymentDetails(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateForm()) {
-      showToast("Please fill in all required fields correctly.", false);
+      showToast(errors.payment || "Please fill in all required fields correctly.", false);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
@@ -157,6 +169,15 @@ const StudentRegister = () => {
       formDataPayload.append("city",             formData.city);
       formDataPayload.append("state",            formData.state);
       formDataPayload.append("pincode",          formData.pincode);
+
+      // Add Payment Details
+      if (paymentDetails?.is_demo_bypass) {
+        formDataPayload.append("is_demo_bypass", "true");
+      } else {
+        formDataPayload.append("razorpay_order_id", paymentDetails?.razorpay_order_id);
+        formDataPayload.append("razorpay_payment_id", paymentDetails?.razorpay_payment_id);
+        formDataPayload.append("razorpay_signature", paymentDetails?.razorpay_signature);
+      }
 
       if (formData.consentForm)  formDataPayload.append("consentForm",  formData.consentForm);
       if (formData.paymentProof) formDataPayload.append("paymentProof", formData.paymentProof);
@@ -228,6 +249,7 @@ const StudentRegister = () => {
 
           <ConsentPaymentSection
             formData={formData} errors={errors} handleChange={handleChange}
+            onPaymentSuccess={handlePaymentSuccess}
           />
 
           {/* Submit */}

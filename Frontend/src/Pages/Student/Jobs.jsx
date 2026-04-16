@@ -5,6 +5,7 @@ import {
   FaSearch, FaRegClock, FaTimesCircle, FaInfoCircle
 } from 'react-icons/fa';
 import useSocketRefresh from "../../hooks/useSocketRefresh";
+import { getAvatarColor } from "../../utils/ui";
 
 // ── Status badge helpers ──────────────────────────────────────────────────────
 const APP_STATUS_UI = {
@@ -200,7 +201,7 @@ const StudJobs = () => {
               >
                 {/* Company row */}
                 <div className="flex items-start gap-4 mb-4">
-                  <div className="w-14 h-14 bg-red-600 rounded-xl flex items-center justify-center text-white font-extrabold text-2xl shrink-0 uppercase">
+                  <div className={`${getAvatarColor(job.company)} rounded-xl flex items-center justify-center text-white font-extrabold text-2xl shrink-0 uppercase w-14 h-14`}>
                     {job.company?.[0] || 'C'}
                   </div>
                   <div className="flex-1 min-w-0">

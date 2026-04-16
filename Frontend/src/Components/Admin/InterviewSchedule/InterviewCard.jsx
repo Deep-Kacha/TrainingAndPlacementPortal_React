@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaMapMarkerAlt, FaCalendarAlt, FaTrashAlt, FaChevronDown, FaChevronUp, FaCalendarPlus } from "react-icons/fa";
+import { getAvatarColor } from "../../../utils/ui";
 
 const MODE_ICON = { Online: "💻", Offline: "🏢", Hybrid: "🔀" };
 
@@ -41,7 +42,7 @@ const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
 
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="bg-red-600 text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0 shadow-sm">
+        <div className={`${getAvatarColor(data?.name)} text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0 shadow-sm`}>
           {data?.name?.charAt(0).toUpperCase() || "C"}
         </div>
         <div className="flex-1 min-w-0">
