@@ -3,11 +3,12 @@ import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const AdminForgotPassword = () => {
-
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
   const [formData, setFormData] = useState({
     email: "",
@@ -16,6 +17,11 @@ const AdminForgotPassword = () => {
   });
 
   const [errors, setErrors] = useState({});
+
+  const showToast = (message, type = "success") => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 4000);
+  };
 
   const validateField = (name, value, allData) => {
     let error = "";
@@ -49,7 +55,7 @@ const AdminForgotPassword = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
     Object.keys(formData).forEach((key) => {
@@ -59,7 +65,29 @@ const AdminForgotPassword = () => {
 
     const hasErrors = Object.values(newErrors).some(err => err !== "");
     if (!hasErrors) {
-      console.log("Password reset successfully", formData);
+      setLoading(true);
+      try {
+        const res = await fetch("/api/auth/forgot-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            newPassword: formData.newPassword
+          })
+        });
+
+        const result = await res.json();
+        if (result.success) {
+          showToast("Password reset successfully! Redirecting to login...", "success");
+          setTimeout(() => navigate("/login"), 3000);
+        } else {
+          showToast(result.error || "Failed to reset password.", "error");
+        }
+      } catch (error) {
+        showToast("Network error. Please try again.", "error");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -78,12 +106,22 @@ const AdminForgotPassword = () => {
     <div className="w-full">
         {/* Header */}
         <h1 className="text-2xl md:text-3xl font-bold text-red-600">
-          Forgot Password
+          Recover Admin Account
         </h1>
 
-        <p className="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">
-          Update your password to recover your account.
+        <p className="text-gray-600 mb-8">
+          Enter your admin email and new password to regain access.
         </p>
+
+        {/* Toast */}
+        {toast.visible && (
+          <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 border shadow-sm transition-all animate-in fade-in slide-in-from-top-2 ${
+            toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+          }`}>
+            <span className="text-lg">{toast.type === "success" ? "✓" : "⚠"}</span>
+            <p className="text-sm font-semibold">{toast.message}</p>
+          </div>
+        )}
 
         {/* Form */}
         <div className="flex justify-center">
@@ -208,8 +246,13 @@ const AdminForgotPassword = () => {
 
 
             {/* Confirm Button */}
-            <button type="submit" className="w-full bg-red-600 text-white py-3 rounded-lg mb-3 hover:bg-red-700">
-              Confirm Password
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="w-full py-4 mt-6 bg-red-600 text-white rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-black transition-all shadow-md active:scale-[0.98] disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin rounded-full"></div>}
+              {loading ? "Resetting..." : "Reset Password"}
             </button>
 
 
@@ -217,7 +260,7 @@ const AdminForgotPassword = () => {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="w-full border py-3 rounded-lg hover:bg-gray-50"
+              className="w-full border py-3 rounded-lg hover:bg-gray-50 mt-3"
             >
               Cancel
             </button>

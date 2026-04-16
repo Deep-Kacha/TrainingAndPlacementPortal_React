@@ -50,7 +50,7 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
               href={`${BASE_URL}/${student.paymentProofPath}`} 
               target="_blank" 
               rel="noreferrer"
-              className="px-2.5 py-1 rounded-lg text-[10px] font-extrabold uppercase bg-green-100 text-green-700 border border-green-200 hover:bg-green-200 transition-colors"
+              className="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase bg-green-100 text-green-700 border border-green-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all shadow-sm"
             >
               VIEW PROOF
             </a>
@@ -65,7 +65,7 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
               href={`${BASE_URL}/${student.consentFormPath}`} 
               target="_blank" 
               rel="noreferrer"
-              className="text-white bg-blue-600 hover:bg-blue-700 font-bold text-[9px] uppercase px-2 py-1 rounded shadow-sm transition-colors"
+              className="inline-block whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[9px] uppercase px-3 py-1.5 rounded shadow-sm transition-all"
             >
               VIEW FORM
             </a>

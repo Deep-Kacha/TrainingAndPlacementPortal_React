@@ -25,8 +25,8 @@ const StudentTable = ({ students, onToggle, onDelete }) => {
               <th className="p-5">Branch &amp; Sem</th>
               <th className="p-5">Academic Info</th>
               <th className="p-5">Email Address</th>
-              <th className="p-5">Payment</th>
-              <th className="p-5">Documents</th>
+              <th className="p-5 min-w-[120px]">Payment</th>
+              <th className="p-5 min-w-[120px]">Documents</th>
               <th className="p-5">Status</th>
               <th className="p-5 text-center">Approve</th>
               <th className="p-5 text-center">Delete</th>

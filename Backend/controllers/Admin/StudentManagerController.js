@@ -30,7 +30,7 @@ const getAllStudents = async (req, res) => {
                 sp.pincode
             FROM users u
             INNER JOIN students_profile sp ON u.id = sp.user_id
-            WHERE u.role = 'student'
+            WHERE u.role IN ('student', 'pending')
             ORDER BY u.created_at DESC
         `);
 
@@ -71,7 +71,7 @@ const getAllStudents = async (req, res) => {
 const approveStudent = async (req, res) => {
     try {
         const { id } = req.params;
-        await pool.query('UPDATE users SET is_approved = true WHERE id = $1 AND role = $2', [id, 'student']);
+        await pool.query('UPDATE users SET is_approved = true, role = $1 WHERE id = $2', ['student', id]);
         broadcast('REFRESH_STUDENTS');
         broadcast('REFRESH_STATS');
         res.status(200).json({ success: true, message: "Student approved successfully." });
@@ -84,7 +84,7 @@ const approveStudent = async (req, res) => {
 const rejectStudent = async (req, res) => {
     try {
         const { id } = req.params;
-        await pool.query('UPDATE users SET is_approved = false WHERE id = $1 AND role = $2', [id, 'student']);
+        await pool.query('UPDATE users SET is_approved = false WHERE id = $1', [id]);
         broadcast('REFRESH_STUDENTS');
         broadcast('REFRESH_STATS');
         res.status(200).json({ success: true, message: "Student rejected/set to pending." });
@@ -100,7 +100,7 @@ const deleteStudent = async (req, res) => {
         await pool.query('BEGIN');
         await pool.query('DELETE FROM applications WHERE student_id = (SELECT id FROM students_profile WHERE user_id = $1)', [id]);
         await pool.query('DELETE FROM students_profile WHERE user_id = $1', [id]);
-        await pool.query('DELETE FROM users WHERE id = $1 AND role = $2', [id, 'student']);
+        await pool.query('DELETE FROM users WHERE id = $1', [id]);
         await pool.query('COMMIT');
         broadcast('REFRESH_STUDENTS');
         broadcast('REFRESH_STATS');

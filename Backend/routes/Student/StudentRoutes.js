@@ -8,6 +8,7 @@ const { getJobsForStudent, applyToJob } = require('../../controllers/Student/Job
 const { getAppliedJobs } = require('../../controllers/Student/Applications');
 const { getStudentInterviews } = require('../../controllers/Student/Interview_schedule');
 const { getStudentPlacementHistory } = require('../../controllers/Student/Placement_history');
+const { changeStudentPassword } = require('../../controllers/Auth/PasswordController');
 
 // All student routes require 'student' role
 router.use(verifyToken, requireRole('student'));
@@ -18,6 +19,7 @@ router.get('/dashboard-stats', getStudentDashboardStats);
 // Profile
 router.get('/profile', getStudentProfile);
 router.put('/profile', updateStudentProfile);
+router.put('/change-password', changeStudentPassword);
 
 // Jobs
 router.get('/jobs', getJobsForStudent);

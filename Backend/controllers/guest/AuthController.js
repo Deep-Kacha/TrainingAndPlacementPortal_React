@@ -49,7 +49,7 @@ const registerStudent = async (req, res) => {
         await pool.query('BEGIN');
         
         const userInsert = await pool.query(
-            "INSERT INTO users (name, email, password_hash, role, is_approved) VALUES ($1, $2, $3, 'student', false) RETURNING id",
+            "INSERT INTO users (name, email, password_hash, role, is_approved) VALUES ($1, $2, $3, 'pending', false) RETURNING id",
             [name, universityEmail, hashedPw]
         );
         const userId = userInsert.rows[0].id;

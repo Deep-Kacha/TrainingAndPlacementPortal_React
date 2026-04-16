@@ -8,6 +8,13 @@ const StudChangePass = () => {
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
+
+    const showToast = (message, type = "success") => {
+        setToast({ visible: true, message, type });
+        setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 4000);
+    };
 
     const [passwords, setPasswords] = useState({
         current: "",
@@ -65,7 +72,7 @@ const StudChangePass = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const currentErr = validateField("current", passwords.current, passwords);
@@ -79,8 +86,33 @@ const StudChangePass = () => {
         });
 
         if (!currentErr && !newErr && !confirmErr && passwords.current && passwords.new && passwords.confirm) {
-            alert("Password updated successfully!");
-            setPasswords({ current: "", new: "", confirm: "" });
+            setLoading(true);
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch("/api/student/change-password", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword: passwords.current,
+                        newPassword: passwords.new
+                    })
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    showToast("Password updated successfully!", "success");
+                    setPasswords({ current: "", new: "", confirm: "" });
+                } else {
+                    showToast(result.error || "Failed to update password.", "error");
+                }
+            } catch (error) {
+                showToast("Network error. Please try again.", "error");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -92,6 +124,16 @@ const StudChangePass = () => {
             <p className="text-gray-600 mb-8">
                 Update your credentials to maintain account safety.
             </p>
+
+            {/* Toast */}
+            {toast.visible && (
+                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 border shadow-sm transition-all animate-in fade-in slide-in-from-top-2 ${
+                    toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                }`}>
+                    <span className="text-lg">{toast.type === "success" ? "✓" : "⚠"}</span>
+                    <p className="text-sm font-semibold">{toast.message}</p>
+                </div>
+            )}
 
             <div className="flex justify-center">
                 <div className="w-full max-w-xl bg-[#d8cfc3] p-8 md:p-10 rounded-xl border border-gray-200 shadow-sm">
@@ -198,9 +240,11 @@ const StudChangePass = () => {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 type="submit"
-                                className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-black transition-all shadow-sm"
+                                disabled={loading}
+                                className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-black transition-all shadow-sm disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
-                                Change Password
+                                {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin rounded-full"></div>}
+                                {loading ? "Updating..." : "Change Password"}
                             </button>
                             <button
                                 type="button"

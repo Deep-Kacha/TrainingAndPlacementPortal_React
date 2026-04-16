@@ -42,3 +42,12 @@ coverage/
 # OS files
 .DS_Store
 Thumbs.db
+
+# User Uploads
+Backend/uploads/
+Frontend/uploads/
+
+# Scratch and Temporary files
+scratch/
+Backend/scratch/
+Frontend/scratch/

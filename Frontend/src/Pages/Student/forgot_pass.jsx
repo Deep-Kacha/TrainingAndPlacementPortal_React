@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEye, FaEyeSlash, FaEnvelope } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaEnvelope, FaIdCard } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const StudForgotPassword = () => {
@@ -8,30 +8,45 @@ const StudForgotPassword = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
     const [formData, setFormData] = useState({
         email: "",
+        enrollment: "",
         newPassword: "",
         confirmPassword: ""
     });
 
     const [errors, setErrors] = useState({});
 
+    const showToast = (message, type = "success") => {
+        setToast({ visible: true, message, type });
+        setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 4000);
+    };
+
     const validateField = (name, value, allData) => {
         let error = "";
-        if (name === "email") {
-            if (!value) error = "Email is required.";
-            else if (!/^[^\s@]+@rku\.ac\.in$/.test(value)) error = "Only @rku.ac.in email addresses are allowed.";
-        } else if (name === "newPassword") {
-            if (!value) error = "New password is required.";
-            else if (value.length < 8) error = "Must be at least 8 characters.";
-            else if (!/[A-Z]/.test(value)) error = "Must contain an uppercase letter.";
-            else if (!/[a-z]/.test(value)) error = "Must contain a lowercase letter.";
-            else if (!/\d/.test(value)) error = "Must contain a number.";
-            else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) error = "Must contain a special character.";
-        } else if (name === "confirmPassword") {
-            if (!value) error = "Confirm password is required.";
-            else if (value !== allData.newPassword) error = "Passwords do not match.";
+        switch (name) {
+            case "email":
+                if (!value) error = "Email is required.";
+                else if (!/^[^\s@]+@rku\.ac\.in$/.test(value)) error = "Only @rku.ac.in email addresses are allowed.";
+                break;
+            case "enrollment":
+                if (!value) error = "Enrollment number is required.";
+                break;
+            case "newPassword":
+                if (!value) error = "New password is required.";
+                else if (value.length < 8) error = "Must be at least 8 characters.";
+                else if (!/[A-Z]/.test(value)) error = "Must contain an uppercase letter.";
+                else if (!/[a-z]/.test(value)) error = "Must contain a lowercase letter.";
+                else if (!/\d/.test(value)) error = "Must contain a number.";
+                else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) error = "Must contain a special character.";
+                break;
+            case "confirmPassword":
+                if (!value) error = "Confirm password is required.";
+                else if (value !== allData.newPassword) error = "Passwords do not match.";
+                break;
         }
         return error;
     };
@@ -50,23 +65,40 @@ const StudForgotPassword = () => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const emailErr = validateField("email", formData.email, formData);
-        const newErr = validateField("newPassword", formData.newPassword, formData);
-        const confirmErr = validateField("confirmPassword", formData.confirmPassword, formData);
-
-        setErrors({
-            email: emailErr,
-            newPassword: newErr,
-            confirmPassword: confirmErr
+        let newErrors = {};
+        Object.keys(formData).forEach((key) => {
+            newErrors[key] = validateField(key, formData[key], formData);
         });
+        setErrors(newErrors);
 
-        if (!emailErr && !newErr && !confirmErr && formData.email && formData.newPassword && formData.confirmPassword) {
-            alert("Password successfully verified and updated!");
-            setFormData({ email: "", newPassword: "", confirmPassword: "" });
-            navigate("/Authentication/login"); // assuming navigating to home or login page after successful password reset
+        const hasErrors = Object.values(newErrors).some(err => err !== "");
+        if (!hasErrors) {
+            setLoading(true);
+            try {
+                const res = await fetch("/api/auth/forgot-password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        email: formData.email,
+                        enrollment: formData.enrollment,
+                        newPassword: formData.newPassword
+                    })
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    showToast("Password reset successfully! Redirecting to login...", "success");
+                    setTimeout(() => navigate("/Authentication/login"), 3000);
+                } else {
+                    showToast(result.error || "Failed to reset password.", "error");
+                }
+            } catch (error) {
+                showToast("Network error. Please try again.", "error");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
@@ -92,6 +124,16 @@ const StudForgotPassword = () => {
                 Update your password to regain access to your placement portal.
             </p>
 
+            {/* Toast */}
+            {toast.visible && (
+                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 border shadow-sm transition-all animate-in fade-in slide-in-from-top-2 ${
+                    toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                }`}>
+                    <span className="text-lg">{toast.type === "success" ? "✓" : "⚠"}</span>
+                    <p className="text-sm font-semibold">{toast.message}</p>
+                </div>
+            )}
+
             {/* Form */}
             <div className="flex justify-center">
                 <div className="w-full max-w-xl bg-[#d8cfc3] p-8 md:p-10 rounded-xl border border-gray-200 shadow-sm">
@@ -111,7 +153,26 @@ const StudForgotPassword = () => {
                             />
                             <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         </div>
-                        {errors.email && <p className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{errors.email}</p>}
+                        {errors.email && <p className="text-red-600 text-[10px] mt-1 font-bold">{errors.email}</p>}
+                    </div>
+
+                    {/* Enrollment */}
+                    <div className="mb-6">
+                        <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
+                            Enrollment Number
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                name="enrollment"
+                                value={formData.enrollment}
+                                onChange={handleChange}
+                                placeholder="Enter your enrollment number"
+                                className={`w-full p-4 pl-10 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.enrollment ? "border-red-500" : "border-gray-300 focus:border-red-600"}`}
+                            />
+                            <FaIdCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                        </div>
+                        {errors.enrollment && <p className="text-red-600 text-[10px] mt-1 font-bold">{errors.enrollment}</p>}
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -191,9 +252,11 @@ const StudForgotPassword = () => {
                     <div className="flex flex-col sm:flex-row gap-4">
                         <button
                             onClick={handleSubmit}
-                            className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-black transition-all shadow-sm"
+                            disabled={loading}
+                            className="w-full py-4 bg-red-600 text-white rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-black transition-all shadow-md active:scale-[0.98] disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
-                            Update Password
+                            {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin rounded-full"></div>}
+                            {loading ? "Resetting..." : "Reset Password"}
                         </button>
                         <button
                             onClick={() => navigate("/Authentication/login")}

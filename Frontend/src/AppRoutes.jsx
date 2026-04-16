@@ -6,9 +6,7 @@ import PublicRoute from "./Components/common/Routing/PublicRoute";
 
 //Guest Side Routes
 import Login from "./Pages/guest/Login";
-import ForgotPassword from "./Components/Authentication/Forgotpassword";
-import ChangePassword from "./Components/Authentication/Changepassword";
-import ResetPassword from "./Components/Authentication/Resetpassword";
+
 import Home from "./Pages/guest/Home";
 import SubmitJd from "./Pages/guest/SubmitJd";
 import Register from "./Pages/guest/Register";
@@ -64,10 +62,11 @@ function AppRoutes() {
         <Route path="/Register" element={<Register />} />
         <Route path="/SubmitJd" element={<SubmitJd />} />
         <Route path="/Authentication/login" element={<Login />} />
-        <Route path="/ForgotPassword" element={<ForgotPassword />} />
-        <Route path="/Authentication/change-password" element={<ChangePassword />} />
-        <Route path="/Authentication/reset-password" element={<ResetPassword />} />
       </Route>
+
+      {/* Standalone Password Recovery Routes — accessible logged in OR out */}
+      <Route path="/StudForgotPassword" element={<StudForgotPassword />} />
+      <Route path="/AdminForgotPassword" element={<AdminForgotPassword />} />
 
       {/* Student Protected Routes */}
       <Route element={<ProtectedRoute allowedRoles={["student"]} />}>
@@ -80,7 +79,6 @@ function AppRoutes() {
           <Route path="/StudInterviewSchedule" element={<StudInterviewSchedule />} />
           <Route path="/StudPlacementHistory" element={<StudPlacementHistory />} />
           <Route path="/StudChangePass" element={<StudChangePass />} />
-          <Route path="/StudForgotPassword" element={<StudForgotPassword />} />
         </Route>
       </Route>
 
@@ -91,7 +89,6 @@ function AppRoutes() {
           <Route path="/AdminProfile" element={<AdminProfile />} />
           <Route path="/AdminCompanyManagement" element={<AdminCompanyManagement />} />
           <Route path="/AdminJdDetail" element={<AdminJdDetail />} />
-          <Route path="/AdminForgotPassword" element={<AdminForgotPassword />} />
           <Route path="/AdminChangePassword" element={<AdminChangePassword />} />
           <Route path="/AdminInterviewSchedule" element={<AdminInterviewSchedule />} />
           <Route path="/AdminInterviewScheduleForm" element={<AdminInterviewScheduleForm />} />
