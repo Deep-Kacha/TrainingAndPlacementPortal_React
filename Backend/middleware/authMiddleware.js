@@ -9,8 +9,8 @@ const verifyToken = (req, res, next) => {
     const tokenPart = token.split(' ')[1];
     if (!tokenPart) return res.status(403).json({ error: "Malformed token." });
 
-    jwt.verify(tokenPart, process.env.JWT_SECRET || 'your_super_secret_key', (err, decoded) => {
-        if (err) return res.status(401).json({ error: "Unauthorized! Invalid token." });
+    jwt.verify(tokenPart, process.env.JWT_SECRET, (err, decoded) => {
+        if (err || !process.env.JWT_SECRET) return res.status(401).json({ error: "Unauthorized! Invalid signature." });
         req.userId = decoded.id;
         req.userRole = decoded.role;
         next();

@@ -12,7 +12,17 @@ const app = express();
 app.use(morgan('dev')); // Logs all requests to console
 
 // Middleware
-app.use(cors()); // Allows frontend to make requests
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:5173', 'http://localhost:3000'];
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 app.use(express.json()); // Parses incoming JSON payloads
 
 // Serve Static Uploads
