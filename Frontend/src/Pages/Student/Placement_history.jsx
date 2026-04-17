@@ -1,27 +1,33 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaSpinner, FaTrophy, FaDownload } from "react-icons/fa";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
+
 
 const StudPlacementHistory = () => {
     const [placements, setPlacements] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchPlacements = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const res = await fetch("/api/student/placements", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const result = await res.json();
-                if (result.success) setPlacements(result.data);
-            } catch (error) {
-                console.error("Failed to fetch placement history", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPlacements();
+    const fetchPlacements = useCallback(async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/placements", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) setPlacements(result.data);
+        } catch (error) {
+            console.error("Failed to fetch placement history", error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchPlacements();
+    }, [fetchPlacements]);
+
+    useSocketRefresh('REFRESH_APPLICATIONS', fetchPlacements);
+
 
     const currentOffer = placements.length > 0 ? placements[0] : null;
 

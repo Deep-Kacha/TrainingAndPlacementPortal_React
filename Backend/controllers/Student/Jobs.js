@@ -35,6 +35,7 @@ const getJobsForStudent = async (req, res) => {
                 j.internship_duration                       as "internshipDuration",
                 j.eligible_batches                          as "eligibleBatches",
                 j.eligible_courses                          as "eligibleCourses",
+                j.min_cgpa                                  as "minCgpa",
                 COALESCE(cp.website, j.website)             as "companyWebsite",
                 a.status                                    as "applicationStatus",
                 a.id                                        as "applicationId"

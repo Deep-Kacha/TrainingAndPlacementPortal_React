@@ -197,7 +197,9 @@ const StudJobDetails = () => {
                </div>
                <div className="flex justify-between items-center bg-white/40 p-3 rounded-lg">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-gray-500">Min CGPA</span>
-                  <span className="bg-red-600 text-white px-3 py-1 rounded-md font-bold text-xs">{job.eligibilityCriteria || "All"}</span>
+                  <span className="bg-red-600 text-white px-3 py-1 rounded-md font-bold text-xs">
+                    {job.minCgpa && parseFloat(job.minCgpa) > 0 ? job.minCgpa : "All"}
+                  </span>
                </div>
                <div className="flex justify-between items-center text-xs">
                   <span className="text-gray-500 font-bold uppercase tracking-wider">Batch</span>

@@ -1,4 +1,6 @@
 const pool = require('../../config/db');
+const { broadcast } = require('../../config/socket');
+
 
 /**
  * GET /api/student/profile
@@ -33,10 +35,20 @@ const getStudentProfile = async (req, res) => {
  * Updates the student's profile.
  */
 const updateStudentProfile = async (req, res) => {
+    const client = await pool.connect();
     try {
         const userId = req.userId;
         const data = req.body;
 
+        await client.query('BEGIN');
+
+        // 1. Update name in users table
+        await client.query(
+            "UPDATE users SET name = $1 WHERE id = $2",
+            [data.name, userId]
+        );
+
+        // 2. Update the rest in students_profile
         const query = `
             UPDATE students_profile SET 
                 enrollment_no = $1, department = $2, current_year = $3, semester = $4,
@@ -56,11 +68,19 @@ const updateStudentProfile = async (req, res) => {
             userId
         ];
 
-        await pool.query(query, values);
+        await client.query(query, values);
+        
+        await client.query('COMMIT');
+
+        broadcast('REFRESH_STUDENTS');
+        broadcast('REFRESH_STATS');
         res.status(200).json({ success: true, message: "Profile updated successfully" });
     } catch (error) {
+        await client.query('ROLLBACK');
         console.error("Error updating student profile:", error);
         res.status(500).json({ success: false, error: "Internal server error" });
+    } finally {
+        client.release();
     }
 };
 

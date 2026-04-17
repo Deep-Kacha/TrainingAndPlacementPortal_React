@@ -21,6 +21,10 @@ const SelectionProcessSection = ({ formData, errors, handleChange }) => (
     <FormField label="Expected Date of Campus Drive" required error={errors.driveDate}>
       <input name="driveDate" type="date" className={INPUT_STYLE} value={formData.driveDate} onChange={handleChange} />
     </FormField>
+    
+    <FormField label="Application Deadline (Final date to apply)">
+      <input name="deadline" type="date" className={INPUT_STYLE} value={formData.deadline} onChange={handleChange} />
+    </FormField>
 
     <FormField label="Registration Link (Optional)">
       <input name="registrationLink" placeholder="https://..." className={INPUT_STYLE} value={formData.registrationLink} onChange={handleChange} />

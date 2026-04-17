@@ -23,7 +23,8 @@ const EMPTY_FORM = {
   eligibleBatches: [], eligibleCourses: [],
   selectionProcess: "", driveDate: "", regLink: "",
   contactName: "", contactEmail: "", contactMobile: "",
-  additionalDetails: "", fileName: ""
+  additionalDetails: "", fileName: "",
+  minCgpa: "0", deadline: ""
 };
 
 // ─── DB row → form shape mapper ───────────────────────────────────────────────
@@ -47,7 +48,9 @@ const mapRowToForm = (row) => ({
   contactName:       row.contact_person_name   || "",
   contactEmail:      row.contact_person_email  || "",
   contactMobile:     row.contact_person_mobile || "",
-  additionalDetails: row.additional_info       || ""
+  additionalDetails: row.additional_info       || "",
+  minCgpa:           row.min_cgpa              || "0",
+  deadline:          row.application_deadline ? row.application_deadline.split("T")[0] : ""
 });
 
 // ─── Form → API payload mapper ────────────────────────────────────────────────
@@ -69,6 +72,8 @@ const mapFormToPayload = (f) => ({
   contact_person_email:  f.contactEmail,
   contact_person_mobile: f.contactMobile,
   additional_info:       f.additionalDetails,
+  min_cgpa:              f.minCgpa || 0,
+  application_deadline:  f.deadline || null
 });
 
 // ─── Subcomponents ────────────────────────────────────────────────────────────
@@ -385,6 +390,16 @@ const AdminJdDetail = () => {
             />
             {errors.eligibleCourses && <p className="text-red-500 text-xs mt-1">{errors.eligibleCourses}</p>}
           </div>
+          <div>
+             <InputField 
+               label="Minimum CGPA Requirement" 
+               type="number" 
+               value={formData.minCgpa}
+               onChange={(e) => handleChange("minCgpa", e.target.value)} 
+               readOnly={!isEditing} 
+             />
+             <p className="text-gray-400 text-[10px] mt-1 italic">Enter 0 for no minimum requirement.</p>
+          </div>
         </div>
       </SectionCard>
 
@@ -408,6 +423,10 @@ const AdminJdDetail = () => {
             <InputField label="Expected Date of Campus Drive *" type="date" value={formData.driveDate}
               onChange={(e) => handleChange("driveDate", e.target.value)} readOnly={!isEditing} />
             {errors.driveDate && <p className="text-red-500 text-xs mt-1">{errors.driveDate}</p>}
+          </div>
+          <div>
+            <InputField label="Application Deadline" type="date" value={formData.deadline}
+              onChange={(e) => handleChange("deadline", e.target.value)} readOnly={!isEditing} />
           </div>
           <div>
             <InputField label="Registration Link (Optional)" value={formData.regLink}

@@ -1,6 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import InterviewCard from "../../Components/Admin/InterviewSchedule/InterviewCard";
 import { FaSearch, FaChevronDown, FaSpinner } from "react-icons/fa";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
+
 
 const AdminInterviewSchedule = () => {
   const [companies, setCompanies] = useState([]);
@@ -12,6 +14,10 @@ const AdminInterviewSchedule = () => {
   useEffect(() => {
     fetchInterviews();
   }, []);
+
+  useSocketRefresh('REFRESH_INTERVIEWS', fetchInterviews);
+  useSocketRefresh('REFRESH_JOBS', fetchInterviews);
+
 
   const fetchInterviews = async () => {
     try {

@@ -147,7 +147,10 @@ const StudProfile = () => {
                             </button>
                             <button 
                                 className="w-full bg-white border border-gray-300 text-gray-700 rounded-lg py-3 px-4 font-semibold text-sm hover:bg-gray-50 transition-all"
-                                onClick={() => setIsEditing(false)}
+                                onClick={() => {
+                                    setIsEditing(false);
+                                    fetchProfile();
+                                }}
                             >
                                 Cancel
                             </button>

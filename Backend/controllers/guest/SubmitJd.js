@@ -12,7 +12,8 @@ const submitJd = async (req, res) => {
             jobPosition, ctc, internshipDuration, stipend, bond, joinDate,
             eligibleBatches, eligibleCourses,
             selectionProcess, driveDate, registrationLink,
-            contactName, contactEmail, contactMobile, additionalInfo
+            contactName, contactEmail, contactMobile, additionalInfo,
+            minCgpa, deadline
         } = req.body;
 
         // Basic validation
@@ -25,8 +26,9 @@ const submitJd = async (req, res) => {
                 company_name, job_title, job_position, description, ctc_package, location, website,
                 stipend, bond, joining_date, eligible_batches, eligible_courses,
                 selection_process, drive_date, contact_person_name, contact_person_email,
-                contact_person_mobile, additional_info, status, internship_duration, registration_link
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+                contact_person_mobile, additional_info, status, internship_duration, registration_link,
+                min_cgpa, application_deadline
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)
             RETURNING id;
         `;
 
@@ -51,10 +53,16 @@ const submitJd = async (req, res) => {
             additionalInfo,
             'pending',
             internshipDuration,
-            registrationLink
+            registrationLink,
+            minCgpa || 0,
+            deadline || null
         ];
 
         const result = await pool.query(query, values);
+
+        const { broadcast } = require('../../config/socket');
+        broadcast('REFRESH_JOBS');
+        broadcast('REFRESH_STATS');
 
         res.status(201).json({
             success: true,

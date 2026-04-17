@@ -32,6 +32,8 @@ const StudDashboard = () => {
     // Real-time listeners
     useSocketRefresh('REFRESH_STATS', fetchStats);
     useSocketRefresh('REFRESH_APPLICATIONS', fetchStats);
+    useSocketRefresh('REFRESH_INTERVIEWS', fetchStats);
+    useSocketRefresh('REFRESH_STUDENTS', fetchStats);
 
     if (loading) {
         return (

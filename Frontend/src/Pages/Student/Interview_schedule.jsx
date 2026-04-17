@@ -1,28 +1,34 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { FaSpinner, FaCalendarDay, FaClock, FaVideo, FaBuilding, FaLink, FaMapMarkerAlt, FaLayerGroup, FaCalendarCheck } from "react-icons/fa";
 import { getAvatarColor } from "../../utils/ui";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
+
 
 const StudInterviewSchedule = () => {
     const [interviews, setInterviews] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchInterviews = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const res = await fetch("/api/student/interviews", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                const result = await res.json();
-                if (result.success) setInterviews(result.data);
-            } catch (error) {
-                console.error("Failed to fetch student interviews", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchInterviews();
+    const fetchInterviews = useCallback(async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/interviews", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) setInterviews(result.data);
+        } catch (error) {
+            console.error("Failed to fetch student interviews", error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        fetchInterviews();
+    }, [fetchInterviews]);
+
+    useSocketRefresh('REFRESH_INTERVIEWS', fetchInterviews);
+
 
     const ICONS = {
         Online: <FaVideo />,

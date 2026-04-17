@@ -101,7 +101,7 @@ const updateJobDetail = async (req, res) => {
             stipend, bond, joining_date, eligible_batches, eligible_courses,
             selection_process, drive_date, registration_link,
             contact_person_name, contact_person_email, contact_person_mobile,
-            additional_info
+            additional_info, min_cgpa, application_deadline
         } = req.body;
 
         const query = `
@@ -122,8 +122,10 @@ const updateJobDetail = async (req, res) => {
                 contact_person_name = $14,
                 contact_person_email = $15,
                 contact_person_mobile = $16,
-                additional_info = $17
-            WHERE id = $18
+                additional_info = $17,
+                min_cgpa = $18,
+                application_deadline = $19
+            WHERE id = $20
             RETURNING *;
         `;
 
@@ -132,7 +134,7 @@ const updateJobDetail = async (req, res) => {
             stipend, bond, joining_date, eligible_batches, eligible_courses,
             selection_process, drive_date, registration_link,
             contact_person_name, contact_person_email, contact_person_mobile,
-            additional_info, id
+            additional_info, min_cgpa || 0, application_deadline || null, id
         ];
 
         const result = await pool.query(query, values);

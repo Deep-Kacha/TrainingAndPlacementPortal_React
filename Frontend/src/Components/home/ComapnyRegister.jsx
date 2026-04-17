@@ -14,6 +14,7 @@ const INITIAL_STATE = {
   eligibleBatches: [], eligibleCourses: [],
   selectionProcess: "", driveDate: "", registrationLink: "",
   contactName: "", contactEmail: "", contactMobile: "", additionalInfo: "",
+  minCgpa: "0", deadline: "",
 };
 
 const CompanyRegister = () => {
@@ -144,7 +145,7 @@ const CompanyRegister = () => {
           />
 
           <EligibilitySection
-            formData={formData} handleCheckbox={handleCheckbox}
+            formData={formData} handleCheckbox={handleCheckbox} handleChange={handleChange}
           />
 
           <SelectionProcessSection

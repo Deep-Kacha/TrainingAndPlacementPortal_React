@@ -1,4 +1,6 @@
 const pool = require('../../config/db');
+const { broadcast } = require('../../config/socket');
+
 
 /**
  * GET /api/admin/interviews
@@ -71,6 +73,7 @@ const createInterviewSchedule = async (req, res) => {
             RETURNING *
         `, [job_id, round_name, interview_date, interview_time, mode || null, venue_or_link || null]);
 
+        broadcast('REFRESH_INTERVIEWS');
         res.status(201).json({ success: true, message: "Interview schedule created.", data: result.rows[0] });
     } catch (error) {
         console.error("Error creating interview schedule:", error);
@@ -86,6 +89,7 @@ const deleteInterviewSchedule = async (req, res) => {
     try {
         const { scheduleId } = req.params;
         await pool.query('DELETE FROM interview_schedules WHERE id = $1', [scheduleId]);
+        broadcast('REFRESH_INTERVIEWS');
         res.status(200).json({ success: true, message: "Interview schedule deleted." });
     } catch (error) {
         console.error("Error deleting interview schedule:", error);
