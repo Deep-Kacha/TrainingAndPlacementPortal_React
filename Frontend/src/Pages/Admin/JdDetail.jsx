@@ -10,8 +10,7 @@ import {
   FaBriefcase,
   FaCheckCircle,
   FaClipboardList,
-  FaUserTie,
-  FaUpload
+  FaUserTie
 } from "react-icons/fa";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -48,8 +47,7 @@ const mapRowToForm = (row) => ({
   contactName:       row.contact_person_name   || "",
   contactEmail:      row.contact_person_email  || "",
   contactMobile:     row.contact_person_mobile || "",
-  additionalDetails: row.additional_info       || "",
-  fileName: ""
+  additionalDetails: row.additional_info       || ""
 });
 
 // ─── Form → API payload mapper ────────────────────────────────────────────────
@@ -73,12 +71,47 @@ const mapFormToPayload = (f) => ({
   additional_info:       f.additionalDetails,
 });
 
+// ─── Subcomponents ────────────────────────────────────────────────────────────
+const ContactOfficersList = () => {
+  const [officers, setOfficers] = useState([]);
+  useEffect(() => {
+    const fetchOfficers = async () => {
+      try {
+        const res = await fetch("/api/guest/contact-officers");
+        const result = await res.json();
+        if (result.success && result.data.length > 0) {
+          setOfficers(result.data);
+        } else {
+          setOfficers([
+            { name: "Dr. Vishal Doshi", department: "Head of Training & Placement Cell", mobile: "+91 98765 43210" },
+            { name: "Mr. Osho Shah", department: "Assistant Training & Placement Officer", mobile: "+91 87654 32109" }
+          ]);
+        }
+      } catch {
+        // use default fallback
+      }
+    };
+    fetchOfficers();
+  }, []);
+
+  return (
+    <>
+      {officers.map((officer, i) => (
+        <div key={i} className="bg-gray-100 p-4 rounded-lg">
+          <p className="font-semibold">{officer.name}</p>
+          <p className="text-sm text-gray-600">{officer.department || "Training & Placement Cell"}</p>
+          {officer.mobile && <p className="text-sm text-gray-600 mt-1">{officer.mobile}</p>}
+          {officer.email && <p className="text-sm text-gray-600 truncate">{officer.email}</p>}
+        </div>
+      ))}
+    </>
+  );
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 const AdminJdDetail = () => {
   const navigate    = useNavigate();
   const location    = useLocation();
-  const fileInputRef = useRef(null);
-
   const jobId  = location.state?.jobId;
   const initMode = location.state?.mode === "edit";
 
@@ -86,9 +119,9 @@ const AdminJdDetail = () => {
   const [errors,     setErrors]     = useState({});
   const [isEditing,  setIsEditing]  = useState(initMode);
   const [loading,    setLoading]    = useState(true);
-  const [saving,     setSaving]     = useState(false);
   const [pageError,  setPageError]  = useState("");
   const [saveMsg,    setSaveMsg]    = useState("");
+  const [saving,     setSaving]     = useState(false);
 
   // ── Fetch JD from backend ────────────────────────────────────────────────
   useEffect(() => {
@@ -123,11 +156,6 @@ const AdminJdDetail = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: "" }));
     if (saveMsg) setSaveMsg("");
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) handleChange("fileName", file.name);
   };
 
   // ── Validation ───────────────────────────────────────────────────────────
@@ -165,13 +193,15 @@ const AdminJdDetail = () => {
     setSaving(true);
     try {
       const token = localStorage.getItem("token");
+      const payload = mapFormToPayload(formData);
+
       const res = await fetch(`/api/admin/jobs/${jobId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(mapFormToPayload(formData))
+        body: JSON.stringify(payload)
       });
       const result = await res.json();
       if (result.success) {
@@ -254,19 +284,10 @@ const AdminJdDetail = () => {
         <p className="text-gray-500 text-sm">RK University, Rajkot – Training & Placement Cell</p>
       </div>
 
-      {/* Contact Information (static placement cell info) */}
+      {/* Contact Information */}
       <SectionCard icon={<FaAddressBook />} title="Contact Information">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <p className="font-semibold">Dr. Vishal Doshi</p>
-            <p className="text-sm text-gray-600">Head of Training & Placement Cell</p>
-            <p className="text-sm">+91 98765 43210</p>
-          </div>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <p className="font-semibold">Mr. Osho Shah</p>
-            <p className="text-sm text-gray-600">Assistant Training & Placement Officer</p>
-            <p className="text-sm">+91 87654 32109</p>
-          </div>
+          <ContactOfficersList />
         </div>
       </SectionCard>
 
@@ -413,24 +434,6 @@ const AdminJdDetail = () => {
               onChange={(e) => handleChange("contactMobile", e.target.value)} readOnly={!isEditing} />
             {errors.contactMobile && <p className="text-red-500 text-xs mt-1">{errors.contactMobile}</p>}
           </div>
-        </div>
-      </SectionCard>
-
-      {/* Upload Documents */}
-      <SectionCard icon={<FaUpload />} title="Upload Documents">
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center">
-          <p className="text-gray-500 mb-3">
-            {formData.fileName || "Drop files here or click to browse"}
-          </p>
-          <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
-          {isEditing && (
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="bg-blue-600 text-white px-5 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
-              Choose Files
-            </button>
-          )}
         </div>
       </SectionCard>
 

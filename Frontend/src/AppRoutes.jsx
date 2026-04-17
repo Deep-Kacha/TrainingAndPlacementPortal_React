@@ -6,6 +6,7 @@ import PublicRoute from "./Components/common/Routing/PublicRoute";
 
 //Guest Side Routes
 import Login from "./Pages/guest/Login";
+import ForgotPassword from "./Pages/guest/ForgotPassword";
 
 import Home from "./Pages/guest/Home";
 import SubmitJd from "./Pages/guest/SubmitJd";
@@ -62,11 +63,16 @@ function AppRoutes() {
         <Route path="/Register" element={<Register />} />
         <Route path="/SubmitJd" element={<SubmitJd />} />
         <Route path="/Authentication/login" element={<Login />} />
+        <Route path="/ForgotPassword" element={<ForgotPassword />} />
       </Route>
 
       {/* Standalone Password Recovery Routes — accessible logged in OR out */}
-      <Route path="/StudForgotPassword" element={<StudForgotPassword />} />
-      <Route path="/AdminForgotPassword" element={<AdminForgotPassword />} />
+      <Route element={<StudentLayout />}>
+        <Route path="/StudForgotPassword" element={<StudForgotPassword />} />
+      </Route>
+      <Route element={<AdminLayout />}>
+        <Route path="/AdminForgotPassword" element={<AdminForgotPassword />} />
+      </Route>
 
       {/* Student Protected Routes */}
       <Route element={<ProtectedRoute allowedRoles={["student"]} />}>

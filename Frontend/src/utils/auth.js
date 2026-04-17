@@ -30,6 +30,6 @@ export const getUserRole = () => {
 export const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    // Use replace to prevent back-button issues after logout
-    window.location.replace("/Authentication/login");
+    // Use replace to redirect to home page and prevent back-button issues
+    window.location.replace("/");
 };

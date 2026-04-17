@@ -3,7 +3,6 @@ import { FaEye, FaEyeSlash, FaEnvelope, FaIdCard } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
 const StudForgotPassword = () => {
-
     const navigate = useNavigate();
 
     const [showPassword, setShowPassword] = useState(false);
@@ -90,7 +89,7 @@ const StudForgotPassword = () => {
                 const result = await res.json();
                 if (result.success) {
                     showToast("Password reset successfully! Redirecting to login...", "success");
-                    setTimeout(() => navigate("/Authentication/login"), 3000);
+                    setTimeout(() => navigate(-1), 3000);
                 } else {
                     showToast(result.error || "Failed to reset password.", "error");
                 }
@@ -102,171 +101,141 @@ const StudForgotPassword = () => {
         }
     };
 
-    const checkRequirement = (type) => {
-        const val = formData.newPassword;
-        switch (type) {
-            case "length": return val.length >= 8;
-            case "upper": return /[A-Z]/.test(val);
-            case "lower": return /[a-z]/.test(val);
-            case "number": return /\d/.test(val);
-            case "special": return /[!@#$%^&*(),.?":{}|<>]/.test(val);
-            default: return false;
-        }
-    };
+
 
     return (
         <div className="w-full">
-
             <h1 className="text-2xl md:text-3xl font-bold text-red-600">
-                Recover Account
+                Recover Student Account
             </h1>
             <p className="text-gray-600 mb-8">
-                Update your password to regain access to your placement portal.
+                Confirm your identity to reset your placement portal password.
             </p>
 
-            {/* Toast */}
-            {toast.visible && (
-                <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 border shadow-sm transition-all animate-in fade-in slide-in-from-top-2 ${
-                    toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
-                }`}>
-                    <span className="text-lg">{toast.type === "success" ? "✓" : "⚠"}</span>
-                    <p className="text-sm font-semibold">{toast.message}</p>
-                </div>
-            )}
-
-            {/* Form */}
+            {/* Form Container */}
             <div className="flex justify-center">
-                <div className="w-full max-w-xl bg-[#d8cfc3] p-8 md:p-10 rounded-xl border border-gray-200 shadow-sm">
+
+                <form onSubmit={handleSubmit} className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md">
+
+                    <h2 className="text-xl font-bold text-center mb-2">
+                        Reset Password
+                    </h2>
+                    <p className="text-center text-sm text-gray-600 mb-6">
+                        Provide your registered details
+                    </p>
+
+                    {/* Toast */}
+                    {toast.visible && (
+                        <div className={`mb-6 p-3 rounded-md text-sm font-medium border ${
+                            toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                        }`}>
+                            {toast.message}
+                        </div>
+                    )}
+
                     {/* Email */}
-                    <div className="mb-6">
-                        <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
-                            Registered Email Address
-                        </label>
-                        <div className="relative">
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">Email Address</label>
+                        <div className="relative mt-1">
                             <input
                                 type="email"
                                 name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="Enter your college email"
-                                className={`w-full p-4 pl-10 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.email ? "border-red-500" : "border-gray-300 focus:border-red-600"}`}
+                                className={`w-full p-2 pl-8 rounded-md border ${errors.email ? "border-red-500" : ""}`}
                             />
-                            <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <FaEnvelope className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs" />
                         </div>
-                        {errors.email && <p className="text-red-600 text-[10px] mt-1 font-bold">{errors.email}</p>}
+                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
                     </div>
 
                     {/* Enrollment */}
-                    <div className="mb-6">
-                        <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
-                            Enrollment Number
-                        </label>
-                        <div className="relative">
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">Enrollment Number</label>
+                        <div className="relative mt-1">
                             <input
                                 type="text"
                                 name="enrollment"
                                 value={formData.enrollment}
                                 onChange={handleChange}
-                                placeholder="Enter your enrollment number"
-                                className={`w-full p-4 pl-10 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.enrollment ? "border-red-500" : "border-gray-300 focus:border-red-600"}`}
+                                placeholder="Enter enrollment number"
+                                className={`w-full p-2 pl-8 rounded-md border ${errors.enrollment ? "border-red-500" : ""}`}
                             />
-                            <FaIdCard className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <FaIdCard className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 text-xs" />
                         </div>
-                        {errors.enrollment && <p className="text-red-600 text-[10px] mt-1 font-bold">{errors.enrollment}</p>}
+                        {errors.enrollment && <p className="text-red-500 text-xs mt-1">{errors.enrollment}</p>}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        {/* New Password */}
-                        <div>
-                            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
-                                New Password
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type={showPassword ? "text" : "password"}
-                                    name="newPassword"
-                                    value={formData.newPassword}
-                                    onChange={handleChange}
-                                    placeholder="Enter new password"
-                                    className={`w-full p-4 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.newPassword ? "border-red-500" : "border-gray-300 focus:border-red-600 shadow-sm"}`}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                                >
-                                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                                </button>
-                            </div>
-                            {errors.newPassword && <p className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{errors.newPassword}</p>}
+                    {/* New Password */}
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">New Password</label>
+                        <div className="relative mt-1">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="newPassword"
+                                value={formData.newPassword}
+                                onChange={handleChange}
+                                placeholder="Enter new password"
+                                className={`w-full p-2 rounded-md border ${errors.newPassword ? "border-red-500" : ""}`}
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? <FaEyeSlash /> : <FaEye />}
+                            </button>
                         </div>
-
-                        {/* Confirm Password */}
-                        <div>
-                            <label className="block text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-2">
-                                Confirm Password
-                            </label>
-                            <div className="relative">
-                                <input
-                                    type={showConfirm ? "text" : "password"}
-                                    name="confirmPassword"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    placeholder="Re-enter password"
-                                    className={`w-full p-4 rounded-lg border outline-none text-gray-800 font-semibold transition-all bg-white ${errors.confirmPassword ? "border-red-500" : "border-gray-300 focus:border-red-600 shadow-sm"}`}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowConfirm(!showConfirm)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                                >
-                                    {showConfirm ? <FaEyeSlash /> : <FaEye />}
-                                </button>
-                            </div>
-                            {errors.confirmPassword && <p className="text-red-600 text-[10px] font-bold uppercase tracking-widest mt-2 ml-1">{errors.confirmPassword}</p>}
-                        </div>
+                        {errors.newPassword && <p className="text-red-500 text-xs mt-1">{errors.newPassword}</p>}
                     </div>
 
-                    {/* Password Rules */}
-                    <div className="bg-white border border-gray-200 p-6 rounded-xl mb-8">
-                        <p className="text-[10px] font-bold text-gray-800 uppercase tracking-widest mb-4">
-                            Security Guidelines
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
-                            {[
-                                { key: "length", label: "Min 8 Characters" },
-                                { key: "upper", label: "Upper & Lower" },
-                                { key: "number", label: "Include Number" },
-                                { key: "special", label: "Special Character" }
-                            ].map((req) => (
-                                <div key={req.key} className={`flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider ${checkRequirement(req.key) ? "text-green-600" : "text-gray-400"}`}>
-                                    <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[8px] border ${checkRequirement(req.key) ? "bg-green-600 border-green-600 text-white" : "border-gray-300"}`}>
-                                        {checkRequirement(req.key) ? "✓" : ""}
-                                    </div>
-                                    {req.label}
-                                </div>
-                            ))}
+                    {/* Confirm Password */}
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">Confirm Password</label>
+                        <div className="relative mt-1">
+                            <input
+                                type={showConfirm ? "text" : "password"}
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                placeholder="Re-enter password"
+                                className={`w-full p-2 rounded-md border ${errors.confirmPassword ? "border-red-500" : ""}`}
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                                onClick={() => setShowConfirm(!showConfirm)}
+                            >
+                                {showConfirm ? <FaEyeSlash /> : <FaEye />}
+                            </button>
                         </div>
+                        {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <button
-                            onClick={handleSubmit}
-                            disabled={loading}
-                            className="w-full py-4 bg-red-600 text-white rounded-lg font-bold text-sm uppercase tracking-widest hover:bg-black transition-all shadow-md active:scale-[0.98] disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                        >
-                            {loading && <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin rounded-full"></div>}
-                            {loading ? "Resetting..." : "Reset Password"}
-                        </button>
-                        <button
-                            onClick={() => navigate("/Authentication/login")}
-                            className="sm:w-32 bg-white text-gray-700 border border-gray-300 py-3 px-6 rounded-lg font-bold text-sm uppercase tracking-wider hover:bg-gray-50 transition-all shadow-sm"
-                        >
-                            Cancel
-                        </button>
-                    </div>
-                </div>
+
+
+                    {/* Actions */}
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3 font-semibold shadow-sm"
+                    >
+                        {loading ? "Resetting..." : "Reset Password"}
+                    </button>
+
+                    <button
+                        type="button"
+                        onClick={() => navigate(-1)}
+                        className="w-full border border-black py-2 rounded-md hover:bg-gray-100 transition text-sm font-medium"
+                    >
+                        Cancel
+                    </button>
+
+                </form>
+
             </div>
+
         </div>
     );
 };

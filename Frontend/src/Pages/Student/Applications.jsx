@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaSpinner, FaHistory, FaCheckCircle, FaHourglassHalf,
   FaTrophy, FaTimesCircle, FaCalendarAlt, FaSync
@@ -15,7 +16,9 @@ const STATUS_UI = {
 };
 
 const StudApplications = () => {
+  const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
+  const [isPlaced, setIsPlaced]         = useState(false);
   const [loading, setLoading]           = useState(true);
 
   const fetchApplications = useCallback(async () => {
@@ -23,7 +26,10 @@ const StudApplications = () => {
       const token = localStorage.getItem("token");
       const res   = await fetch("/api/student/applications", { headers: { Authorization: `Bearer ${token}` } });
       const result = await res.json();
-      if (result.success) setApplications(result.data);
+      if (result.success) {
+        setApplications(result.data);
+        setIsPlaced(result.isPlaced || false);
+      }
     } catch {
       console.error("Failed to fetch applications");
     } finally {
@@ -116,7 +122,7 @@ const StudApplications = () => {
                     </td>
                     <td className="px-6 py-5 text-right">
                       <button 
-                        onClick={() => navigate('/StudJobDetails', { state: { job: app } })}
+                        onClick={() => navigate('/StudJobDetails', { state: { job: app, isPlacedGlobally: isPlaced } })}
                         className="text-red-700 text-[10px] font-bold uppercase tracking-widest hover:underline"
                       >
                         View Details →

@@ -5,7 +5,6 @@ import JobRoleSection from "./company/Jobrolesection";
 import EligibilitySection from "./company/Eligibilitysection";
 import SelectionProcessSection from "./company/Selectionprocesssection";
 import ContactPersonSection from "./company/Contactpersonsection";
-import UploadDocumentsSection from "./company/Uploaddocumentssection";
 import AdditionalDetailsSection from "./company/Additionaldetailssection";
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
 
@@ -44,6 +43,8 @@ const CompanyRegister = () => {
     }));
   };
 
+
+
   const validateForm = () => {
     let newErrors = {};
     if (!formData.email)            newErrors.email            = "Email is required";
@@ -72,10 +73,17 @@ const CompanyRegister = () => {
     }
     setIsSubmitting(true);
     try {
+      const submitData = new FormData();
+      Object.keys(formData).forEach((key) => {
+        if (Array.isArray(formData[key])) {
+            submitData.append(key, JSON.stringify(formData[key]));
+        } else {
+            submitData.append(key, formData[key]);
+        }
+      });
       const response = await fetch("/api/guest/submit-jd", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: submitData,
       });
       const data = await response.json();
       if (response.ok) {
@@ -146,8 +154,6 @@ const CompanyRegister = () => {
           <ContactPersonSection
             formData={formData} errors={errors} handleChange={handleChange}
           />
-
-          <UploadDocumentsSection />
 
           <AdditionalDetailsSection
             formData={formData} handleChange={handleChange}

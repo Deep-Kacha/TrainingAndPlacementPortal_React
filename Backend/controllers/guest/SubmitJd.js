@@ -25,8 +25,8 @@ const submitJd = async (req, res) => {
                 company_name, job_title, job_position, description, ctc_package, location, website,
                 stipend, bond, joining_date, eligible_batches, eligible_courses,
                 selection_process, drive_date, contact_person_name, contact_person_email,
-                contact_person_mobile, additional_info, status
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18)
+                contact_person_mobile, additional_info, status, internship_duration, registration_link
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
             RETURNING id;
         `;
 
@@ -49,7 +49,9 @@ const submitJd = async (req, res) => {
             contactEmail,
             contactMobile,
             additionalInfo,
-            'pending'
+            'pending',
+            internshipDuration,
+            registrationLink
         ];
 
         const result = await pool.query(query, values);

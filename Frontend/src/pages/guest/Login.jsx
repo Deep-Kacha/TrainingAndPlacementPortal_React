@@ -158,10 +158,7 @@ const Login = () => {
 
           <div className="text-right text-sm mb-4">
             <span
-              onClick={() => {
-                if (role === "Admin") navigate("/AdminForgotPassword");
-                else navigate("/StudForgotPassword");
-              }}
+              onClick={() => navigate("/ForgotPassword")}
               className="hover:underline cursor-pointer"
             >
               Forgot Password?

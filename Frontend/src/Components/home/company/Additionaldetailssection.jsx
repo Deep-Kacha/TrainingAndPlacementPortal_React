@@ -5,7 +5,7 @@ import SectionCard from "../register/SectionCard";
 import { INPUT_STYLE } from "../register/Placementdata";
 
 const AdditionalDetailsSection = ({ formData, handleChange }) => (
-  <SectionCard number="8" title="Additional Details" contentClassName="px-6 py-5">
+  <SectionCard number="7" title="Additional Details" contentClassName="px-6 py-5">
     <label className="text-sm text-gray-600">Additional Information</label>
     <textarea
       name="additionalInfo"

@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { getAllCompanies, updateCompanyStatus, getJobDetail, updateJobDetail } = require('../../controllers/Admin/CompanyManagement');
 const { verifyToken, requireRole } = require('../../middleware/authMiddleware');
-
 // GET /api/admin/companies - Protected
 router.get('/companies', verifyToken, requireRole('admin'), getAllCompanies);
 

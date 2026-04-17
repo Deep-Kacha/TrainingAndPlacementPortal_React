@@ -70,10 +70,12 @@ const AddPortalUser = () => {
     setErrors(errs);
   };
 
-  const handleClear = () => {
+  const handleClear = (clearUser = true) => {
     setForm({ email: "", password: "", confirmPassword: "" });
     setErrors({});
-    setCreatedUser(null);
+    if (clearUser === true) {
+      setCreatedUser(null);
+    }
   };
 
   // ── Add user ──────────────────────────────────────────────────────────────
@@ -96,7 +98,7 @@ const AddPortalUser = () => {
       const result = await res.json();
       if (result.success) {
         setCreatedUser(result.data);
-        handleClear();
+        handleClear(false);
         fetchAdminUsers();
         showToast("Portal user added successfully!", true);
       } else {

@@ -1,6 +1,15 @@
 const bcrypt = require('bcryptjs');
 const pool = require('../../config/db');
 
+const validatePasswordStrength = (password) => {
+    if (password.length < 8) return "Password must be at least 8 characters long.";
+    if (!/[A-Z]/.test(password)) return "Password must contain at least one uppercase letter.";
+    if (!/[a-z]/.test(password)) return "Password must contain at least one lowercase letter.";
+    if (!/\d/.test(password)) return "Password must contain at least one number.";
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return "Password must contain at least one special character.";
+    return null;
+};
+
 /**
  * PUT /api/student/change-password
  * Protected route for logged-in students to change their password.
@@ -12,6 +21,11 @@ const changeStudentPassword = async (req, res) => {
 
         if (!currentPassword || !newPassword) {
             return res.status(400).json({ success: false, error: "Please provide both current and new passwords." });
+        }
+
+        const strengthError = validatePasswordStrength(newPassword);
+        if (strengthError) {
+            return res.status(400).json({ success: false, error: strengthError });
         }
 
         // 1. Fetch user
@@ -49,6 +63,11 @@ const forgotPassword = async (req, res) => {
 
         if (!email || !newPassword) {
             return res.status(400).json({ success: false, error: "Email and new password are required." });
+        }
+
+        const strengthError = validatePasswordStrength(newPassword);
+        if (strengthError) {
+            return res.status(400).json({ success: false, error: strengthError });
         }
 
         // 1. Find user by email
