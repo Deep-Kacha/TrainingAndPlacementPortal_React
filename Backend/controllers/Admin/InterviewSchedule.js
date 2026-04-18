@@ -97,4 +97,36 @@ const deleteInterviewSchedule = async (req, res) => {
     }
 };
 
-module.exports = { getInterviewSchedules, createInterviewSchedule, deleteInterviewSchedule };
+/**
+ * PUT /api/admin/interviews/:scheduleId
+ * Updates an existing interview schedule round.
+ */
+const updateInterviewSchedule = async (req, res) => {
+    try {
+        const { scheduleId } = req.params;
+        const { round_name, interview_date, interview_time, mode, venue_or_link } = req.body;
+
+        if (!round_name || !interview_date || !interview_time) {
+            return res.status(400).json({ success: false, error: "round_name, interview_date and interview_time are required." });
+        }
+
+        const result = await pool.query(`
+            UPDATE interview_schedules 
+            SET round_name = $1, interview_date = $2, interview_time = $3, mode = $4, venue_or_link = $5
+            WHERE id = $6
+            RETURNING *
+        `, [round_name, interview_date, interview_time, mode || null, venue_or_link || null, scheduleId]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ success: false, error: "Interview schedule not found." });
+        }
+
+        broadcast('REFRESH_INTERVIEWS');
+        res.status(200).json({ success: true, message: "Interview schedule updated.", data: result.rows[0] });
+    } catch (error) {
+        console.error("Error updating interview schedule:", error);
+        res.status(500).json({ success: false, error: "Internal server error" });
+    }
+};
+
+module.exports = { getInterviewSchedules, createInterviewSchedule, deleteInterviewSchedule, updateInterviewSchedule };

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaSpinner, FaCheckCircle } from "react-icons/fa";
@@ -14,13 +14,42 @@ const AdminInterviewScheduleForm = () => {
     hrName: ""
   });
 
-  const [rounds, setRounds] = useState([
-    { id: 1, roundNo: "1", roundName: "", venue: "", waitingArea: "", date: "", time: "", mode: "Offline" }
-  ]);
-
+  const [rounds, setRounds] = useState([]);
   const [errors, setErrors] = useState({ companyDetails: {}, rounds: [] });
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState({ text: "", ok: false });
+
+  // ── Pre-population Logic ────────────────────────────────────────────────
+  useEffect(() => {
+    if (companyData.schedules && Array.isArray(companyData.schedules) && companyData.schedules.length > 0) {
+      const existingRounds = companyData.schedules.map((s, idx) => {
+        // Parse "Round 1: Technical Interview" -> No: "1", Name: "Technical Interview"
+        const match = s.round_name?.match(/Round\s+(\d+):\s*(.*)/i);
+        const roundNo = match ? match[1] : String(idx + 1);
+        const roundName = match ? match[2] : s.round_name;
+
+        // Ensure date is YYYY-MM-DD for input[type="date"]
+        const rawDate = s.interview_date ? new Date(s.interview_date) : null;
+        const formattedDate = rawDate && !isNaN(rawDate) ? rawDate.toISOString().split('T')[0] : "";
+
+        return {
+          id: Date.now() + idx, // Local UI ID
+          db_id: s.id,         // Original Database ID
+          roundNo,
+          roundName,
+          venue: s.venue_or_link || "",
+          waitingArea: "",     // Not explicitly stored separately
+          date: formattedDate,
+          time: s.interview_time ? s.interview_time.slice(0, 5) : "",
+          mode: s.mode || "Offline"
+        };
+      });
+      setRounds(existingRounds);
+    } else {
+      // Default empty round if none exist
+      setRounds([{ id: 1, roundNo: "1", roundName: "", venue: "", waitingArea: "", date: "", time: "", mode: "Offline" }]);
+    }
+  }, [companyData.schedules]);
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -97,23 +126,30 @@ const AdminInterviewScheduleForm = () => {
     try {
       const token = localStorage.getItem("token");
       const results = await Promise.all(
-        rounds.map(round =>
-          fetch("/api/admin/interviews", {
-            method: "POST",
+        rounds.map(round => {
+          const body = {
+            job_id: companyData.id,
+            round_name: `Round ${round.roundNo}: ${round.roundName}`,
+            interview_date: round.date,
+            interview_time: round.time,
+            mode: round.mode,
+            venue_or_link: round.venue + (round.waitingArea ? ` (Waiting: ${round.waitingArea})` : "")
+          };
+
+          // If it has a db_id, it's an existing round -> UPDATE (PUT)
+          // Otherwise, it's a new round -> CREATE (POST)
+          const method = round.db_id ? "PUT" : "POST";
+          const url = round.db_id ? `/api/admin/interviews/${round.db_id}` : "/api/admin/interviews";
+
+          return fetch(url, {
+            method,
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({
-              job_id: companyData.id,
-              round_name: `Round ${round.roundNo}: ${round.roundName}`,
-              interview_date: round.date,
-              interview_time: round.time,
-              mode: round.mode,
-              venue_or_link: round.venue + (round.waitingArea ? ` (Waiting: ${round.waitingArea})` : "")
-            })
-          }).then(r => r.json())
-        )
+            body: JSON.stringify(body)
+          }).then(r => r.json());
+        })
       );
 
       const allOk = results.every(r => r.success);
