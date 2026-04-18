@@ -1,25 +1,18 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import InterviewCard from "../../Components/Admin/InterviewSchedule/InterviewCard";
 import { FaSearch, FaChevronDown, FaSpinner } from "react-icons/fa";
 import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 
 const AdminInterviewSchedule = () => {
+  console.log("📍 ADMIN_INTERVIEW_PAGE: Attempting render...");
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
 
-  useEffect(() => {
-    fetchInterviews();
-  }, []);
-
-  useSocketRefresh('REFRESH_INTERVIEWS', fetchInterviews);
-  useSocketRefresh('REFRESH_JOBS', fetchInterviews);
-
-
-  const fetchInterviews = async () => {
+  const fetchInterviews = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch("/api/admin/interviews", {
@@ -27,20 +20,29 @@ const AdminInterviewSchedule = () => {
       });
       const result = await res.json();
       if (result.success) {
-        setCompanies(result.data);
+        setCompanies(result.data || []);
       }
     } catch (error) {
       console.error("Failed to fetch interviews", error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchInterviews();
+  }, [fetchInterviews]);
+
+  useSocketRefresh('REFRESH_INTERVIEWS', fetchInterviews);
+  useSocketRefresh('REFRESH_JOBS', fetchInterviews);
 
   const filteredCompanies = useMemo(() => {
+    if (!Array.isArray(companies)) return [];
+    
     return companies.filter(company => {
+      if (!company) return false;
       const searchTermLower = searchTerm.toLowerCase();
       
-      // Backend returns "Scheduled Interview (Pending)" or "Scheduled Interview (Complete)"
       const statusMatch =
         filterStatus === "All" ||
         (filterStatus === "Pending" && company.status?.includes("Pending")) ||
@@ -136,14 +138,20 @@ const AdminInterviewSchedule = () => {
 
         {/* Interview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredCompanies.map((company) => (
-            <InterviewCard
-              key={company.id}
-              data={company}
-              onScheduleCreated={fetchInterviews}
-              onScheduleDeleted={fetchInterviews}
-            />
-          ))}
+          {Array.isArray(filteredCompanies) && filteredCompanies.length > 0 ? (
+            filteredCompanies.map((company) => (
+              <InterviewCard
+                key={company?.id || Math.random()}
+                data={company}
+                onScheduleCreated={fetchInterviews}
+                onScheduleDeleted={fetchInterviews}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-12 text-center bg-white rounded-xl border border-dashed border-gray-300">
+               <p className="text-gray-400 font-medium italic">No matching interviews found.</p>
+            </div>
+          )}
         </div>
     </div>
   );

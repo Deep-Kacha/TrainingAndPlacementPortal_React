@@ -6,6 +6,12 @@ import { getAvatarColor } from "../../../utils/ui";
 const MODE_ICON = { Online: "💻", Offline: "🏢", Hybrid: "🔀" };
 
 const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
+  // 🛡️ PROPS SHIELD: Prevent crash if data is missing or malformed
+  if (!data || typeof data !== "object") {
+    console.error("📍 InterviewCard: Received invalid data prop", data);
+    return null;
+  }
+
   const navigate      = useNavigate();
   const [expanded,    setExpanded]    = useState(false);
   const [schedules,   setSchedules]   = useState(data.schedules || []);
@@ -42,17 +48,17 @@ const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
 
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className={`${getAvatarColor(data?.name)} text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0 shadow-sm`}>
-          {data?.name?.charAt(0).toUpperCase() || "C"}
+        <div className={`${getAvatarColor(String(data?.name || ""))} text-white w-12 h-12 flex items-center justify-center rounded-lg text-xl font-bold flex-shrink-0 shadow-sm`}>
+          {String(data?.name || "C").charAt(0).toUpperCase()}
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-lg truncate text-gray-800">{data?.name || "Company Name"}</h3>
           <p className="text-gray-500 text-xs font-bold uppercase tracking-wider truncate">{data?.role || "Job Role"}</p>
         </div>
         <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-lg flex-shrink-0 border ${
-          data.status?.includes("Complete") ? "bg-gray-100 text-gray-400 border-gray-200" : "bg-green-50 text-green-700 border-green-100"
+          String(data?.status || "").includes("Complete") ? "bg-gray-100 text-gray-400 border-gray-200" : "bg-green-50 text-green-700 border-green-100"
         }`}>
-          {data.status?.includes("Complete") ? "COMPLETED" : "IN PROGRESS"}
+          {String(data?.status || "").includes("Complete") ? "COMPLETED" : "IN PROGRESS"}
         </span>
       </div>
 
@@ -106,20 +112,20 @@ const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
                 </button>
             </div>
           )}
-          {schedules.map((s) => (
-            <div key={s.id} className="bg-white border border-gray-100 rounded-xl px-4 py-3 flex items-start justify-between gap-3 shadow-sm">
+          {schedules.map((s) => s && (
+            <div key={s.id || Math.random()} className="bg-white border border-gray-100 rounded-xl px-4 py-3 flex items-start justify-between gap-3 shadow-sm">
               <div>
-                <p className="font-bold text-gray-800 text-sm">{s.round_name}</p>
+                <p className="font-bold text-gray-800 text-sm">{s.round_name || "Untitled Round"}</p>
                 <div className="flex items-center gap-3 mt-1.5">
                     <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 bg-gray-50 px-2 py-0.5 rounded border">
                         <FaCalendarAlt className="text-red-500" /> {formatDate(s.interview_date)}
                     </p>
                     <p className="text-gray-500 text-[10px] font-bold uppercase tracking-wider">
-                        {s.time ? s.time.slice(0, 5) : "—"}
+                        {s.interview_time ? s.interview_time.slice(0, 5) : "—"}
                     </p>
                 </div>
                 <p className="text-gray-400 font-medium text-[10px] mt-2 flex items-center gap-1">
-                  {MODE_ICON[s.mode] || "📍"} {s.mode.toUpperCase()} {s.venue_or_link ? `— ${s.venue_or_link}` : ""}
+                  {MODE_ICON[s.mode] || "📍"} {(s.mode || "Not specified").toUpperCase()} {s.venue_or_link ? `— ${s.venue_or_link}` : ""}
                 </p>
               </div>
               <button
