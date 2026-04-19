@@ -1,5 +1,5 @@
 import { logout } from "../../utils/auth";
-
+import { useEffect } from "react";
 const StudLogout = () => {
     useEffect(() => {
         logout();
@@ -13,4 +13,4 @@ const StudLogout = () => {
     );
 };
 
-export default StudLogout;
+export default StudLogout;
