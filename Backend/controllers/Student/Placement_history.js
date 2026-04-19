@@ -13,14 +13,18 @@ const getStudentPlacementHistory = async (req, res) => {
 
         const query = `
             SELECT 
-                company_name as "company", 
-                job_title as "role", 
-                ctc_offered as "salary", 
-                placement_date as "date", 
-                offer_letter_url as "offerLetterUrl"
-            FROM placement_history
-            WHERE student_id = $1
-            ORDER BY placement_date DESC
+                COALESCE(cp.company_name, j.company_name) as "company", 
+                j.job_title as "role", 
+                j.ctc_package as "salary", 
+                a.applied_at as "date", 
+                a.status,
+                ph.offer_letter_url as "offerLetterUrl"
+            FROM applications a
+            JOIN jobs j ON a.job_id = j.id
+            LEFT JOIN companies_profile cp ON j.company_id = cp.id
+            LEFT JOIN placement_history ph ON (a.student_id = ph.student_id AND a.job_id = ph.job_id)
+            WHERE a.student_id = $1
+            ORDER BY a.applied_at DESC
         `;
         const result = await pool.query(query, [studentId]);
 

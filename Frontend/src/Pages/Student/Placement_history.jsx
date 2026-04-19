@@ -29,7 +29,15 @@ const StudPlacementHistory = () => {
     useSocketRefresh('REFRESH_APPLICATIONS', fetchPlacements);
 
 
-    const currentOffer = placements.length > 0 ? placements[0] : null;
+    const STATUS_UI = {
+        applied:     { label: "Pending",      color: "text-blue-700 bg-blue-50 border-blue-100"     },
+        shortlisted: { label: "Shortlisted",  color: "text-indigo-700 bg-indigo-50 border-indigo-100" },
+        interview:   { label: "Interview",    color: "text-orange-700 bg-orange-50 border-orange-100" },
+        selected:    { label: "Selected 🎉",  color: "text-green-700 bg-green-50 border-green-200"   },
+        rejected:    { label: "Rejected",     color: "text-red-700 bg-red-50 border-red-100"         },
+    };
+
+    const currentOffer = placements.find(p => p.status === 'selected') || null;
 
     if (loading) {
         return (
@@ -112,7 +120,7 @@ const StudPlacementHistory = () => {
                             <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-400">Designation</th>
                             <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-400 text-center">Package</th>
                             <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-400 text-center">Date</th>
-                            <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-400 text-right">Verification</th>
+                            <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-400 text-right">Status</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -136,8 +144,8 @@ const StudPlacementHistory = () => {
                                     {row.date}
                                 </td>
                                 <td className="px-6 py-5 text-right">
-                                    <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest bg-green-50 text-green-700 border border-green-100">
-                                        Verified
+                                    <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase tracking-widest border shadow-sm ${STATUS_UI[row.status]?.color || STATUS_UI.applied.color}`}>
+                                        {STATUS_UI[row.status]?.label || row.status}
                                     </span>
                                 </td>
                             </tr>

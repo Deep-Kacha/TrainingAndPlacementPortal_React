@@ -30,7 +30,7 @@ const getStudentInterviews = async (req, res) => {
             JOIN jobs j ON isched.job_id = j.id
             LEFT JOIN companies_profile cp ON j.company_id = cp.id
             JOIN applications a ON a.job_id = j.id
-            WHERE a.student_id = $1 AND a.status IN ('shortlisted', 'interview', 'selected')
+            WHERE a.student_id = $1 AND a.status IN ('applied', 'shortlisted', 'interview', 'selected')
             ORDER BY isched.interview_date DESC, isched.interview_time DESC
         `;
         const result = await pool.query(query, [studentId]);

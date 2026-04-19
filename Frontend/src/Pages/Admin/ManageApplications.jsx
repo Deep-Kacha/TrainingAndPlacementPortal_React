@@ -15,6 +15,7 @@ const ManageApplications = () => {
 
   const [selectedJob, setSelectedJob] = useState(null);
   const [students, setStudents] = useState([]);
+  const [jobSchedules, setJobSchedules] = useState([]);
   const [loadingStudents, setLoadingStudents] = useState(false);
 
   const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
@@ -45,9 +46,13 @@ const ManageApplications = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await res.json();
-      if (result.success) setStudents(result.data);
+      if (result.success) {
+        setStudents(result.data);
+        setJobSchedules(result.schedules || []);
+      }
     } catch {
       setStudents([]);
+      setJobSchedules([]);
     } finally {
       setLoadingStudents(false);
     }
@@ -74,6 +79,7 @@ const ManageApplications = () => {
   const handleJobSelect = (job) => {
     setSelectedJob(job);
     setStudents([]);
+    setJobSchedules([]);
     fetchStudents(job);
   };
 
@@ -131,6 +137,7 @@ const ManageApplications = () => {
           <StudentTablePanel
             selectedJob={selectedJob}
             students={students}
+            schedules={jobSchedules}
             loading={loadingStudents}
             onStatusChange={handleStatusChange}
           />

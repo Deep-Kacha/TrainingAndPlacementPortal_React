@@ -120,14 +120,6 @@ const StudInterviewSchedule = () => {
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div className="mt-auto pt-4 border-t border-white/20 flex justify-end">
-                                            {item.mode === 'Online' && item.venue && (
-                                                <a href={item.venue} target="_blank" rel="noreferrer" className="bg-white text-blue-700 border border-blue-100 shadow-sm px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-widest hover:bg-blue-50 transition-all">
-                                                    Join Interview →
-                                                </a>
-                                            )}
-                                        </div>
                                     </div>
                                 ))}
                             </div>

@@ -13,9 +13,10 @@ const STATUS_BADGE = {
  * A single student row inside the ManageApplications table.
  * Props:
  *  - student   {object}  student data from the API
+ *  - schedules {array}   list of interview rounds for the job
  *  - onChange  {fn}      called with (applicationId, newStatus) on status change
  */
-const StudentTableRow = ({ student, onChange }) => {
+const StudentTableRow = ({ student, schedules, onChange }) => {
   const formattedDate = student.appliedAt
     ? new Date(student.appliedAt).toLocaleDateString("en-GB", {
         day: "numeric", month: "short", year: "numeric",
@@ -52,6 +53,13 @@ const StudentTableRow = ({ student, onChange }) => {
         <span className={`inline-block text-[10px] font-bold uppercase tracking-wider border px-2.5 py-1 rounded-full ${badge.color}`}>
           {badge.label}
         </span>
+        {schedules && schedules.length > 0 && (
+          <div className="mt-1.5">
+            <span className="text-[7px] font-extrabold bg-red-100 text-red-600 px-2 py-0.5 rounded border border-red-200 uppercase tracking-tighter">
+              Interview Active
+            </span>
+          </div>
+        )}
       </td>
 
       {/* Status dropdown */}

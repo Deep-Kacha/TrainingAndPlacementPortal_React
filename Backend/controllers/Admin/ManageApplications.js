@@ -50,7 +50,20 @@ const getStudentsByJob = async (req, res) => {
             ORDER BY sp.cgpa DESC
         `;
         const result = await pool.query(query, [jobId]);
-        res.status(200).json({ success: true, data: result.rows });
+        
+        // Also fetch interview schedules for this job to show in the panel
+        const schedulesResult = await pool.query(`
+            SELECT id, round_name, interview_date, interview_time, mode, venue_or_link
+            FROM interview_schedules
+            WHERE job_id = $1
+            ORDER BY interview_date ASC
+        `, [jobId]);
+
+        res.status(200).json({ 
+            success: true, 
+            data: result.rows,
+            schedules: schedulesResult.rows 
+        });
     } catch (error) {
         console.error("Error fetching students by job:", error);
         res.status(500).json({ success: false, error: "Internal server error" });

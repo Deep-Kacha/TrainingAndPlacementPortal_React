@@ -9,7 +9,7 @@ import StudentTableRow from "./StudentTableRow";
  *  - loading       {boolean}      show spinner while fetching
  *  - onStatusChange {fn}          called with (applicationId, newStatus)
  */
-const StudentTablePanel = ({ selectedJob, students, loading, onStatusChange }) => {
+const StudentTablePanel = ({ selectedJob, students, schedules, loading, onStatusChange }) => {
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-[#c4b5a6] overflow-hidden min-h-[400px]">
 
@@ -27,12 +27,25 @@ const StudentTablePanel = ({ selectedJob, students, loading, onStatusChange }) =
       {selectedJob && (
         <>
           {/* Sub-header */}
-          <div className="p-5 border-b border-[#c4b5a6] bg-gray-50/50 flex justify-between items-center">
+          <div className="p-5 border-b border-[#c4b5a6] bg-gray-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold text-gray-900 m-0">{selectedJob.companyName}</h2>
               <p className="text-xs font-bold text-blue-600 uppercase mt-0.5">{selectedJob.jobRole}</p>
             </div>
-            <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase">
+            
+            {/* Display rounds if any */}
+            {schedules && schedules.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {schedules.map((s, idx) => (
+                  <div key={idx} className="bg-white border border-red-100 rounded-lg px-3 py-1.5 shadow-sm">
+                    <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Round {idx + 1}</p>
+                    <p className="text-[10px] font-bold text-red-600 truncate max-w-[120px] leading-none">{s.round_name}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold uppercase w-fit">
               {students.length} Applicants
             </div>
           </div>
@@ -63,6 +76,7 @@ const StudentTablePanel = ({ selectedJob, students, loading, onStatusChange }) =
                     <StudentTableRow
                       key={student.applicationId}
                       student={student}
+                      schedules={schedules}
                       onChange={onStatusChange}
                     />
                   ))}
