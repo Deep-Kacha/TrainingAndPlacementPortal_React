@@ -1,6 +1,6 @@
-import Footer from "../../components/common/Footer";
-import StudentRegistration from "../../components/home/StudentRegister";
-import AuthHeader from "../../components/common/AuthHeader";
+import Footer from "../../Components/common/Footer";
+import StudentRegistration from "../../Components/home/StudentRegister";
+import AuthHeader from "../../Components/common/AuthHeader";
 
 const Register = () => {
     return(

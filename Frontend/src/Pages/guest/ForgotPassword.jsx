@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash, FaEnvelope, FaIdCard } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import AuthHeader from "../../components/common/AuthHeader";
-import Footer from "../../components/common/Footer";
+import AuthHeader from "../../Components/common/AuthHeader";
+import Footer from "../../Components/common/Footer";
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
