@@ -1,6 +1,6 @@
-import Footer from "../../components/common/Footer";
-import CompanyRegister from "../../components/home/ComapnyRegister";
-import AuthHeader from "../../components/common/AuthHeader";    
+import Footer from "../../Components/common/Footer";
+import CompanyRegister from "../../Components/home/ComapnyRegister";
+import AuthHeader from "../../Components/common/AuthHeader";    
 
 const SubmitJd = () => {
     return(

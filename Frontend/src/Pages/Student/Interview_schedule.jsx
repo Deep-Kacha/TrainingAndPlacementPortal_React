@@ -1,128 +1,134 @@
-import React from 'react';
+import { useState, useEffect, useCallback } from "react";
+import { FaSpinner, FaCalendarDay, FaClock, FaVideo, FaBuilding, FaLink, FaMapMarkerAlt, FaLayerGroup, FaCalendarCheck } from "react-icons/fa";
+import { getAvatarColor } from "../../utils/ui";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
+
 
 const StudInterviewSchedule = () => {
+    const [interviews, setInterviews] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const interviews = [
-        {
-            id: 1,
-            company: "TCS",
-            role: "Software Developer",
-            date: "March 18, 2024",
-            time: "11:00 AM - 12:00 PM",
-            type: "Online Interview",
-            typeIcon: "video",
-            location: "Zoom",
-            locationIcon: "link",
-            round: "Final Round",
-            status: "Pending",
-            statusColor: "red"
-        },
-        {
-            id: 2,
-            company: "Infosys",
-            role: "Software Developer",
-            date: "March 10, 2024",
-            time: "2:00 PM - 3:30 PM",
-            type: "Offline Interview",
-            typeIcon: "building",
-            location: "College Auditorium",
-            locationIcon: "pin",
-            round: "HR Round",
-            status: "Completed",
-            statusColor: "green"
-        },
-        {
-            id: 3,
-            company: "Wipro",
-            role: "Software Developer",
-            date: "March 15, 2024",
-            time: "10:00 AM - 11:30 AM",
-            type: "Online Interview",
-            typeIcon: "video",
-            location: "Microsoft Teams",
-            locationIcon: "link",
-            round: "Technical Round",
-            status: "Completed",
-            statusColor: "green"
-        },
-        {
-            id: 4,
-            company: "Accenture",
-            role: "Software Developer",
-            date: "March 8, 2024",
-            time: "3:00 PM - 4:00 PM",
-            type: "Offline Interview",
-            typeIcon: "building",
-            location: "Conference Room A",
-            locationIcon: "pin",
-            round: "Technical Round",
-            status: "Completed",
-            statusColor: "green"
+    const fetchInterviews = useCallback(async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/interviews", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) setInterviews(result.data);
+        } catch (error) {
+            console.error("Failed to fetch student interviews", error);
+        } finally {
+            setLoading(false);
         }
-    ];
+    }, []);
 
-    const icons = {
-        calendar: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>,
-        clock: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>,
-        video: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>,
-        building: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>,
-        link: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>,
-        pin: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>,
-        layer: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+    useEffect(() => {
+        fetchInterviews();
+    }, [fetchInterviews]);
+
+    useSocketRefresh('REFRESH_INTERVIEWS', fetchInterviews);
+
+
+    const ICONS = {
+        Online: <FaVideo />,
+        Offline: <FaBuilding />,
+        venue: <FaMapMarkerAlt />,
+        link: <FaLink />
     };
+
+    // Group interviews by Company + Role
+    const groupedInterviews = interviews.reduce((acc, item) => {
+        const key = `${item.company}-${item.role}`;
+        if (!acc[key]) {
+            acc[key] = {
+                company: item.company,
+                role: item.role,
+                rounds: []
+            };
+        }
+        acc[key].rounds.push(item);
+        return acc;
+    }, {});
 
     return (
         <div className="w-full">
-            <header className="page-header">
-                <h1 className="page-title">Interview Schedule</h1>
-                <p className="page-subtitle">View your upcoming and completed interview details.</p>
-            </header>
+            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
+                Interview Pipeline
+            </h1>
+            <p className="text-gray-600 mb-8">
+                Your progressive selection rounds organized by job application.
+            </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {interviews.map((item) => (
-                    <div key={item.id} className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm relative flex flex-col pb-20 md:pb-6">
-
-                        {/* Header Section */}
-                        <div className="flex flex-row items-center gap-4 mb-6">
-                            <div className="w-14 h-14 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold text-2xl shrink-0">
-                                {item.company.charAt(0)}
+            {loading ? (
+                <div className="flex flex-col items-center justify-center py-24">
+                    <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+                    <p className="text-gray-500 font-medium font-bold uppercase tracking-widest text-[10px]">Syncing schedules...</p>
+                </div>
+            ) : Object.keys(groupedInterviews).length === 0 ? (
+                <div className="text-center py-24 bg-white rounded-xl border border-gray-200 border-dashed">
+                    <FaCalendarCheck className="text-gray-200 text-6xl mx-auto mb-4" />
+                    <p className="text-gray-500 font-bold uppercase tracking-widest text-sm">No interviews scheduled.</p>
+                </div>
+            ) : (
+                <div className="space-y-12">
+                    {Object.values(groupedInterviews).map((group, gIdx) => (
+                        <div key={gIdx} className="space-y-6">
+                            {/* Group Header */}
+                            <div className="flex items-center gap-4 border-b border-gray-200 pb-4">
+                                <div className={`${getAvatarColor(group.company)} text-white rounded-lg flex items-center justify-center font-bold text-xl uppercase shadow-md w-12 h-12`}>
+                                    {group.company?.[0] || 'C'}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-800 leading-tight">{group.company}</h3>
+                                    <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] mt-1">{group.role}</p>
+                                </div>
                             </div>
-                            <div className="flex flex-col justify-center">
-                                <h3 className="m-0 text-xl font-bold text-gray-900">{item.company}</h3>
-                                <p className="m-0 text-gray-700 text-sm font-medium">{item.role}</p>
+
+                            {/* Rounds Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                {group.rounds.map((item) => (
+                                    <div key={item.id} className="bg-[#d8cfc3] p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col group transition-all hover:shadow-md h-full">
+                                        <div className="flex justify-between items-start mb-6">
+                                            <p className="text-red-700 font-bold text-xs uppercase tracking-widest bg-white/50 px-3 py-1 rounded-lg border border-white/60">{item.round}</p>
+                                            <span className={`px-2 py-1 rounded text-white font-bold text-[8px] uppercase tracking-widest shadow-sm ${item.statusColor === 'red' ? 'bg-red-600' : 'bg-green-600'}`}>
+                                                {item.status}
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-4 mb-6 pt-4 border-t border-white/20">
+                                            <div className="flex items-center gap-6">
+                                                <div className="flex-1">
+                                                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Date</p>
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                                                        <FaCalendarDay className="text-red-600" /> {item.date}
+                                                    </div>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Time</p>
+                                                    <div className="flex items-center gap-2 text-xs font-bold text-gray-800">
+                                                        <FaClock className="text-red-600" /> {item.time}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex-1">
+                                                <p className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mb-1">Venue / Access</p>
+                                                <div className="flex items-center gap-2 text-xs font-bold text-gray-800 truncate">
+                                                    <span className="bg-white/60 p-1.5 rounded-lg text-gray-600">{ICONS[item.mode] || <FaVideo />}</span>
+                                                    <span className="truncate">{item.venue || "TBD"}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-
-                        {/* Details Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-2 text-gray-600 text-sm font-medium mb-16 md:mb-12">
-                            <div className="flex items-center gap-3">
-                                {icons.calendar} {item.date}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                {icons.clock} {item.time}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                {icons[item.typeIcon]} {item.type}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                {icons[item.locationIcon]} {item.location}
-                            </div>
-                            <div className="flex items-center gap-3 md:col-span-2">
-                                {icons.layer} {item.round}
-                            </div>
-                        </div>
-
-                        {/* Status Button */}
-                        <div className="absolute bottom-6 right-6 mt-auto flex justify-end inset-x-auto">
-                            <span className={`px-4 py-2 rounded text-white font-bold text-sm tracking-wide inline-block shadow-sm ${item.statusColor === 'red' ? 'bg-red-700' : 'bg-green-700'}`}>
-                                {item.status}
-                            </span>
-                        </div>
-
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
-    )
-}
+    );
+};
+
 export default StudInterviewSchedule;

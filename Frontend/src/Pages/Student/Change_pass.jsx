@@ -8,6 +8,8 @@ const StudChangePass = () => {
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
     const [passwords, setPasswords] = useState({
         current: "",
@@ -20,6 +22,11 @@ const StudChangePass = () => {
         new: "",
         confirm: ""
     });
+
+    const showToast = (message, type = "success") => {
+        setToast({ visible: true, message, type });
+        setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 4000);
+    };
 
     const validateField = (name, value, allPasswords) => {
         let error = "";
@@ -53,19 +60,9 @@ const StudChangePass = () => {
         }
     };
 
-    const checkRequirement = (type) => {
-        const val = passwords.new;
-        switch (type) {
-            case "length": return val.length >= 8;
-            case "upper": return /[A-Z]/.test(val);
-            case "lower": return /[a-z]/.test(val);
-            case "number": return /\d/.test(val);
-            case "special": return /[!@#$%^&*(),.?":{}|<>]/.test(val);
-            default: return false;
-        }
-    };
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const currentErr = validateField("current", passwords.current, passwords);
@@ -79,148 +76,168 @@ const StudChangePass = () => {
         });
 
         if (!currentErr && !newErr && !confirmErr && passwords.current && passwords.new && passwords.confirm) {
-            alert("Password successfully verified and updated!");
-            setPasswords({ current: "", new: "", confirm: "" });
+            setLoading(true);
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch("/api/student/change-password", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        currentPassword: passwords.current,
+                        newPassword: passwords.new
+                    })
+                });
+
+                const result = await res.json();
+                if (result.success) {
+                    showToast("Password updated successfully!", "success");
+                    setPasswords({ current: "", new: "", confirm: "" });
+                } else {
+                    showToast(result.error || "Failed to update password.", "error");
+                }
+            } catch (error) {
+                showToast("Network error. Please try again.", "error");
+            } finally {
+                setLoading(false);
+            }
         }
     };
 
     return (
         <div className="w-full">
-            {/* Header */}
-            <header className="page-header flex justify-between items-start mb-8">
-                <div>
-                    <h1 className="page-title text-[#e7000b] text-[2rem] font-bold m-0 mb-2">Change Password</h1>
-                    <p className="page-subtitle text-[#666] text-base m-0">Update your account password for better security.</p>
-                </div>
-            </header>
+            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
+                Change Password
+            </h1>
+            <p className="text-gray-600 mb-8">
+                Update your account password for better security.
+            </p>
 
-            {/* Form Container */}
             <div className="flex justify-center">
-                <form onSubmit={handleSubmit} className="bg-[#ece6da] border-[1.5px] border-[#e7000b] p-6 md:p-8 rounded-[12px] shadow-sm w-full max-w-lg">
+
+                <form onSubmit={handleSubmit} className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md">
+
+                    <h2 className="text-xl font-bold text-center mb-2">
+                        Security Settings
+                    </h2>
+                    <p className="text-center text-sm text-gray-600 mb-6">
+                        Renew your credentials
+                    </p>
+
+                    {/* Toast */}
+                    {toast.visible && (
+                        <div className={`mb-6 p-3 rounded-md text-sm font-medium border ${
+                            toast.type === "success" ? "bg-green-50 border-green-200 text-green-800" : "bg-red-50 border-red-200 text-red-800"
+                        }`}>
+                            {toast.message}
+                        </div>
+                    )}
+
                     {/* Current Password */}
-                    <div className="mb-5">
-                        <label className="block text-sm font-semibold text-[#333] mb-2">
-                            Current Password
-                        </label>
-                        <div className="relative">
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">Current Password</label>
+                        <div className="relative mt-1">
                             <input
                                 type={showCurrent ? "text" : "password"}
                                 name="current"
                                 value={passwords.current}
                                 onChange={handleChange}
                                 placeholder="Enter current password"
-                                className={`w-full p-3 rounded-lg border outline-none text-[#333] bg-white ${errors.current ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
+                                className={`w-full p-2 rounded-md border ${errors.current ? "border-red-500" : ""}`}
                             />
                             <button
                                 type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                                 onClick={() => setShowCurrent(!showCurrent)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
-                                {showCurrent ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                                {showCurrent ? <FaEyeSlash /> : <FaEye />}
                             </button>
                         </div>
                         {errors.current && <p className="text-red-500 text-xs mt-1">{errors.current}</p>}
                     </div>
 
                     {/* New Password */}
-                    <div className="mb-5">
-                        <label className="block text-sm font-semibold text-[#333] mb-2">
-                            New Password
-                        </label>
-                        <div className="relative">
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">New Password</label>
+                        <div className="relative mt-1">
                             <input
                                 type={showNew ? "text" : "password"}
                                 name="new"
                                 value={passwords.new}
                                 onChange={handleChange}
                                 placeholder="Enter new password"
-                                className={`w-full p-3 rounded-lg border outline-none text-[#333] bg-white ${errors.new ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
+                                className={`w-full p-2 rounded-md border ${errors.new ? "border-red-500" : ""}`}
                             />
                             <button
                                 type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                                 onClick={() => setShowNew(!showNew)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
-                                {showNew ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                                {showNew ? <FaEyeSlash /> : <FaEye />}
                             </button>
                         </div>
                         {errors.new && <p className="text-red-500 text-xs mt-1">{errors.new}</p>}
                     </div>
 
                     {/* Confirm Password */}
-                    <div className="mb-5">
-                        <label className="block text-sm font-semibold text-[#333] mb-2">
-                            Confirm New Password
-                        </label>
-                        <div className="relative">
+                    <div className="mb-4">
+                        <label className="text-sm font-medium">Confirm New Password</label>
+                        <div className="relative mt-1">
                             <input
                                 type={showConfirm ? "text" : "password"}
                                 name="confirm"
                                 value={passwords.confirm}
                                 onChange={handleChange}
-                                placeholder="Re-Enter new password"
-                                className={`w-full p-3 rounded-lg border outline-none text-[#333] bg-white ${errors.confirm ? "border-red-500" : "border-[#e0d8cc] focus:border-[#e7000b]"}`}
+                                placeholder="Re-enter new password"
+                                className={`w-full p-2 rounded-md border ${errors.confirm ? "border-red-500" : ""}`}
                             />
                             <button
                                 type="button"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                                 onClick={() => setShowConfirm(!showConfirm)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                             >
-                                {showConfirm ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                                {showConfirm ? <FaEyeSlash /> : <FaEye />}
                             </button>
                         </div>
                         {errors.confirm && <p className="text-red-500 text-xs mt-1">{errors.confirm}</p>}
                     </div>
 
-                    {/* Password Requirements */}
-                    <div className="bg-white border border-[#e0d8cc] p-4 rounded-lg mb-5 text-sm">
-                        <p className="font-bold text-[#333] mb-2">
-                            Password requirements:
-                        </p>
-                        <ul className="space-y-1 text-[#666]">
-                            <li className={checkRequirement("length") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("length") ? "✔" : "○"} At least 8 characters long
-                            </li>
-                            <li className={checkRequirement("upper") && checkRequirement("lower") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("upper") && checkRequirement("lower") ? "✔" : "○"} Contains uppercase and lowercase letters
-                            </li>
-                            <li className={checkRequirement("number") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("number") ? "✔" : "○"} Contains at least one number
-                            </li>
-                            <li className={checkRequirement("special") ? "text-green-600 font-medium" : ""}>
-                                {checkRequirement("special") ? "✔" : "○"} Contains at least one special character
-                            </li>
-                        </ul>
-                    </div>
 
-                    {/* Forgot Password */}
-                    <div className="text-right text-sm mb-5">
+
+                    {/* Forgot Password Link */}
+                    <div className="text-right text-sm mb-4">
                         <button
-                            className="text-[#3498db] font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
+                            type="button"
+                            className="text-gray-700 hover:underline"
                             onClick={() => navigate("/StudForgotPassword")}
                         >
                             Forgot Password?
                         </button>
                     </div>
 
-                    {/* Update Button */}
+                    {/* Actions */}
                     <button
                         type="submit"
-                        className="w-full bg-[#e7000b] text-white py-3 rounded-lg mb-3 font-bold uppercase transition-all hover:bg-red-700 border-none cursor-pointer"
+                        disabled={loading}
+                        className="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition mb-3 font-semibold shadow-sm"
                     >
-                        Update Password
+                        {loading ? "Updating..." : "Update Password"}
                     </button>
 
-                    {/* Cancel */}
                     <button
                         type="button"
-                        className="w-full bg-transparent border border-gray-400 text-[#333] py-3 rounded-lg font-bold uppercase transition-all hover:bg-gray-100 cursor-pointer"
                         onClick={() => navigate(-1)}
+                        className="w-full border border-black py-2 rounded-md hover:bg-gray-100 transition text-sm font-medium"
                     >
                         Cancel
                     </button>
+
                 </form>
+
             </div>
+
         </div>
     );
 };

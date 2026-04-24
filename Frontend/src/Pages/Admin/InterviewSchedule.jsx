@@ -1,75 +1,82 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import InterviewCard from "../../Components/Admin/InterviewSchedule/InterviewCard";
-import { FaSearch, FaChevronDown } from "react-icons/fa";
+import { FaSearch, FaChevronDown, FaSpinner } from "react-icons/fa";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
+
 
 const AdminInterviewSchedule = () => {
-
+  console.log("📍 ADMIN_INTERVIEW_PAGE: Attempting render...");
+  const [companies, setCompanies] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchCategory, setSearchCategory] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
 
-  const allCompanies = [
-    {
-      id: 1,
-      name: "Multiicon",
-      role: "PHP Developer",
-      salary: "₹3.6 LPA",
-      location: "Rajkot, Gujarat",
-      process: "Aptitude + Technical Interview + HR",
-      status: "Scheduled Interview (Pending)"
-    },
-    {
-      id: 2,
-      name: "Gateway Group of Companies",
-      role: "Software Engineer",
-      salary: "₹4.5 LPA",
-      location: "Ahmedabad, Gujarat",
-      process: "Written Test + Technical Round + HR",
-      status: "Scheduled Interview (Pending)"
-    },
-    {
-      id: 3,
-      name: "Infinity IT Company",
-      role: "React Native Developer",
-      salary: "₹5 LPA",
-      location: "Surat, Gujarat",
-      process: "Online Test + Personal Interview",
-      status: "On Hold"
-    },
-    {
-      id: 4,
-      name: "TCS Ltd",
-      role:"Software Development Engineer",
-      salary:"₹8 LPA",
-      location: "Bangalore, Karnataka",
-      process: "Aptitude Test + Personal Interview + Practical Test + Panel Interview",
-      status: "Scheduled Interview (Complete)"
+  const fetchInterviews = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/interviews", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setCompanies(result.data || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch interviews", error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  }, []);
+
+  useEffect(() => {
+    fetchInterviews();
+  }, [fetchInterviews]);
+
+  useSocketRefresh('REFRESH_INTERVIEWS', fetchInterviews);
+  useSocketRefresh('REFRESH_JOBS', fetchInterviews);
 
   const filteredCompanies = useMemo(() => {
-    return allCompanies.filter(company => {
+    if (!Array.isArray(companies)) return [];
+    
+    return companies.filter(company => {
+      if (!company) return false;
       const searchTermLower = searchTerm.toLowerCase();
-      const statusMatch = filterStatus === "All" || company.status === filterStatus;
+      
+      const statusMatch =
+        filterStatus === "All" ||
+        (filterStatus === "Pending" && company.status?.includes("Pending")) ||
+        (filterStatus === "Completed" && company.status?.includes("Complete"));
 
       if (!statusMatch) return false;
 
+      const name     = company.name?.toLowerCase()     || "";
+      const role     = company.role?.toLowerCase()     || "";
+      const location = company.location?.toLowerCase() || "";
+      const salary   = company.salary?.toLowerCase()   || "";
+
       if (searchCategory === "All") {
-        return company.name.toLowerCase().includes(searchTermLower) ||
-          company.role.toLowerCase().includes(searchTermLower) ||
-          company.location.toLowerCase().includes(searchTermLower) ||
-          company.salary.toLowerCase().includes(searchTermLower);
+        return name.includes(searchTermLower) || role.includes(searchTermLower) ||
+          location.includes(searchTermLower)  || salary.includes(searchTermLower);
       }
 
-      const field = searchCategory === "Company" ? company.name :
-                    searchCategory === "Role" ? company.role :
-                    searchCategory === "Location" ? company.location :
-                    searchCategory === "Salary" ? company.salary : "";
-      
-      return field.toLowerCase().includes(searchTermLower);
-    });
-  }, [allCompanies, searchTerm, searchCategory, filterStatus]);
+      const field = searchCategory === "Company"  ? name :
+                    searchCategory === "Role"     ? role :
+                    searchCategory === "Location" ? location :
+                    searchCategory === "Salary"   ? salary : "";
 
+      return field.includes(searchTermLower);
+    });
+  }, [companies, searchTerm, searchCategory, filterStatus]);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px]">
+        <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+        <p className="text-gray-500 font-medium">Loading Interview Schedules...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -79,7 +86,7 @@ const AdminInterviewSchedule = () => {
           Interview Schedule
         </h1>
         <p className="text-gray-600 mb-6 md:mb-8 text-sm md:text-base">
-          Manage interview schedules.
+          Manage interview schedules across all job drives.
         </p>
 
         {/* Search and Filter Section */}
@@ -121,26 +128,31 @@ const AdminInterviewSchedule = () => {
               className="w-full appearance-none p-3 pr-10 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-300 cursor-pointer text-gray-700 shadow-sm"
             >
               <option value="All">All Status</option>
-              <option value="On Hold">On Hold</option>
-              <option value="Scheduled Interview (Pending)">Scheduled Interview (Pending)</option>
-              <option value="Scheduled Interview (Complete)">Scheduled Interview (Complete)</option>
+              <option value="Pending">Pending</option>
+              <option value="Completed">Completed</option>
             </select>
             <FaChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
           </div>
 
         </div>
 
-        {/* Cards */}
+        {/* Interview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredCompanies.map((company) => (
-            <InterviewCard
-              key={company.id}
-              data={company}
-            />
-          ))}
-
+          {Array.isArray(filteredCompanies) && filteredCompanies.length > 0 ? (
+            filteredCompanies.map((company) => (
+              <InterviewCard
+                key={company?.id || Math.random()}
+                data={company}
+                onScheduleCreated={fetchInterviews}
+                onScheduleDeleted={fetchInterviews}
+              />
+            ))
+          ) : (
+            <div className="col-span-full py-12 text-center bg-white rounded-xl border border-dashed border-gray-300">
+               <p className="text-gray-400 font-medium italic">No matching interviews found.</p>
+            </div>
+          )}
         </div>
-
     </div>
   );
 };

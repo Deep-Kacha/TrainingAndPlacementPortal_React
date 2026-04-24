@@ -1,231 +1,188 @@
-import { useState } from "react";
-import StudentRow from "../../Components/Admin/StudentMangement/StudentRow";
+import { useState, useEffect } from "react";
+import { FaUsers, FaSpinner } from "react-icons/fa";
+import StudentTable from "../../Components/Admin/StudentMangement/StudentTable";
+import Toast from "../../Components/common/Toast";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
+/**
+ * Admin › Students Management page.
+ * Responsibilities: fetch data, hold state, pass props to components.
+ * All table markup is delegated to StudentTable and its children.
+ */
 const AdminStudentsManagement = () => {
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [toast, setToast] = useState({ visible: false, message: "", type: "success" });
 
-  const [students, setStudents] = useState([
-    {
-      id:1,
-      name:"Aarav Patel",
-      enrollment:"21SOECE11001",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.9",
-      email:"aarav.patel@rku.ac.in",
-      approved:true
-    },
-    {
-      id:2,
-      name:"Vivaan Shah",
-      enrollment:"21SOEIT11023",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.8",
-      email:"vivaan.shah@rku.ac.in",
-      approved:true
-    },
-    {
-      id:3,
-      name:"Diya Mehta",
-      enrollment:"21SOECE11045",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"9.2",
-      email:"diya.mehta@rku.ac.in",
-      approved:true
-    },
-    {
-      id:4,
-      name:"Ishaan Gupta",
-      enrollment:"21SOEIT11056",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"8.1",
-      email:"ishaan.gupta@rku.ac.in",
-      approved:true
-    },
-    {
-      id:5,
-      name:"Riya Singh",
-      enrollment:"21SOECE11089",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.5",
-      email:"riya.singh@rku.ac.in",
-      approved:true
-    },
-    {
-      id:6,
-      name:"Ananya Roy",
-      enrollment:"21SOEIT11012",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.6",
-      email:"ananya.roy@rku.ac.in",
-      approved:true
-    },
-    {
-      id:7,
-      name:"Vihaan Kumar",
-      enrollment:"21SOECE11034",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.7",
-      email:"vihaan.kumar@rku.ac.in",
-      approved:true
-    },
-    {
-      id:8,
-      name:"Aditya Joshi",
-      enrollment:"21SOEIT11067",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"9.0",
-      email:"aditya.joshi@rku.ac.in",
-      approved:true
-    },
-    {
-      id:9,
-      name:"Aisha Sharma",
-      enrollment:"21SOECE11099",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.2",
-      email:"aisha.sharma@rku.ac.in",
-      approved:true
-    },
-    {
-      id:10,
-      name:"Rohan Verma",
-      enrollment:"21SOEIT11078",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.9",
-      email:"rohan.verma@rku.ac.in",
-      approved:true
-    },
-    {
-      id:11,
-      name:"Priya Reddy",
-      enrollment:"21SOECE11015",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"9.5",
-      email:"priya.reddy@rku.ac.in",
-      approved:true
-    },
-    {
-      id:12,
-      name:"Arjun Nair",
-      enrollment:"21SOEIT11042",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"8.8",
-      email:"arjun.nair@rku.ac.in",
-      approved:true
-    },
-    {
-      id:13,
-      name:"Saanvi Singh",
-      enrollment:"21SOECE11063",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"8.0",
-      email:"saanvi.singh@rku.ac.in",
-      approved:true
-    },
-    {
-      id:14,
-      name:"Kabir Das",
-      enrollment:"21SOEIT11081",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"7.5",
-      email:"kabir.das@rku.ac.in",
-      approved:true
-    },
-    {
-      id:15,
-      name:"Myra Desai",
-      enrollment:"21SOECE11029",
-      course:"B.Tech - CE",
-      batch:"2025",
-      cgpa:"9.1",
-      email:"myra.desai@rku.ac.in",
-      approved:true
-    },
-    {
-      id:16,
-      name:"Advik Rao",
-      enrollment:"21SOEIT11095",
-      course:"B.Tech - IT",
-      batch:"2025",
-      cgpa:"8.4",
-      email:"advik.rao@rku.ac.in",
-      approved:true
-    }
-  ]);
+  // ── Helpers ───────────────────────────────────────────────────────────────
 
-  const deleteStudent = (id) => {
-    setStudents(students.filter((s) => s.id !== id));
+  const showToast = (message, type = "success") => {
+    setToast({ visible: true, message, type });
+    setTimeout(() => setToast((t) => ({ ...t, visible: false })), 3000);
   };
+
+  /** Normalise field names from either API response shape */
+  const normalise = (raw) => ({
+    ...raw,
+    fullName:        raw.fullName        || raw.name       || "N/A",
+    enrollmentNumber:raw.enrollmentNumber|| raw.enrollment || "N/A",
+    branch:          raw.branch          || raw.course     || "N/A",
+    semester:        raw.semester        || (raw.batch ? raw.batch.replace("Sem ", "") : "N/A"),
+    isApproved:      raw.isApproved      ?? raw.approved   ?? false,
+    consentFormPath: raw.consentFormPath || null,
+    paymentProofPath: raw.paymentProofPath || null,
+    personalEmail:   raw.personalEmail   || "N/A",
+    tenth:           raw.tenth           || "N/A",
+    twelfth:         raw.twelfth         || "N/A",
+    backlogs:        raw.backlogs        ?? 0,
+    parentName:      raw.parentName      || "N/A",
+    parentEmail:     raw.parentEmail     || "N/A",
+    parentMobile:    raw.parentMobile    || "N/A",
+    currentAddress:  raw.currentAddress  || "N/A",
+    permanentAddress:raw.permanentAddress|| "N/A",
+    city:            raw.city            || "N/A",
+    state:           raw.state           || "N/A",
+    pincode:         raw.pincode         || "N/A",
+    registeredAt:    raw.registeredAt    || null
+  });
+
+  // ── Data fetching ─────────────────────────────────────────────────────────
+
+  const fetchStudents = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/students", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const raw = Array.isArray(data) ? data : data.data || [];
+        setStudents(raw.map(normalise));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  useSocketRefresh('REFRESH_STUDENTS', fetchStudents);
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
+
+  const handleToggle = async (studentId, isApproved) => {
+    try {
+      const token = localStorage.getItem("token");
+      const endpoint = isApproved ? "approve" : "reject";
+      const res = await fetch(`/api/admin/students/${studentId}/${endpoint}`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await res.json();
+      if (result.success || res.ok) {
+        showToast(result.message || (isApproved ? "Student approved." : "Set to pending."), "success");
+      } else {
+        showToast(result.message || "Operation failed.", "error");
+      }
+    } catch {
+      showToast("Network error. Please try again.", "error");
+    } finally {
+      fetchStudents();
+    }
+  };
+
+  const handleDelete = async (studentId, fullName) => {
+    if (!confirm(`Are you sure you want to delete ${fullName}? This cannot be undone.`)) return;
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`/api/admin/students/${studentId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await res.json();
+      if (result.success || res.ok) {
+        showToast(result.message || "Student deleted.", "success");
+      } else {
+        showToast(result.message || "Delete failed.", "error");
+      }
+    } catch {
+      showToast("Network error. Please try again.", "error");
+    } finally {
+      fetchStudents();
+    }
+  };
+
+  // Filtered list
+  const filteredStudents = students.filter(s => {
+    if (filterStatus === "Approved") return s.isApproved;
+    if (filterStatus === "Pending") return !s.isApproved;
+    return true;
+  });
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="w-full">
-
-        {/* Header */}
-        <div className="mb-6">
-
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
-              Students Management
-            </h1>
-
-            <p className="text-gray-600 text-sm md:text-base">
-              Manage student registrations and approvals.
-            </p>
-          </div>
-
+      {/* Page header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-bold text-red-600">Students Management</h1>
+          <p className="text-gray-600 text-sm mt-1 font-medium">
+            Manage student registrations and verification docs.
+          </p>
         </div>
 
-
-        {/* Table */}
-
-        <div className="bg-white rounded-xl shadow overflow-x-auto">
-
-          <table className="w-full text-left min-w-[800px]">
-
-            <thead className="bg-white text-sm border-b">
-
-              <tr>
-                <th className="p-4">Student Name</th>
-                <th className="p-4">Enrollment No.</th>
-                <th className="p-4">Course / Branch</th>
-                <th className="p-4">Batch</th>
-                <th className="p-4">CGPA</th>
-                <th className="p-4">Email</th>
-                <th className="p-4">Approval</th>
-                <th className="p-4">Delete</th>
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-              {students.map((student) => (
-                <StudentRow
-                  key={student.id}
-                  student={student}
-                  onDelete={deleteStudent}
-                />
-              ))}
-
-            </tbody>
-
-          </table>
-
+        {/* Filter Dropdown */}
+        <div className="relative w-full md:w-64">
+           <select 
+             value={filterStatus}
+             onChange={(e) => setFilterStatus(e.target.value)}
+             className="w-full appearance-none p-3 px-4 rounded-lg border bg-white outline-none focus:ring-2 focus:ring-red-200 cursor-pointer text-sm font-bold text-gray-700 shadow-sm"
+           >
+             <option value="All">All Registrations</option>
+             <option value="Pending">Pending Verification</option>
+             <option value="Approved">Approved Students</option>
+           </select>
         </div>
+      </div>
 
+      {/* Loading state */}
+      {loading && (
+        <div className="text-center py-12">
+          <FaSpinner className="animate-spin text-red-600 text-4xl mx-auto mb-4" />
+          <p className="text-gray-500">Loading students...</p>
+        </div>
+      )}
+
+      {/* Empty state */}
+      {!loading && filteredStudents.length === 0 && (
+        <div className="text-center py-12 bg-white rounded-xl shadow">
+          <FaUsers className="text-gray-300 text-5xl mx-auto mb-4" />
+          <p className="text-gray-500 text-lg">
+            {filterStatus === "All" ? "No students registered yet." : `No students found matching "${filterStatus}".`}
+          </p>
+          <p className="text-gray-400 text-sm mt-1">
+            {filterStatus === "All" ? "Students will appear here after they register on the portal." : "Try switching your status filter to see other students."}
+          </p>
+        </div>
+      )}
+
+      {/* Data table */}
+      {!loading && filteredStudents.length > 0 && (
+        <StudentTable
+          students={filteredStudents}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
+        />
+      )}
+
+      <Toast message={toast.message} type={toast.type} visible={toast.visible} />
     </div>
   );
 };

@@ -1,68 +1,159 @@
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaSpinner, FaTrophy, FaCalendarCheck, FaBriefcase, FaUserCircle } from "react-icons/fa";
+import useSocketRefresh from "../../hooks/useSocketRefresh";
 
 const StudDashboard = () => {
     const navigate = useNavigate();
+    const [stats, setStats] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const statusCards = [
-        { title: 'T&P Status', status: 'APPROVED', detail: 'Registration Approved', colorClass: 'text-green-700 bg-[#e8f5e9]', icon: '✅' },
-        { title: 'Applied', status: '3', detail: 'Job Applications', colorClass: 'text-[#2980b9] bg-blue-100', icon: '💼' },
-        { title: 'Interviews', status: '2', detail: 'Scheduled', colorClass: 'text-[#d35400] bg-orange-100', icon: '🗓️' }
-    ];
+    const fetchStats = useCallback(async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("/api/student/dashboard-stats", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const result = await res.json();
+            if (result.success) {
+                setStats(result.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch student stats", error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
-    const quickActions = [
-        { title: 'Browse Jobs', desc: 'Explore available opportunities', linkText: 'View Jobs', onclick: () => navigate("/StudJobs"), icon: '🔍' },
-        { title: 'My Applied', desc: 'Track application status', linkText: 'View Applied', onclick: () => navigate("/StudApplications"), icon: '📋' },
-        { title: 'Profile', desc: 'Update your information', linkText: 'Edit Profile', onclick: () => navigate("/StudProfile"), icon: '👤' },
-        { title: 'Interviews', desc: 'Manage interview schedule', linkText: 'View Schedule', onclick: () => navigate("/StudInterviewSchedule"), icon: '🗓️' }
-    ];
+    useEffect(() => {
+        fetchStats();
+    }, [fetchStats]);
+
+    // Real-time listeners
+    useSocketRefresh('REFRESH_STATS', fetchStats);
+    useSocketRefresh('REFRESH_APPLICATIONS', fetchStats);
+    useSocketRefresh('REFRESH_INTERVIEWS', fetchStats);
+    useSocketRefresh('REFRESH_STUDENTS', fetchStats);
+
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px]">
+                <FaSpinner className="animate-spin text-red-600 text-4xl mb-4" />
+                <p className="text-gray-500 font-medium">Loading Statistics...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full">
-            <header className="page-header flex justify-between items-start">
-                <div>
-                    <h1 className="page-title">Welcome Bhavesh - 2023CS001</h1>
-                    <p className="page-subtitle">Here's your placement dashboard overview</p>
-                </div>
-            </header>
+            <h1 className="text-2xl md:text-3xl font-bold text-red-600">
+                Welcome, {stats?.studentName || "Student"}
+            </h1>
+            <p className="text-gray-600 mb-8">
+                Enrollment: {stats?.enrollment || "PENDING"} | Overview of your placement progress.
+            </p>
 
-            {/* Status Cards */}
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
-                {statusCards.map((card, index) => (
-                    <div key={index} className="bg-[#ece6da] p-6 rounded-lg border border-[#e0dacd] shadow-sm">
-                        <div className="flex justify-between items-start mb-5">
-                            <div className="text-[1.5rem] p-[10px] bg-[#d8cfc3] rounded-[8px]">
-                                {card.icon}
-                            </div>
-                            <span className={`font-bold text-[0.85rem] px-[8px] py-[4px] rounded-[4px] ${card.colorClass}`}>
-                                {card.status}
-                            </span>
-                        </div>
-                        <div>
-                            <h3 className="m-0 text-[1.2rem] font-bold text-[#333]">{card.title}</h3>
-                            <p className="mt-[5px] text-[0.9rem] text-text-gray m-0">{card.detail}</p>
-                        </div>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                <div 
+                    onClick={() => navigate("/StudApplications")}
+                    className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm cursor-pointer hover:bg-[#cec3b3] transition-colors group"
+                >
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">Applied Jobs</p>
+                        <h2 className="text-2xl font-bold text-blue-700">{stats?.counts?.applied || 0}</h2>
                     </div>
-                ))}
-            </section>
+                    <div className="p-3 rounded-lg bg-blue-100 text-blue-600 text-xl group-hover:scale-110 transition-transform">
+                        <FaBriefcase />
+                    </div>
+                </div>
+
+                <div 
+                    onClick={() => navigate("/StudInterviewSchedule")}
+                    className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm cursor-pointer hover:bg-[#cec3b3] transition-colors group"
+                >
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">Active Rounds</p>
+                        <h2 className="text-2xl font-bold text-orange-700">{stats?.counts?.interviews || 0}</h2>
+                    </div>
+                    <div className="p-3 rounded-lg bg-orange-100 text-orange-600 text-xl group-hover:scale-110 transition-transform">
+                        <FaCalendarCheck />
+                    </div>
+                </div>
+
+                <div className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">Status</p>
+                        <h2 className={`text-xl font-bold ${stats?.counts?.isPlaced ? 'text-green-700' : 'text-blue-700'}`}>
+                            {stats?.counts?.isPlaced ? 'PLACED' : 'APPROVED'}
+                        </h2>
+                    </div>
+                    <div className={`p-3 rounded-lg text-xl ${stats?.counts?.isPlaced ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                        <FaTrophy />
+                    </div>
+                </div>
+
+                {/* Extra Slot or Branding */}
+                <div className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
+                    <div>
+                        <p className="text-gray-600 font-medium text-sm">RKU Portal</p>
+                        <h2 className="text-lg font-bold text-gray-800">Verified</h2>
+                    </div>
+                    <div className="p-3 rounded-lg bg-red-100 text-red-600 text-xl">
+                        <FaUserCircle />
+                    </div>
+                </div>
+            </div>
 
             {/* Quick Actions */}
-            <section>
-                <h2 className="text-[1.5rem] font-bold mb-[20px] text-[#333]">Quick Actions</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-                    {quickActions.map((action, index) => (
-                        <div key={index} className="bg-[#ece6da] border border-[#e0dacd] p-6 rounded-lg cursor-pointer hover:shadow-md transition flex flex-col items-center text-center" onClick={action.onclick}>
-                            <div className="w-[60px] h-[60px] bg-[#e9e2d5] rounded-full flex items-center justify-center mb-[15px] text-[1.8rem]">
-                                {action.icon}
-                            </div>
-                            <h3 className="text-lg font-bold my-[10px] text-[#333]">{action.title}</h3>
-                            <p className="text-text-gray text-[0.9rem] mb-[20px] leading-snug w-full">{action.desc}</p>
-                            <span className="text-[#e7000b] font-[600] text-[0.95rem] no-underline mt-auto">
-                                {action.linkText} ➔
-                            </span>
-                        </div>
-                    ))}
+            <h2 className="text-xl md:text-2xl font-bold text-red-600 mb-6 font-semibold">
+                Quick Actions
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-orange-500">
+                        🔍
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">Browse Jobs</h3>
+                    <p className="text-gray-600 text-sm">Explore opportunities</p>
+                    <button onClick={() => navigate("/StudJobs")} className="mt-4 font-semibold text-orange-600">
+                        View Jobs →
+                    </button>
                 </div>
-            </section>
+
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-blue-600">
+                        📋
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">My Applied</h3>
+                    <p className="text-gray-600 text-sm">Track your progress</p>
+                    <button onClick={() => navigate("/StudApplications")} className="mt-4 font-semibold text-blue-700">
+                        View History →
+                    </button>
+                </div>
+
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-purple-600">
+                        👤
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">My Profile</h3>
+                    <p className="text-gray-600 text-sm">Update info</p>
+                    <button onClick={() => navigate("/StudProfile")} className="mt-4 font-semibold text-purple-600">
+                        Edit Profile →
+                    </button>
+                </div>
+
+                <div className="bg-[#d8cfc3] p-8 rounded-xl shadow text-center">
+                    <div className="flex justify-center mb-4 text-3xl text-green-600">
+                        🏆
+                    </div>
+                    <h3 className="text-lg font-semibold mb-1">Placement</h3>
+                    <p className="text-gray-600 text-sm">View achievements</p>
+                    <button onClick={() => navigate("/StudPlacementHistory")} className="mt-4 font-semibold text-green-700">
+                        View Records →
+                    </button>
+                </div>
+            </div>
         </div>
     );
 };
