@@ -1,62 +1,77 @@
 import React, { useState } from "react";
-import Footer from "../../components/common/Footer";
-import AuthHeader from "../../components/common/AuthHeader";
+import Footer from "../../Components/common/Footer";
+import AuthHeader from "../../Components/common/AuthHeader";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 
 const Login = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const [role, setRole] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState("");
-    const [validationErrors, setValidationErrors] = useState({});
+  const [role, setRole] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
-    const validate = (name, value) => {
-        let errorMessage = "";
-        if (name === "role" && !value) errorMessage = "Please select a role.";
-        else if (name === "email") {
-            if (!value) errorMessage = "Email is required.";
-            else if (!/^[^\s@]+@rku\.ac\.in$/.test(value)) errorMessage = "Only @rku.ac.in emails are allowed.";
-        } else if (name === "password" && !value) errorMessage = "Password is required.";
-        return errorMessage;
-    };
+  const validate = (name, value) => {
+    let errorMessage = "";
+    if (name === "role" && !value) {
+      errorMessage = "Please select a role.";
+    } else if (name === "email") {
+      if (!value) {
+        errorMessage = "Email is required.";
+      } else if (role === "Student" && !/^[^\s@]+@rku\.ac\.in$/.test(value)) {
+        // Only students must use the @rku.ac.in domain
+        errorMessage = "Students must use their @rku.ac.in college email.";
+      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        errorMessage = "Please enter a valid email address.";
+      }
+    } else if (name === "password" && !value) {
+      errorMessage = "Password is required.";
+    }
+    return errorMessage;
+  };
 
-    const handleLogin = () => {
-        const roleErr = validate("role", role);
-        const emailErr = validate("email", email);
-        const passErr = validate("password", password);
+  const handleLogin = async () => {
+    const roleErr = validate("role", role);
+    const emailErr = validate("email", email);
+    const passErr = validate("password", password);
 
-        if (roleErr || emailErr || passErr) {
-            setValidationErrors({ role: roleErr, email: emailErr, password: passErr });
-            return;
-        }
+    if (roleErr || emailErr || passErr) {
+      setValidationErrors({ role: roleErr, email: emailErr, password: passErr });
+      return;
+    }
 
-        setError(""); // Clear previous errors
-        if (role === "Student") {
-            if (email === "student@rku.ac.in" && password === "Student@123") {
-                navigate("/StudDashboard");
-            } else {
-                setError("Invalid Student email or password");
-            }
-        } else if (role === "Admin") {
-            if (email === "admin@rku.ac.in" && password === "Admin@123") {
-                navigate("/AdminDashboard");
-            } else {
-                setError("Invalid Admin email or password");
-            }
-        } else {
-            setError("Please select a valid role");
-        }
-    };
+    setError(""); // Clear previous errors
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, role })
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        if (data.user.role === 'student') navigate("/StudDashboard");
+        else if (data.user.role === 'admin') navigate("/AdminDashboard");
+        else if (data.user.role === 'company') navigate("/CompanyDashboard");
+      } else {
+        setError(data.error || "Login failed.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setError("Network error. Please try again later.");
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-200">
 
-    <AuthHeader/>
+      <AuthHeader />
 
       {/* Main Section */}
       <div className="flex-grow flex flex-col items-center justify-center px-4 py-12">
@@ -69,8 +84,8 @@ const Login = () => {
         </div>
 
         {/* Login Card */}
-        <form 
-          onSubmit={(e) => { e.preventDefault(); handleLogin(); }} 
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
           className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md"
         >
 
@@ -84,7 +99,7 @@ const Login = () => {
           {/* Select Role */}
           <div className="mb-4">
             <label className="text-sm font-medium">Select Role</label>
-            <select 
+            <select
               className={`w-full mt-1 p-2 rounded-md border ${validationErrors.role ? "border-red-500" : ""}`}
               value={role}
               onChange={(e) => {
@@ -143,7 +158,10 @@ const Login = () => {
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
           <div className="text-right text-sm mb-4">
-            <span  onClick={() => navigate("/ForgotPassword")} className="hover:underline cursor-pointer">
+            <span
+              onClick={() => navigate("/ForgotPassword")}
+              className="hover:underline cursor-pointer"
+            >
               Forgot Password?
             </span>
           </div>
@@ -167,7 +185,7 @@ const Login = () => {
             <p>
               Don't have an account?{" "}
               <span className="font-semibold cursor-pointer hover:underline"
-              onClick={() => navigate("/register")}
+                onClick={() => navigate("/Register")}
               >
                 Register ?
               </span>
@@ -177,7 +195,7 @@ const Login = () => {
         </form>
       </div>
 
-      <Footer/>
+      <Footer />
     </div>
   );
 };

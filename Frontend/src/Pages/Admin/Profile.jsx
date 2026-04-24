@@ -1,59 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProfileCard from "../../Components/Admin/Profile/ProfileCard";
 import ProfileInfoForm from "../../Components/Admin/Profile/ProfileInfoForm";
 import AddPortalUser from "../../Components/Admin/Profile/AddPortalUser";
 import PasswordActions from "../../Components/Admin/Profile/PasswordActions";
+import { FaSpinner, FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 
 const AdminProfile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: "", ok: true });
+
+  const showToast = (message, ok = true) => {
+    setToast({ visible: true, message, ok });
+    setTimeout(() => setToast(t => ({ ...t, visible: false })), 4000);
+  };
+  const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState({
-    name: "Vishal Doshi",
-    role: "TPO Head",
-    employeeId: "26FGHP579",
-    department: "Training & Placement Shell",
-    location: "Office No .27",
-    mobile: "+91 98765 43210",
-    email: "vishal.doshi@rku.ac.in"
+    name: "",
+    role: "",
+    employeeId: "",
+    department: "",
+    location: "",
+    mobile: "",
+    email: ""
   });
   const [errors, setErrors] = useState({});
 
-  const validate = (name, value) => {
-    let error = "";
-    switch (name) {
-      case "name":
-        if (!value.trim()) error = "Full Name is required";
-        break;
-      case "role":
-        if (!value.trim()) error = "Role is required";
-        break;
-      case "employeeId":
-        if (!value.trim()) error = "Employee Id is required";
-        break;
-      case "department":
-        if (!value.trim()) error = "Department is required";
-        break;
-      case "location":
-        if (!value.trim()) error = "Office Location is required";
-        break;
-      case "mobile":
-        if (!value.trim()) error = "Mobile number is required";
-        else if (!/^\+?[0-9\s-]{10,}$/.test(value)) error = "Invalid mobile number";
-        break;
-      case "email":
-        if (!value.trim()) error = "Email is required";
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = "Invalid email address";
-        break;
-      default:
-        break;
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch("/api/admin/profile", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const result = await res.json();
+      if (result.success) {
+        setProfileData({
+          name: result.data.name || "",
+          role: result.data.role || "Admin",
+          employeeId: result.data.employeeId || "",
+          department: result.data.department || "",
+          location: result.data.location || "",
+          mobile: result.data.mobile || "",
+          email: result.data.email || ""
+        });
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile", error);
+    } finally {
+      setLoading(false);
     }
-    return error;
   };
 
-  const handleEditToggle = () => {
+  const validate = (name, value) => {
+    if (!value || (typeof value === "string" && !value.trim())) {
+        if (name === "mobile" || name === "location" || name === "department" || name === "employeeId") return ""; // allow empty optional fields
+        return "This field is required";
+    }
+    if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return "Invalid email address";
+    return "";
+  };
+
+  const handleEditToggle = async () => {
     if (isEditing) {
+      // Validate
       const newErrors = {};
       let isValid = true;
-      Object.keys(profileData).forEach((key) => {
+      ["name", "email"].forEach((key) => {
         const error = validate(key, profileData[key]);
         if (error) {
           newErrors[key] = error;
@@ -63,10 +78,30 @@ const AdminProfile = () => {
       setErrors(newErrors);
       if (!isValid) return;
 
-      console.log("Saving profile data:", profileData); // Save logic here
+      // Save to backend
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("/api/admin/profile", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify(profileData)
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast("Profile updated successfully!", true);
+        } else {
+          showToast(result.error || "Failed to update profile.", false);
+        }
+      } catch {
+        showToast("Failed to save profile. Check your connection.", false);
+      }
     }
     setIsEditing(!isEditing);
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,7 +116,17 @@ const AdminProfile = () => {
 
           {/* Header */}
           <h1 className="text-2xl md:text-3xl font-bold text-red-600">Profile</h1>
-          <p className="text-gray-600 mb-8">Update your information.</p>
+          <p className="text-gray-600 mb-6">Update your information.</p>
+
+          {/* Toast */}
+          {toast.visible && (
+            <div className={`mb-6 flex items-center gap-3 px-5 py-3 rounded-xl shadow-sm text-sm font-medium ${
+              toast.ok ? "bg-green-50 border border-green-200 text-green-800" : "bg-red-50 border border-red-200 text-red-800"
+            }`}>
+              {toast.ok ? <FaCheckCircle className="text-green-500" /> : <FaTimesCircle className="text-red-500" />}
+              {toast.message}
+            </div>
+          )}
 
           {/* Top Cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

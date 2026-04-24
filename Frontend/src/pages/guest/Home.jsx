@@ -1,11 +1,11 @@
 import React from "react";
-import Header from "../../components/common/Header";
-import HeroSection from "../../components/home/HeroSection";
-import StatsSection from "../../components/home/StateSection";
-import PlacementPolicy from "../../components/home/PlacementPolicy";
-import Recruiters from "../../components/home/Recruiters";
-import AboutSection from "../../components/home/AboutSection";
-import Footer from "../../components/common/Footer";
+import Header from "../../Components/common/Header";
+import HeroSection from "../../Components/home/HeroSection";
+import StatsSection from "../../Components/home/StateSection";
+import PlacementPolicy from "../../Components/home/PlacementPolicy";
+import Recruiters from "../../Components/home/Recruiters";
+import AboutSection from "../../Components/home/AboutSection";
+import Footer from "../../Components/common/Footer";
 
 const Home = () => {
   return (

@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+Backend/node_modules/
+Frontend/node_modules/
+
+# Production / Build
+dist/
+build/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Coverage  
+coverage/
+*.lcov
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# User Uploads
+Backend/uploads/
+Frontend/uploads/
+
+# Scratch and Temporary files
+scratch/
+Backend/scratch/
+Frontend/scratch/
