@@ -104,27 +104,47 @@ async function seedTestData() {
       const status = i < 15 ? 'approved' : (i < 21 ? 'pending' : 'rejected');
       
       const deadline = new Date();
-      deadline.setDate(deadline.getDate() + (Math.floor(Math.random() * 20) + 1));
+      deadline.setDate(deadline.getDate() + (Math.floor(Math.random() * 15) + 3)); // 3 to 17 days in future
 
       const drDate = new Date();
-      drDate.setDate(drDate.getDate() - (Math.floor(Math.random() * 30))); 
+      drDate.setDate(drDate.getDate() + (Math.floor(Math.random() * 15) + 20)); // 20 to 34 days in future
       const joDate = new Date(drDate);
       joDate.setMonth(joDate.getMonth() + 4);
+
+      // Complete details to satisfy frontend validation on Admin & Student dashboards
+      const minCgpa = (6.0 + Math.random() * 2.0).toFixed(2); // CGPA between 6.0 and 8.0
+      const stipendVal = i % 3 === 0 ? '15,000 INR/Month' : (i % 3 === 1 ? '25,000 INR/Month' : 'No Stipend');
+      const bondVal = i % 2 === 0 ? '1 Year' : 'No Bond';
+      const internshipDur = i % 2 === 0 ? '6 Months' : '3 Months';
+      const selectionProcess = `1. Online Assessment\n2. Technical Interview (Round 1 & 2)\n3. HR & Cultural Fit Interview`;
+      const regLink = `https://careers.${comp.company_name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com/apply`;
+      const contactEmail = `hr.${comp.company_name.toLowerCase().replace(/[^a-z0-9]/g, '')}@gmail.com`;
+      const contactMobile = `+91 99887 766${10 + i}`;
+      const contactName = comp.hr_contact_name || 'HR Recruitment Lead';
+      const jobWebsite = comp.website || `https://www.${comp.company_name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`;
+      const requiredSkills = i % 3 === 0 
+        ? 'React, Node.js, Express, PostgreSQL, REST APIs' 
+        : (i % 3 === 1 ? 'Python, Django, Pandas, SQL, AWS' : 'Java, Spring Boot, Microservices, Hibernate, Docker');
 
       const jobRes = await pool.query(`
         INSERT INTO jobs (
           company_id, job_title, job_position, job_type, description, status,
           ctc_package, location, application_deadline, eligible_batches, eligible_courses,
-          drive_date, joining_date
-        ) VALUES ($1, $2, $3, 'Full Time', $4, $5, $6, $7, $8, $9, $10, $11, $12)
-        RETURNING id, status, job_title
+          drive_date, joining_date, min_cgpa, stipend, bond, internship_duration,
+          selection_process, registration_link, company_name, website,
+          contact_person_name, contact_person_email, contact_person_mobile,
+          required_skills, additional_info
+        ) VALUES (
+          $1, $2, $3, 'Full Time', $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25
+        ) RETURNING id, status, job_title
       `, [
         comp.id, titleLabel, titleLabel,
         `Join ${comp.company_name} as a ${titleLabel}. Work on cutting-edge tech in ${comp.location}.`,
         status, salaryLabel, comp.location, deadline,
         ['2025', '2026'], ['B.Tech CSE', 'B.Tech IT', 'MCA'],
-        status !== 'rejected' && status !== 'pending' ? drDate : null,
-        status === 'closed' ? joDate : null
+        drDate, joDate, minCgpa, stipendVal, bondVal, internshipDur,
+        selectionProcess, regLink, comp.company_name, jobWebsite,
+        contactName, contactEmail, contactMobile, requiredSkills, 'No additional information.'
       ]);
       jobs.push(jobRes.rows[0]);
     }
