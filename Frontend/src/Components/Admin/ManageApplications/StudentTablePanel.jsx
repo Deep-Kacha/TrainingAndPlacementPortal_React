@@ -61,7 +61,7 @@ const StudentTablePanel = ({ selectedJob, students, schedules, loading, onStatus
                 No applicants found for this job.
               </div>
             ) : (
-              <table className="w-full text-left border-collapse">
+              <table className="w-full min-w-[600px] text-left border-collapse">
                 <thead className="bg-gray-50 text-[10px] font-bold uppercase text-gray-500 border-b border-gray-100">
                   <tr>
                     <th className="px-6 py-4">Student</th>

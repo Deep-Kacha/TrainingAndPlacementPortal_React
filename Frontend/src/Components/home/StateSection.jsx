@@ -39,11 +39,11 @@ const StatsSection = () => {
             <p className="text-gray-500 font-medium">Loading Statistics...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-10">
             {stats.map((stat, index) => (
               <div
                 key={index}
-                className="bg-[#d9d1c7] p-6 text-center rounded-lg shadow-sm border border-[#c4b5a6] transition-transform hover:scale-105"
+                className="bg-[#d9d1c7] p-4 sm:p-6 text-center rounded-lg shadow-sm border border-[#c4b5a6] transition-transform hover:scale-105"
               >
                 <div className="text-red-600 text-2xl md:text-3xl font-extrabold">
                   {stat.value}

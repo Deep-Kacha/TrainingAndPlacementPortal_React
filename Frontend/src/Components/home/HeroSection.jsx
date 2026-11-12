@@ -1,6 +1,7 @@
 import React from "react";
 import heroBg from "../../assets/images/hero.jpg";
 import { useNavigate } from "react-router-dom";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -15,14 +16,14 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-white/50"></div>
 
       {/* Content */}
-      <div className="relative max-w-7xl px-8 lg:px-16 py-45">
+      <div className="relative max-w-7xl px-4 sm:px-8 lg:px-16 py-20 sm:py-28 lg:py-40">
 
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-          Welcome to Training <br /> & Placement Cell
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+          Welcome to Training <br /> &amp; Placement Cell
         </h1>
 
         <p className="mt-3 text-Gray-600 font-semibold text-lg tracking-wide uppercase">
-          RK University
+          {PORTAL_BRANDING.institutionName}
         </p>
 
         <p className="mt-4 max-w-lg text-gray-700">

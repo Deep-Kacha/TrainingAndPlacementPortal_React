@@ -2,6 +2,8 @@
  * Authentication Utilities
  * Manages token and user session retrieval from localStorage.
  */
+import { IS_DEMO_MODE } from "../demo/demoConfig";
+import { resetDemoDb } from "../demo/demoStore";
 
 export const getAuthToken = () => {
     return localStorage.getItem("token");
@@ -30,6 +32,9 @@ export const getUserRole = () => {
 export const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    if (IS_DEMO_MODE) {
+        resetDemoDb();
+    }
     // Use replace to redirect to home page and prevent back-button issues
     window.location.replace("/");
 };

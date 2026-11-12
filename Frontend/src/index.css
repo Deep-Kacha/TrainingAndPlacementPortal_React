@@ -31,8 +31,11 @@
 }
 
 @layer base {
+  html,
   body {
     margin: 0;
+    max-width: 100%;
+    overflow-x: hidden;
     font-family: ui-sans-serif, system-ui, sans-serif;
     background-color: #ffffff;
     color: #333333;

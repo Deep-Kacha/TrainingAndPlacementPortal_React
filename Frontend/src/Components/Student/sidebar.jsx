@@ -13,7 +13,7 @@ import {
     FaBars,
     FaTimes
 } from "react-icons/fa";
-import logo from "../../assets/images/logo.png";
+import PortalLogo from "../common/PortalLogo";
 
 // Map of sidebar item path → all sub-paths that should keep it active
 const STUDENT_SUBPAGE_MAP = {
@@ -55,7 +55,7 @@ const Sidebar = () => {
             {/* Logo + Mobile Toggle */}
             <div className="flex justify-between items-center md:justify-center md:flex-col">
                 <NavLink to="/StudDashboard" onClick={() => setIsOpen(false)} className="block">
-                    <img src={logo} alt="RK University" className="w-28 md:w-36 md:mb-4 hover:opacity-80 transition-opacity" />
+                    <PortalLogo className="w-28 md:w-36 md:mb-4 hover:opacity-80 transition-opacity" />
                 </NavLink>
                 <button className="text-2xl md:hidden" onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? <FaTimes /> : <FaBars />}

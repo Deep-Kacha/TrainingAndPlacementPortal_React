@@ -7,6 +7,7 @@ import SelectionProcessSection from "./company/Selectionprocesssection";
 import ContactPersonSection from "./company/Contactpersonsection";
 import AdditionalDetailsSection from "./company/Additionaldetailssection";
 import { FaCheckCircle, FaTimesCircle, FaSpinner } from "react-icons/fa";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const INITIAL_STATE = {
   email: "", companyName: "", jobLocation: "", website: "", description: "",
@@ -129,7 +130,7 @@ const CompanyRegister = () => {
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-gray-800">Campus Placement Registration</h2>
           <p className="text-gray-500 text-sm mt-2">
-            RK University, Rajkot – Training &amp; Placement Cell
+            {PORTAL_BRANDING.institutionName}, {PORTAL_BRANDING.cityState.split(",")[0]} – Training &amp; Placement Cell
           </p>
         </div>
 

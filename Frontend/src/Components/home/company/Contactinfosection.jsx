@@ -1,6 +1,7 @@
 import { Phone, Mail } from "lucide-react";
 import SectionCard from "../register/SectionCard";
 import { useState, useEffect } from "react";
+import { PORTAL_BRANDING } from "../../../demo/demoConfig";
 
 const ContactInfoSection = () => {
   const [officers, setOfficers] = useState([]);
@@ -14,10 +15,7 @@ const ContactInfoSection = () => {
           setOfficers(result.data);
         } else {
           // Fallback if no officers exist in DB
-          setOfficers([
-            { name: "Dr. Vishal Doshi", department: "Head of Training & Placement Cell", mobile: "+91 98765 43210", email: "vishal.doshi@rku.ac.in" },
-            { name: "Mr. Osho Shah", department: "Assistant Training & Placement Officer", mobile: "+91 87654 32109", email: "osho.shah@rku.ac.in" }
-          ]);
+          setOfficers(PORTAL_BRANDING.officers);
         }
       } catch (err) {
         console.error("Failed to fetch contact officers", err);

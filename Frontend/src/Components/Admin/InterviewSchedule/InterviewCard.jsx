@@ -63,7 +63,7 @@ const InterviewCard = ({ data, onScheduleCreated, onScheduleDeleted }) => {
       </div>
 
       {/* Meta Grid */}
-      <div className="grid grid-cols-2 gap-4 my-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-2">
         <div>
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Package</p>
             <p className="text-lg font-bold text-red-600">{data?.salary || "—"}</p>

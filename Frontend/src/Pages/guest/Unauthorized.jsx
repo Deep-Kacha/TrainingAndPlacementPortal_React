@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaLock, FaHome } from "react-icons/fa";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const Unauthorized = () => {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ const Unauthorized = () => {
             </div>
             
             <p className="mt-8 text-gray-400 text-[10px] font-bold uppercase tracking-widest">
-                Protected by RKU Placement Security Layer
+                {PORTAL_BRANDING.securityFooter}
             </p>
         </div>
     );
