@@ -1,4 +1,4 @@
-import { PORTAL_BRANDING } from "./demoConfig";
+import { DEMO_SUPER_ADMIN_EMAIL, PORTAL_BRANDING } from "./demoConfig";
 import { demoEventBus, getCurrentDemoUser, getDemoDb, saveDemoDb } from "./demoStore";
 
 const jsonResponse = (data, status = 200) =>
@@ -402,7 +402,7 @@ export async function handleDemoRequest(urlString, options = {}) {
           department: ap.department || "",
           location: ap.location || "",
           mobile: ap.mobile || "",
-          isSuperAdmin: caller.email === PORTAL_BRANDING.superAdminEmail,
+          isSuperAdmin: caller.email === DEMO_SUPER_ADMIN_EMAIL,
         },
       });
     }
@@ -450,7 +450,7 @@ export async function handleDemoRequest(urlString, options = {}) {
     }
 
     if (path === "/api/admin/add-user" && method === "POST") {
-      if (caller.email !== PORTAL_BRANDING.superAdminEmail) {
+      if (caller.email !== DEMO_SUPER_ADMIN_EMAIL) {
         return jsonResponse({ success: false, error: "Only the super admin can add portal users." }, 403);
       }
       const { email, password } = body;
@@ -476,7 +476,7 @@ export async function handleDemoRequest(urlString, options = {}) {
 
     const toggleUserMatch = path.match(/^\/api\/admin\/users\/(\d+)\/toggle$/);
     if (toggleUserMatch && method === "PUT") {
-      if (caller.email !== PORTAL_BRANDING.superAdminEmail) {
+      if (caller.email !== DEMO_SUPER_ADMIN_EMAIL) {
         return jsonResponse({ success: false, error: "Only the super admin can enable/disable users." }, 403);
       }
       const targetId = parseInt(toggleUserMatch[1], 10);
@@ -485,7 +485,7 @@ export async function handleDemoRequest(urlString, options = {}) {
       }
       const target = db.users.find((u) => u.id === targetId && u.role === "admin");
       if (!target) return jsonResponse({ success: false, error: "Admin user not found." }, 404);
-      if (target.email === PORTAL_BRANDING.superAdminEmail) {
+      if (target.email === DEMO_SUPER_ADMIN_EMAIL) {
         return jsonResponse({ success: false, error: "Cannot disable the super admin account." }, 400);
       }
       target.is_approved = !target.is_approved;
@@ -499,7 +499,7 @@ export async function handleDemoRequest(urlString, options = {}) {
 
     const deleteUserMatch = path.match(/^\/api\/admin\/users\/(\d+)$/);
     if (deleteUserMatch && method === "DELETE") {
-      if (caller.email !== PORTAL_BRANDING.superAdminEmail) {
+      if (caller.email !== DEMO_SUPER_ADMIN_EMAIL) {
         return jsonResponse({ success: false, error: "Only the super admin can remove users." }, 403);
       }
     const targetId = parseInt(deleteUserMatch[1], 10);
@@ -508,7 +508,7 @@ export async function handleDemoRequest(urlString, options = {}) {
     }
     const target = db.users.find((u) => u.id === targetId && u.role === "admin");
     if (!target) return jsonResponse({ success: false, error: "Admin user not found." }, 404);
-    if (target.email === PORTAL_BRANDING.superAdminEmail) {
+    if (target.email === DEMO_SUPER_ADMIN_EMAIL) {
       return jsonResponse({ success: false, error: "Cannot delete the super admin account." }, 400);
     }
     db.users = db.users.filter((u) => u.id !== targetId);
