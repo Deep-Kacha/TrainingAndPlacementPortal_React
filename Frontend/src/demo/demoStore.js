@@ -1,6 +1,7 @@
 import { getInitialSeedData } from "./seedData";
 
-const STORAGE_KEY = "tnp_demo_db_v1";
+const STORAGE_KEY = "tnp_demo_db_synced_v2";
+const SEED_VERSION = "2026-11-12-net-sync-v1";
 
 function clone(data) {
   return JSON.parse(JSON.stringify(data));
@@ -10,19 +11,23 @@ export function getDemoDb() {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
     if (raw) {
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed._seedVersion === SEED_VERSION) {
+        return parsed;
+      }
     }
+    sessionStorage.removeItem("tnp_demo_db_v1");
   } catch {
     // ignore storage errors and fall back to seed
   }
-  const initial = clone(getInitialSeedData());
+  const initial = { ...clone(getInitialSeedData()), _seedVersion: SEED_VERSION };
   saveDemoDb(initial);
   return initial;
 }
 
 export function saveDemoDb(db) {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ ...db, _seedVersion: SEED_VERSION }));
   } catch {
     // ignore quota errors
   }
@@ -30,6 +35,7 @@ export function saveDemoDb(db) {
 
 export function resetDemoDb() {
   try {
+    sessionStorage.removeItem("tnp_demo_db_v1");
     sessionStorage.removeItem(STORAGE_KEY);
   } catch {
     // ignore storage errors
