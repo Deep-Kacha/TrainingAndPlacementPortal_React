@@ -47,7 +47,7 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
         {data?.process || "No selection process details."}
       </p>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {status === "pending" ? (
           <>
             <button
@@ -64,7 +64,7 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
             </button>
           </>
         ) : (
-          <div className="col-span-2 flex gap-2">
+          <div className="sm:col-span-2 flex flex-wrap gap-2">
             <button
               disabled
               className={`flex-1 text-white py-2 rounded cursor-not-allowed text-sm font-semibold ${
@@ -85,7 +85,7 @@ const CompanyCard = ({ data, onStatusChange, undoState, onUndo }) => {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <button
           onClick={() => goToDetail("view")}
           className="border border-black py-2 rounded hover:bg-gray-50 transition text-sm font-semibold"

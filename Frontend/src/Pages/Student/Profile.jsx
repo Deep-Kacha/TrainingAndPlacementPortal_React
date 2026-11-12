@@ -201,7 +201,8 @@ const StudProfile = () => {
             </h2>
 
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <table className="w-full text-left">
+                <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[480px]">
                     <thead className="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-gray-400">Company</th>
@@ -234,6 +235,7 @@ const StudProfile = () => {
                         )}
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     );

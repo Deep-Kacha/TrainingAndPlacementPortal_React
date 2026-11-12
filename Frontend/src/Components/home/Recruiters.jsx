@@ -13,32 +13,32 @@ const Recruiters = () => {
   const companies = [gateway, multiicon, qtonz, rkit, infinity, tcs, rtcamp];
 
   return (
-    <section id="recruiters" className="py-18 bg-gray-100 overflow-hidden">
+    <section id="recruiters" className="py-12 sm:py-16 bg-gray-100 overflow-hidden">
 
       {/* Heading */}
-      <div className="text-center  mb-14">
-        <h2 className="text-3xl font-bold text-gray-800">
+      <div className="text-center mb-8 sm:mb-14 px-4">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">
           Our Top Recruiters
         </h2>
 
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 mt-2 text-sm sm:text-base">
           Trusted by leading organizations worldwide
         </p>
       </div>
 
       {/* Slider */}
-      <div className="flex animate-scroll gap-20 w-max px-20">
+      <div className="flex animate-scroll gap-6 sm:gap-12 w-max px-4 sm:px-12">
 
         {companies.concat(companies).map((logo, index) => (
           <div
             key={index}
             className="bg-[#d8d1c7] flex items-center justify-center
-            rounded-lg shadow-md px-25 py-20 min-w-[200px] h-[100px]"
+            rounded-lg shadow-md px-6 py-4 w-44 sm:w-52 h-24 flex-shrink-0"
           >
             <img
               src={logo}
               alt="company"
-              className="max-h-30 object-contain"
+              className="max-h-14 w-auto object-contain"
             />
           </div>
         ))}

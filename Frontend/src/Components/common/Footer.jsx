@@ -4,7 +4,7 @@ import { PORTAL_BRANDING } from "../../demo/demoConfig";
 const Footer = () => {
   return (
     <footer className="bg-[#d8cfc2] ">
-      <div className="max-w-7xl mx-auto px-8 py-10 grid md:grid-cols-4 gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 py-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         
         {/* Column 1 */}
         <div>
@@ -49,7 +49,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="border-t border-gray-400 text-sm py-4 px-8 flex justify-between">
+      <div className="border-t border-gray-400 text-sm py-4 px-4 sm:px-8 flex flex-col sm:flex-row gap-2 justify-between items-center text-center sm:text-left">
         <p>© 2026 {PORTAL_BRANDING.institutionName}. All rights reserved.</p>
         <div className="space-x-4">
           <span>Privacy Policy</span>

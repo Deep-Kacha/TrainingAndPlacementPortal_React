@@ -92,7 +92,7 @@ const ConsentPaymentSection = ({ formData, errors, handleChange, onPaymentSucces
             className="absolute top-0 right-0 w-12 h-12 cursor-pointer z-20 opacity-0 hover:opacity-10 bg-red-600/10 transition-opacity rounded-bl-full"
           />
           <div className="flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-full flex items-center justify-center text-xl ${paymentStatus === 'verified' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+            <div className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-xl ${paymentStatus === 'verified' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
               {paymentStatus === 'verified' ? <FaCheckCircle /> : <FaCreditCard />}
             </div>
             <div>

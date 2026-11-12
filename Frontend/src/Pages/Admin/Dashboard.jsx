@@ -181,7 +181,8 @@ const AdminDashboard = () => {
               Placements by Company
             </h2>
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-              <table className="w-full text-left">
+              <div className="overflow-x-auto">
+              <table className="w-full text-left min-w-[540px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <th className="px-5 py-3 text-[11px] font-bold uppercase tracking-widest text-gray-400">Company</th>
@@ -227,6 +228,7 @@ const AdminDashboard = () => {
                   })}
                 </tbody>
               </table>
+              </div>
             </div>
           </div>
         )}

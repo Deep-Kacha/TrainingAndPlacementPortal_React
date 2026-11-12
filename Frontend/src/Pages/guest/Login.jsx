@@ -105,7 +105,7 @@ const Login = () => {
           {/* Login Card */}
           <form
             onSubmit={(e) => { e.preventDefault(); handleLogin(); }}
-            className="bg-[#d8cfc2] p-8 rounded-xl shadow-lg w-full max-w-md"
+            className="bg-[#d8cfc2] p-5 sm:p-8 rounded-xl shadow-lg w-full max-w-md"
           >
 
             <h2 className="text-xl font-bold text-center mb-2">
@@ -220,7 +220,7 @@ const Login = () => {
 
           {/* Role-Based Demo Access Card (Shown only in Demo/Production Mode) */}
           {IS_DEMO_MODE && (
-            <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md border border-gray-300">
+            <div className="bg-white p-5 sm:p-6 rounded-xl shadow-lg w-full max-w-md border border-gray-300">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <FaShieldAlt className="text-red-600" />
@@ -243,7 +243,7 @@ const Login = () => {
                 {DEMO_ACCOUNTS.map((account) => (
                   <div
                     key={account.key}
-                    className="p-3 rounded-lg border border-gray-200 bg-gray-50 hover:border-red-300 transition flex items-center justify-between gap-3"
+                    className="p-3 rounded-lg border border-gray-200 bg-gray-50 hover:border-red-300 transition flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
