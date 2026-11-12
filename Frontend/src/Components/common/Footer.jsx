@@ -1,4 +1,5 @@
 import React from "react";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const Footer = () => {
   return (
@@ -8,7 +9,7 @@ const Footer = () => {
         {/* Column 1 */}
         <div>
           <h2 className="font-bold text-black">
-            RK University <span className="text-red-600">T&P Portal</span>
+            {PORTAL_BRANDING.institutionName} <span className="text-red-600">T&P Portal</span>
           </h2>
           <p className="text-sm mt-3 text-gray-700">
             Empowering students with career opportunities
@@ -41,15 +42,15 @@ const Footer = () => {
         <div>
           <h3 className="text-red-600 font-semibold mb-3">Contact</h3>
           <ul className="space-y-2 text-sm">
-            <li>tpo@rku.ac.in</li>
-            <li>+91 2827 255734</li>
-            <li>Rajkot, Gujarat</li>
+            <li>{PORTAL_BRANDING.tpoEmail}</li>
+            <li>{PORTAL_BRANDING.phone}</li>
+            <li>{PORTAL_BRANDING.cityState}</li>
           </ul>
         </div>
       </div>
 
       <div className="border-t border-gray-400 text-sm py-4 px-8 flex justify-between">
-        <p>© 2026 RK University. All rights reserved.</p>
+        <p>© 2026 {PORTAL_BRANDING.institutionName}. All rights reserved.</p>
         <div className="space-x-4">
           <span>Privacy Policy</span>
           <span>Terms of Service</span>

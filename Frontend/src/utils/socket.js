@@ -1,13 +1,21 @@
 import { io } from "socket.io-client";
+import { IS_DEMO_MODE } from "../demo/demoConfig";
+import { demoEventBus } from "../demo/demoStore";
 
-// Connect to the backend server
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
-const socket = io(API_URL, {
-  autoConnect: true,
-  reconnection: true,
-  reconnectionAttempts: 10,
-  reconnectionDelay: 1000,
-});
+let socket;
+
+if (IS_DEMO_MODE) {
+  socket = demoEventBus;
+} else {
+  // Connect to the backend server
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  socket = io(API_URL, {
+    autoConnect: true,
+    reconnection: true,
+    reconnectionAttempts: 10,
+    reconnectionDelay: 1000,
+  });
+}
 
 socket.on("connect", () => {
   console.log("🟢 Socket Connected to Backend (Real-Time Active)");

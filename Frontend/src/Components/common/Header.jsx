@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../assets/images/logo.png";
+import PortalLogo from "./PortalLogo";
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,7 +11,7 @@ const Header = () => {
 
         {/* LEFT : LOGO */}
         <div className="flex-shrink-0">
-          <img src={logo} alt="RK University" className="h-14" />
+          <PortalLogo className="h-14" variant="header" />
         </div>
 
         {/* CENTER : NAVIGATION */}

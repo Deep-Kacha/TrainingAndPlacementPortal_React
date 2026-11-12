@@ -2,6 +2,7 @@ import { useState } from "react";
 import SectionCard from "../register/SectionCard";
 import FileUpload from "../register/Fileupload";
 import { FaCreditCard, FaCheckCircle, FaSpinner, FaLock, FaVial } from "react-icons/fa";
+import { IS_DEMO_MODE, PORTAL_BRANDING } from "../../../demo/demoConfig";
 
 const ConsentPaymentSection = ({ formData, errors, handleChange, onPaymentSuccess }) => {
   const [loading, setLoading] = useState(false);
@@ -19,12 +20,22 @@ const ConsentPaymentSection = ({ formData, errors, handleChange, onPaymentSucces
       const order = await res.json();
       if (!order.success) throw new Error(order.error);
 
+      if (IS_DEMO_MODE) {
+        setPaymentStatus("verified");
+        onPaymentSuccess({
+          razorpay_order_id: order.order_id,
+          razorpay_payment_id: `pay_demo_${Date.now()}`,
+          razorpay_signature: `sig_demo_${Date.now()}`
+        });
+        return;
+      }
+
       // 2. Razorpay Checkout
       const options = {
         key: order.key_id,
         amount: order.amount,
         currency: "INR",
-        name: "RKU Training & Placement",
+        name: `${PORTAL_BRANDING.shortName} Training & Placement`,
         description: "Placement Registration Fee",
         order_id: order.order_id,
         handler: function (response) {

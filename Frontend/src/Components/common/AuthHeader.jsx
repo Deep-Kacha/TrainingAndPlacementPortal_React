@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/images/logo.png";
+import PortalLogo from "./PortalLogo";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const AuthHeader = () => {
   const navigate = useNavigate();
@@ -11,10 +12,12 @@ const AuthHeader = () => {
 
         {/* Left: Logo + Title */}
         <div className="flex items-center gap-3">
-          <img src={logo} alt="RK University Logo" className="h-10" />
+          <PortalLogo className="h-10" variant="header" />
           <div>
-            <h1 className="text-red-600 font-bold text-sm">T&P Portal</h1>
-            <p className="text-xs text-gray-600">RKU Training & Placement Management</p>
+            <h1 className="text-red-600 font-bold text-sm">T&amp;P Portal</h1>
+            <p className="text-xs text-gray-600">
+              {PORTAL_BRANDING.shortName} Training &amp; Placement Management
+            </p>
           </div>
         </div>
 

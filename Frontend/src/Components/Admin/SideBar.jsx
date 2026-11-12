@@ -15,7 +15,7 @@ import {
   FaTimes
 } from "react-icons/fa";
 
-import logo from "../../assets/images/logo.png";
+import PortalLogo from "../common/PortalLogo";
 
 // Map of sidebar item path → all sub-paths that should keep it active
 const ADMIN_SUBPAGE_MAP = {
@@ -59,7 +59,7 @@ const Sidebar = () => {
     >
       {/* Logo + Mobile Toggle */}
       <div className="flex justify-between items-center md:justify-center md:flex-col">
-        <img src={logo} alt="RK University" className="w-28 md:w-36 md:mb-4" />
+        <PortalLogo className="w-28 md:w-36 md:mb-4" />
         <button className="text-2xl md:hidden" onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? <FaTimes /> : <FaBars />}
         </button>

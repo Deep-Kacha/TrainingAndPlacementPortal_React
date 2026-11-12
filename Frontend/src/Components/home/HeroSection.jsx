@@ -1,6 +1,7 @@
 import React from "react";
 import heroBg from "../../assets/images/hero.jpg";
 import { useNavigate } from "react-router-dom";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const HeroSection = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ const HeroSection = () => {
         </h1>
 
         <p className="mt-3 text-Gray-600 font-semibold text-lg tracking-wide uppercase">
-          RK University
+          {PORTAL_BRANDING.institutionName}
         </p>
 
         <p className="mt-4 max-w-lg text-gray-700">

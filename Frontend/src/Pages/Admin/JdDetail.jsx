@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import SectionCard from "../../Components/Admin/CompanyMangement/SectionCard";
 import InputField from "../../Components/Admin/CompanyMangement/InputField";
 import CheckboxGroup from "../../Components/Admin/CompanyMangement/CheckboxGroup";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 import { FaSpinner } from "react-icons/fa";
 import {
   FaAddressBook,
@@ -87,10 +88,7 @@ const ContactOfficersList = () => {
         if (result.success && result.data.length > 0) {
           setOfficers(result.data);
         } else {
-          setOfficers([
-            { name: "Dr. Vishal Doshi", department: "Head of Training & Placement Cell", mobile: "+91 98765 43210" },
-            { name: "Mr. Osho Shah", department: "Assistant Training & Placement Officer", mobile: "+91 87654 32109" }
-          ]);
+          setOfficers(PORTAL_BRANDING.officers);
         }
       } catch {
         // use default fallback
@@ -286,7 +284,9 @@ const AdminJdDetail = () => {
       {/* Title block */}
       <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 text-center mb-6">
         <h2 className="text-lg font-semibold">Campus Placement Registration Form</h2>
-        <p className="text-gray-500 text-sm">RK University, Rajkot – Training & Placement Cell</p>
+        <p className="text-gray-500 text-sm">
+          {PORTAL_BRANDING.institutionName}, {PORTAL_BRANDING.cityState.split(",")[0]} – Training & Placement Cell
+        </p>
       </div>
 
       {/* Contact Information */}

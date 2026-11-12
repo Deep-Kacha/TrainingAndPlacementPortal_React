@@ -2,6 +2,8 @@ import { useState } from "react";
 import { FaTrashAlt, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import PaymentBadge from "./PaymentBadge";
 import ApprovalToggle from "./ApprovalToggle";
+import { IS_DEMO_MODE } from "../../../demo/demoConfig";
+import { openDemoDocument } from "../../../demo/demoStore";
 
 /**
  * A single student row in the Students Management table.
@@ -46,14 +48,24 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
 
         <td className="p-5 text-center">
           {student.paymentProofPath ? (
-            <a 
-              href={`${BASE_URL}/${student.paymentProofPath}`} 
-              target="_blank" 
-              rel="noreferrer"
-              className="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase bg-green-100 text-green-700 border border-green-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all shadow-sm"
-            >
-              VIEW PROOF
-            </a>
+            IS_DEMO_MODE ? (
+              <button
+                type="button"
+                onClick={() => openDemoDocument("payment", student)}
+                className="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase bg-green-100 text-green-700 border border-green-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all shadow-sm cursor-pointer"
+              >
+                VIEW PROOF
+              </button>
+            ) : (
+              <a 
+                href={`${BASE_URL}/${student.paymentProofPath}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase bg-green-100 text-green-700 border border-green-200 hover:bg-green-600 hover:text-white hover:border-green-600 transition-all shadow-sm"
+              >
+                VIEW PROOF
+              </a>
+            )
           ) : (
             <PaymentBadge status={student.paymentStatus} />
           )}
@@ -61,14 +73,24 @@ const StudentRow = ({ student, onToggle, onDelete }) => {
 
         <td className="p-5 text-center">
           {student.consentFormPath ? (
-            <a 
-              href={`${BASE_URL}/${student.consentFormPath}`} 
-              target="_blank" 
-              rel="noreferrer"
-              className="inline-block whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[9px] uppercase px-3 py-1.5 rounded shadow-sm transition-all"
-            >
-              VIEW FORM
-            </a>
+            IS_DEMO_MODE ? (
+              <button
+                type="button"
+                onClick={() => openDemoDocument("consent", student)}
+                className="inline-block whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[9px] uppercase px-3 py-1.5 rounded shadow-sm transition-all cursor-pointer border-none"
+              >
+                VIEW FORM
+              </button>
+            ) : (
+              <a 
+                href={`${BASE_URL}/${student.consentFormPath}`} 
+                target="_blank" 
+                rel="noreferrer"
+                className="inline-block whitespace-nowrap bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-[9px] uppercase px-3 py-1.5 rounded shadow-sm transition-all"
+              >
+                VIEW FORM
+              </a>
+            )
           ) : (
             <span className="text-gray-400 text-[10px] font-bold uppercase tracking-tight">MISSING</span>
           )}
