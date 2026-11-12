@@ -216,7 +216,7 @@ export async function handleDemoRequest(urlString, options = {}) {
       success: true,
       order_id: `order_demo_${Date.now()}`,
       amount: amount * 100,
-      key_id: "rzp_test_demo",
+      key_id: "demo_key_placeholder",
       is_demo: true,
     });
   }
