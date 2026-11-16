@@ -109,7 +109,7 @@ const StudJobs = () => {
       });
       const result = await res.json();
       if (result.success) {
-        showToast("Application submitted successfully! 🎉", true);
+        showToast("Application submitted successfully! 🎉",       true);
         fetchJobs();
       } else {
         showToast(result.error || "Failed to apply.", false);

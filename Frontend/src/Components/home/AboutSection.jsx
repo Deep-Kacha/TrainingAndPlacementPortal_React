@@ -4,17 +4,17 @@ import { GraduationCap, Handshake, TrendingUp } from "lucide-react";
 
 const AboutSection = () => {
   return (
-    <section id="about" className="bg-gray-100 py-24 px-6">
+    <section id="about" className="bg-gray-100 py-14 sm:py-20 lg:py-24 px-4 sm:px-6">
 
       <div className="max-w-7xl mx-auto">
 
         {/* Heading */}
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900">
-            About Training & Placement Cell
+        <div className="text-center mb-10 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            About Training &amp; Placement Cell
           </h2>
 
-          <p className="text-gray-600 mt-4 max-w-3xl mx-auto">
+          <p className="text-gray-600 mt-4 max-w-3xl mx-auto text-sm sm:text-base">
             Our mission is to bridge the gap between academia and industry by
             providing students with world-class training and connecting them
             with leading employers.
@@ -22,23 +22,23 @@ const AboutSection = () => {
         </div>
 
         {/* Content */}
-        <div className="grid md:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 items-center">
 
           {/* Image */}
           <div className="w-full">
             <img
               src={about}
               alt="Training and Placement"
-              className="w-full h-[320px] object-cover rounded-xl shadow-lg"
+              className="w-full h-[220px] sm:h-[280px] lg:h-[320px] object-cover rounded-xl shadow-lg"
             />
           </div>
 
           {/* Right Content */}
-          <div className="space-y-10">
+          <div className="space-y-6 sm:space-y-10">
 
             {/* Feature 1 */}
-            <div className="flex items-start gap-5">
-              <div className="bg-red-600 text-white p-3 rounded-full">
+            <div className="flex items-start gap-4 sm:gap-5">
+              <div className="bg-red-600 text-white p-3 rounded-full flex-shrink-0">
                 <GraduationCap size={22} />
               </div>
 
@@ -55,8 +55,8 @@ const AboutSection = () => {
             </div>
 
             {/* Feature 2 */}
-            <div className="flex items-start gap-5">
-              <div className="bg-red-600 text-white p-3 rounded-full">
+            <div className="flex items-start gap-4 sm:gap-5">
+              <div className="bg-red-600 text-white p-3 rounded-full flex-shrink-0">
                 <Handshake size={22} />
               </div>
 
@@ -73,8 +73,8 @@ const AboutSection = () => {
             </div>
 
             {/* Feature 3 */}
-            <div className="flex items-start gap-5">
-              <div className="bg-red-600 text-white p-3 rounded-full">
+            <div className="flex items-start gap-4 sm:gap-5">
+              <div className="bg-red-600 text-white p-3 rounded-full flex-shrink-0">
                 <TrendingUp size={22} />
               </div>
 

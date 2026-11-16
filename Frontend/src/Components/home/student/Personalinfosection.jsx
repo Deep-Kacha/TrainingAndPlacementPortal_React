@@ -4,6 +4,7 @@
 import SectionCard from "../register/SectionCard";
 import FormField from "../register/Formfield ";
 import { INPUT_STYLE } from "../register/Placementdata";
+import { PORTAL_BRANDING } from "../../../demo/demoConfig";
 
 const PersonalInfoSection = ({ formData, errors, handleChange }) => (
   <SectionCard number="1" title="Personal Information" contentClassName="p-6 md:p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -37,7 +38,7 @@ const PersonalInfoSection = ({ formData, errors, handleChange }) => (
       </FormField>
 
       <FormField label="University Email Address" required error={errors.universityEmail}>
-        <input name="universityEmail" type="email" placeholder="yourname@rku.ac.in" className={INPUT_STYLE} value={formData.universityEmail} onChange={handleChange} />
+        <input name="universityEmail" type="email" placeholder={`yourname@${PORTAL_BRANDING.emailDomain}`} className={INPUT_STYLE} value={formData.universityEmail} onChange={handleChange} />
       </FormField>
 
       <FormField label="Personal Email Address" required error={errors.personalEmail}>

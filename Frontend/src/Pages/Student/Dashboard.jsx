@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaSpinner, FaTrophy, FaCalendarCheck, FaBriefcase, FaUserCircle } from "react-icons/fa";
 import useSocketRefresh from "../../hooks/useSocketRefresh";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const StudDashboard = () => {
     const navigate = useNavigate();
@@ -96,7 +97,7 @@ const StudDashboard = () => {
                 {/* Extra Slot or Branding */}
                 <div className="flex justify-between items-center bg-[#d8cfc3] p-6 rounded-xl shadow-sm">
                     <div>
-                        <p className="text-gray-600 font-medium text-sm">RKU Portal</p>
+                        <p className="text-gray-600 font-medium text-sm">{PORTAL_BRANDING.shortName} Portal</p>
                         <h2 className="text-lg font-bold text-gray-800">Verified</h2>
                     </div>
                     <div className="p-3 rounded-lg bg-red-100 text-red-600 text-xl">

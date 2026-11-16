@@ -3,8 +3,9 @@ import {
   FaEye, FaEyeSlash, FaUserShield, FaCalendarAlt,
   FaTrash, FaToggleOn, FaToggleOff, FaSpinner, FaCheckCircle, FaTimesCircle
 } from "react-icons/fa";
+import { PORTAL_BRANDING } from "../../../demo/demoConfig";
 
-const SUPER_ADMIN_EMAIL = "admin@rku.ac.in";
+const SUPER_ADMIN_EMAIL = PORTAL_BRANDING.superAdminEmail;
 
 const AddPortalUser = () => {
   // ── Current user ────────────────────────────────────────────────────────────

@@ -3,6 +3,7 @@ import { FaEye, FaEyeSlash, FaEnvelope, FaIdCard } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import AuthHeader from "../../Components/common/AuthHeader";
 import Footer from "../../Components/common/Footer";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const ForgotPassword = () => {
     const navigate = useNavigate();
@@ -35,7 +36,7 @@ const ForgotPassword = () => {
                 break;
             case "email":
                 if (!value) error = "Email is required.";
-                else if (role === "Student" && !/^[^\s@]+@rku\.ac\.in$/.test(value)) error = "Students must use their @rku.ac.in college email.";
+                else if (role === "Student" && !value.toLowerCase().endsWith(`@${PORTAL_BRANDING.emailDomain}`)) error = `Students must use their @${PORTAL_BRANDING.emailDomain} college email.`;
                 else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) error = "Please enter a valid email address.";
                 break;
             case "enrollment":
@@ -125,7 +126,7 @@ const ForgotPassword = () => {
                 {/* Title */}
                 <div className="text-center mb-8">
                     <h1 className="text-2xl md:text-3xl font-bold">
-                        RK University <br /> Training & Placement Cell
+                        {PORTAL_BRANDING.institutionName} <br /> Training & Placement Cell
                     </h1>
                 </div>
 

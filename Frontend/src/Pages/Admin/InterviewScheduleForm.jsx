@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { FaSpinner, FaCheckCircle } from "react-icons/fa";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const AdminInterviewScheduleForm = () => {
 
@@ -211,7 +212,7 @@ const AdminInterviewScheduleForm = () => {
         <div className="bg-[#d8cfc3] p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
           <div>
             <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Interview Policy</p>
-            <p className="text-sm font-bold text-gray-800">Standard RKU</p>
+            <p className="text-sm font-bold text-gray-800">{PORTAL_BRANDING.policyLabel}</p>
           </div>
           <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center text-red-600">
             <FaCheckCircle />

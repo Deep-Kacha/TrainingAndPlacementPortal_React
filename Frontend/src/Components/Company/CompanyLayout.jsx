@@ -1,15 +1,15 @@
 import React, { useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import CompanySidebar from './CompanySidebar';
+import { getUserRole, isAuthenticated } from '../../utils/auth';
 
 const CompanyLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    const role = localStorage.getItem('role');
+    const role = getUserRole();
 
-    if (!token || role !== 'company') {
+    if (!isAuthenticated() || role !== 'company') {
       navigate('/');
     }
   }, [navigate]);

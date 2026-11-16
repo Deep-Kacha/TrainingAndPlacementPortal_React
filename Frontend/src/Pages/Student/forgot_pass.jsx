@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FaEye, FaEyeSlash, FaEnvelope, FaIdCard } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { PORTAL_BRANDING } from "../../demo/demoConfig";
 
 const StudForgotPassword = () => {
     const navigate = useNavigate();
@@ -29,7 +30,7 @@ const StudForgotPassword = () => {
         switch (name) {
             case "email":
                 if (!value) error = "Email is required.";
-                else if (!/^[^\s@]+@rku\.ac\.in$/.test(value)) error = "Only @rku.ac.in email addresses are allowed.";
+                else if (!value.toLowerCase().endsWith(`@${PORTAL_BRANDING.emailDomain}`)) error = `Only @${PORTAL_BRANDING.emailDomain} email addresses are allowed.`;
                 break;
             case "enrollment":
                 if (!value) error = "Enrollment number is required.";
